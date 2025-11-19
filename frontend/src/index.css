@@ -82,6 +82,20 @@ code {
     }
 }
 
+/* Custom Google Maps marker styles */
+.gm-style div[role="button"] {
+  background: #2563eb !important;
+  border-radius: 20px !important;
+  padding: 6px 12px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+  transition: all 0.2s !important;
+}
+
+.gm-style div[role="button"]:hover {
+  background: #1d4ed8 !important;
+  transform: scale(1.1) !important;
+}
+
 @layer base {
     [data-debug-wrapper="true"] {
         display: contents !important;

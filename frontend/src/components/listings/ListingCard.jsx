@@ -105,7 +105,7 @@ const ListingCard = ({ listing }) => {
         </h3>
         
         <div className="flex items-center gap-3 text-sm text-gray-600 mb-1">
-          <span className="font-bold text-gray-900">US${listing.price}/mo</span>
+          <span className="font-bold text-gray-900">${listing.price.toLocaleString()}/mo</span>
           <div className="flex items-center gap-3">
             {listing.bedrooms && (
               <div className="flex items-center gap-1">

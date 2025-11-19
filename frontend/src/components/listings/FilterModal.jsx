@@ -81,27 +81,33 @@ const FilterModal = ({ open, onClose, onFilterChange }) => {
         <div className="px-6 py-6 space-y-8">
           {/* Price */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Price</h3>
+            <h3 className="text-lg font-semibold mb-4">Price (per month)</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm text-gray-600 mb-2 block">Min. price</label>
-                <Input
-                  type="number"
-                  placeholder="Min"
-                  value={filters.minPrice}
-                  onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
-                  className="w-full"
-                />
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                  <Input
+                    type="number"
+                    placeholder="1000"
+                    value={filters.minPrice}
+                    onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
+                    className="w-full pl-7"
+                  />
+                </div>
               </div>
               <div>
                 <label className="text-sm text-gray-600 mb-2 block">Max. price</label>
-                <Input
-                  type="number"
-                  placeholder="Max"
-                  value={filters.maxPrice}
-                  onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
-                  className="w-full"
-                />
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                  <Input
+                    type="number"
+                    placeholder="5000"
+                    value={filters.maxPrice}
+                    onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
+                    className="w-full pl-7"
+                  />
+                </div>
               </div>
             </div>
             <button

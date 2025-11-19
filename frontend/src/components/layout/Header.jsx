@@ -4,11 +4,13 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import FilterModal from '../listings/FilterModal';
+import DatePicker from '../listings/DatePicker';
+import LocationAutocomplete from '../listings/LocationAutocomplete';
 
 const Header = ({ onSearch, onFilterChange }) => {
   const [location, setLocation] = useState('New York, NY, USA');
-  const [moveIn, setMoveIn] = useState('');
-  const [moveOut, setMoveOut] = useState('');
+  const [moveIn, setMoveIn] = useState(null);
+  const [moveOut, setMoveOut] = useState(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
 
   const handleSearch = () => {

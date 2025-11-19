@@ -56,42 +56,38 @@ const MapView = ({ listings, center = { lat: 40.7580, lng: -73.9855 } }) => {
     // Clear existing markers
     markers.forEach(marker => marker.setMap(null));
 
-    // Create new markers
+    // Create new markers with custom icons
     const newMarkers = listings.map(listing => {
-      // Create custom marker with price
-      const markerDiv = document.createElement('div');
-      markerDiv.className = 'custom-marker';
-      markerDiv.innerHTML = `
-        <div style="
-          background: #2563eb;
-          color: white;
-          padding: 6px 12px;
-          border-radius: 20px;
-          font-weight: 600;
-          font-size: 13px;
-          white-space: nowrap;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-          cursor: pointer;
-          transition: all 0.2s;
-        "
-        onmouseover="this.style.transform='scale(1.1)';this.style.background='#1d4ed8';"
-        onmouseout="this.style.transform='scale(1)';this.style.background='#2563eb';"
-        >
-          $${listing.price.toLocaleString()}
-        </div>
-      `;
-
-      const marker = new window.google.maps.marker.AdvancedMarkerElement({
+      const marker = new window.google.maps.Marker({
         position: { lat: listing.lat, lng: listing.lng },
         map: map,
-        content: markerDiv,
         title: listing.title,
+        icon: {
+          path: window.google.maps.SymbolPath.CIRCLE,
+          scale: 0,
+        },
+        label: {
+          text: `$${listing.price.toLocaleString()}`,
+          color: '#ffffff',
+          fontSize: '13px',
+          fontWeight: '600',
+          className: 'marker-label'
+        },
+      });
+
+      // Create info window
+      const infoWindow = new window.google.maps.InfoWindow({
+        content: `
+          <div style="padding: 8px; max-width: 200px;">
+            <h3 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">${listing.title}</h3>
+            <p style="margin: 0; color: #666; font-size: 13px;">$${listing.price.toLocaleString()}/mo</p>
+          </div>
+        `,
       });
 
       // Add click listener
       marker.addListener('click', () => {
-        // TODO: Show listing details
-        console.log('Clicked listing:', listing);
+        infoWindow.open(map, marker);
       });
 
       return marker;

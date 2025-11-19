@@ -44,11 +44,11 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
+          <Route path="/" element={<Listings />} />
+          <Route path="/home" element={<Home />} />
         </Routes>
       </BrowserRouter>
+      <Toaster />
     </div>
   );
 }

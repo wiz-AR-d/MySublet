@@ -45,11 +45,9 @@ const Header = ({ onSearch, onFilterChange }) => {
                 {/* Location */}
                 <div className="flex-1 flex flex-col">
                   <label className="text-xs font-semibold text-gray-700 mb-1">Location</label>
-                  <input
-                    type="text"
+                  <LocationAutocomplete
                     value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="text-sm text-gray-900 outline-none bg-transparent"
+                    onChange={setLocation}
                     placeholder="Where?"
                   />
                 </div>
@@ -59,11 +57,9 @@ const Header = ({ onSearch, onFilterChange }) => {
                 {/* Move-in */}
                 <div className="flex-1 flex flex-col">
                   <label className="text-xs font-semibold text-gray-700 mb-1">Move-in</label>
-                  <input
-                    type="text"
-                    value={moveIn}
-                    onChange={(e) => setMoveIn(e.target.value)}
-                    className="text-sm text-gray-400 outline-none bg-transparent"
+                  <DatePicker
+                    date={moveIn}
+                    onDateChange={setMoveIn}
                     placeholder="Add move-in"
                   />
                 </div>
@@ -73,11 +69,9 @@ const Header = ({ onSearch, onFilterChange }) => {
                 {/* Move-out */}
                 <div className="flex-1 flex flex-col">
                   <label className="text-xs font-semibold text-gray-700 mb-1">Move-out</label>
-                  <input
-                    type="text"
-                    value={moveOut}
-                    onChange={(e) => setMoveOut(e.target.value)}
-                    className="text-sm text-gray-400 outline-none bg-transparent"
+                  <DatePicker
+                    date={moveOut}
+                    onDateChange={setMoveOut}
                     placeholder="Add move-out"
                   />
                 </div>

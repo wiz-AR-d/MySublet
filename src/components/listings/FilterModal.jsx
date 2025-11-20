@@ -20,7 +20,9 @@ export default function FilterModal({ isOpen, onClose }) {
   const [localFilters, setLocalFilters] = useState(filters);
   
   useEffect(() => {
-    setLocalFilters(filters);
+    if (isOpen) {
+      setLocalFilters(filters);
+    }
   }, [filters, isOpen]);
   
   if (!isOpen) return null;

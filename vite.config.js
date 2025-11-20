@@ -5,4 +5,24 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  server: {
+    host: '0.0.0.0',
+    port: 3000,
+    allowedHosts: [
+      'sublethub.preview.emergentagent.com',
+      'localhost',
+      '127.0.0.1',
+      '0.0.0.0'
+    ]
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: 3000,
+    allowedHosts: [
+      'sublethub.preview.emergentagent.com',
+      'localhost',
+      '127.0.0.1',
+      '0.0.0.0'
+    ]
+  }
 })

@@ -1,6 +1,8 @@
 import { create } from 'zustand'
-import { supabase } from '../lib/supabase'
-
+//updated on 11/20/2025 1:45 pm
+// import { supabase } from '../lib/supabase'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
+//
 const useAuthStore = create((set, get) => ({
   user: null,
   profile: null,
@@ -9,6 +11,13 @@ const useAuthStore = create((set, get) => ({
 
   // Initialize auth
   initialize: async () => {
+    //updated on 11/20/2025 1:45 pm
+    if (!isSupabaseConfigured || !supabase) {
+      console.warn('Supabase is not configured. Skipping auth initialization.')
+      set({ loading: false })
+      return
+    }
+    //
     try {
       const { data: { session } } = await supabase.auth.getSession()
       
@@ -66,6 +75,10 @@ const useAuthStore = create((set, get) => ({
 
   // Email/Password Sign Up
   signUp: async (email, password, metadata) => {
+    if (!isSupabaseConfigured || !supabase) {
+      console.warn('Supabase is not configured. Skipping sign up.')
+      return { data: null, error: { message: 'Supabase is not configured.' } }
+    }
     set({ loading: true })
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -80,6 +93,12 @@ const useAuthStore = create((set, get) => ({
 
   // Email/Password Sign In
   signIn: async (email, password) => {
+    //updated on 11/20/2025 1:45 pm
+    if (!isSupabaseConfigured || !supabase) {
+      console.warn('Supabase is not configured. Skipping sign in.')
+      return { data: null, error: { message: 'Supabase is not configured.' } }
+    }
+    //
     set({ loading: true })
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -107,6 +126,12 @@ const useAuthStore = create((set, get) => ({
 
   // Google Sign In
   signInWithGoogle: async () => {
+    //updated on 11/20/2025 1:45 pm
+    if (!isSupabaseConfigured || !supabase) {
+      console.warn('Supabase is not configured. Skipping Google sign in.')
+      return { data: null, error: { message: 'Supabase is not configured.' } }
+    }
+    //
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -118,6 +143,12 @@ const useAuthStore = create((set, get) => ({
 
   // Update user profile (including role if needed)
   updateProfile: async (updates) => {
+    //updated on 11/20/2025 1:45 pm
+    if (!isSupabaseConfigured || !supabase) {
+      console.warn('Supabase is not configured. Skipping profile update.')
+      return { data: null, error: { message: 'Supabase is not configured.' } }
+    }
+    //
     const { user } = get()
     if (!user) return { error: { message: 'No user logged in' } }
 
@@ -155,6 +186,17 @@ const useAuthStore = create((set, get) => ({
 
   // Sign Out
   signOut: async () => {
+    //updated on 11/20/2025 1:45 pm
+    if (!isSupabaseConfigured || !supabase) {
+      console.warn('Supabase is not configured. Nothing to sign out from.')
+      set({
+        user: null,
+        profile: null,
+        session: null,
+      })
+      return
+    }
+    //
     await supabase.auth.signOut()
     set({
       user: null,

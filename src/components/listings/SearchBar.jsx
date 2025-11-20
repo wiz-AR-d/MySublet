@@ -37,7 +37,7 @@ export default function SearchBar() {
   };
   
   const customSelectStyles = {
-    control: (provided, state) => ({
+    control: (provided) => ({
       ...provided,
       border: 'none',
       boxShadow: 'none',

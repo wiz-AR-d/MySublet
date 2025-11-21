@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useListingStore } from '../../store/listingStore';
-import { currencies } from '../../data/mockListings';
+import { currencies } from '../../utils/currency';
 import { ChevronDown } from 'lucide-react';
 
 export default function CurrencySelector() {

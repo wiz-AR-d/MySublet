@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useListingStore } from '../store/listingStore';
 import SearchBar from '../components/listings/SearchBar';
 import FilterModal from '../components/listings/FilterModal';
@@ -6,6 +6,8 @@ import ListingGrid from '../components/listings/ListingGrid';
 import ListingMap from '../components/listings/ListingMap';
 import Pagination from '../components/common/Pagination';
 import CurrencySelector from '../components/listings/CurrencySelector';
+import Loading from '../components/common/Loading';
+import ErrorMessage from '../components/common/ErrorMessage';
 import { Filter, MapPin } from 'lucide-react';
 
 export default function Listings() {
@@ -15,8 +17,16 @@ export default function Listings() {
     itemsPerPage,
     showFilters,
     toggleFilters,
-    selectedCurrency
+    selectedCurrency,
+    loading,
+    error,
+    fetchListings
   } = useListingStore();
+
+  // Fetch listings on mount
+  useEffect(() => {
+    fetchListings();
+  }, [fetchListings]);
   
   const [viewMode, setViewMode] = useState('split'); // 'list', 'map', 'split'
   
@@ -26,6 +36,22 @@ export default function Listings() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentListings = filteredListings.slice(startIndex, endIndex);
+  
+  if (loading && filteredListings.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loading />
+      </div>
+    );
+  }
+
+  if (error && filteredListings.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <ErrorMessage error={error} onRetry={fetchListings} />
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen bg-gray-50">

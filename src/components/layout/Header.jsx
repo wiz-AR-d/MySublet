@@ -2,15 +2,30 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Home, PlusCircle, MessageSquare, User, LogOut, Menu } from 'lucide-react'
 import useAuthStore from '../../store/authStore'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 export default function Header() {
-  const { user, signOut } = useAuthStore()
+  const { user, profile, signOut, isSublessor } = useAuthStore()
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const handleSignOut = async () => {
-    await signOut()
-    navigate('/')
+    try {
+      const { error } = await signOut()
+      
+      if (error) {
+        toast.error('Error signing out. Please try again.')
+        console.error('Sign out error:', error)
+      } else {
+        toast.success('Logged out successfully')
+        navigate('/')
+      }
+    } catch (error) {
+      console.error('Unexpected error during sign out:', error)
+      toast.error('An error occurred while signing out')
+      // Still navigate home even if there's an error
+      navigate('/')
+    }
   }
 
   return (
@@ -31,10 +46,13 @@ export default function Header() {
             
             {user ? (
               <>
-                <Link to="/create-listing" className="text-gray-700 hover:text-blue-600 flex items-center gap-2">
-                  <PlusCircle className="h-4 w-4" />
-                  List Your Place
-                </Link>
+                {/* Only show "List Your Place" for sublessors */}
+                {isSublessor() && (
+                  <Link to="/create-listing" className="text-gray-700 hover:text-blue-600 flex items-center gap-2">
+                    <PlusCircle className="h-4 w-4" />
+                    List Your Place
+                  </Link>
+                )}
                 <Link to="/messages" className="text-gray-700 hover:text-blue-600">
                   <MessageSquare className="h-5 w-5" />
                 </Link>
@@ -85,13 +103,16 @@ export default function Header() {
             </Link>
             {user ? (
               <>
-                <Link
-                  to="/create-listing"
-                  className="block text-gray-700 hover:text-blue-600"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  List Your Place
-                </Link>
+                {/* Only show "List Your Place" for sublessors */}
+                {isSublessor() && (
+                  <Link
+                    to="/create-listing"
+                    className="block text-gray-700 hover:text-blue-600"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    List Your Place
+                  </Link>
+                )}
                 <Link
                   to="/messages"
                   className="block text-gray-700 hover:text-blue-600"
@@ -107,9 +128,9 @@ export default function Header() {
                   Dashboard
                 </Link>
                 <button
-                  onClick={() => {
-                    handleSignOut()
+                  onClick={async () => {
                     setMobileMenuOpen(false)
+                    await handleSignOut()
                   }}
                   className="block w-full text-left text-gray-700 hover:text-red-600"
                 >

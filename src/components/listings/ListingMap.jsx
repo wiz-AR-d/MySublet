@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { currencyRates } from '../../data/mockListings';
+import { currencyRates, convertPrice, getCurrencySymbol } from '../../utils/currency';
 import L from 'leaflet';
 
 // Fix for default markers in React Leaflet
@@ -13,21 +13,8 @@ L.Icon.Default.mergeOptions({
 
 // Custom marker icon for price bubbles
 const createPriceIcon = (price, currency, isSelected = false) => {
-  const getCurrencySymbol = () => {
-    const currencySymbols = {
-      USD: '$',
-      EUR: '€',
-      GBP: '£',
-      CAD: 'C$',
-      AUD: 'A$'
-    };
-    return currencySymbols[currency] || '$';
-  };
-  
-  const convertPrice = (price) => {
-    const rate = currencyRates[currency] || 1;
-    return Math.round(price * rate);
-  };
+  const convertedPrice = convertPrice(price, 'USD', currency);
+  const symbol = getCurrencySymbol(currency);
   
   return L.divIcon({
     html: `
@@ -36,7 +23,7 @@ const createPriceIcon = (price, currency, isSelected = false) => {
           ? 'bg-black text-white border-black' 
           : 'bg-white text-black border-gray-300 hover:bg-gray-50'
       } px-3 py-2 rounded-full border-2 shadow-lg font-semibold text-sm whitespace-nowrap transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-200">
-        ${getCurrencySymbol()}${convertPrice(price).toLocaleString()}
+        ${symbol}${Math.round(convertedPrice).toLocaleString()}
       </div>
     `,
     className: 'custom-div-icon',
@@ -117,12 +104,8 @@ export default function ListingMap({ listings, selectedCurrency, selectedListing
                       </p>
                       <div className="flex items-baseline space-x-1">
                         <span className="font-bold text-gray-900 text-sm">
-                          {selectedCurrency === 'USD' ? '$' : 
-                           selectedCurrency === 'EUR' ? '€' : 
-                           selectedCurrency === 'GBP' ? '£' : 
-                           selectedCurrency === 'CAD' ? 'C$' : 
-                           selectedCurrency === 'AUD' ? 'A$' : '$'}
-                          {Math.round(listing.price * (currencyRates[selectedCurrency] || 1)).toLocaleString()}
+                          {getCurrencySymbol(selectedCurrency)}
+                          {Math.round(convertPrice(listing.price, 'USD', selectedCurrency)).toLocaleString()}
                         </span>
                         <span className="text-xs text-gray-600">/mo</span>
                       </div>

@@ -13,6 +13,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Listings from './pages/Listings'
+import CreateListing from './pages/CreateListing'
 import Dashboard from './pages/Dashboard'
 import AuthCallback from './pages/AuthCallback'
 
@@ -47,10 +48,8 @@ function App() {
             <Route
               path="/create-listing"
               element={
-                <ProtectedRoute>
-                  <div className="p-8 text-center">
-                    <h1 className="text-2xl font-bold">Create Listing - Coming Soon</h1>
-                  </div>
+                <ProtectedRoute requireRole="sublessor">
+                  <CreateListing />
                 </ProtectedRoute>
               }
             />

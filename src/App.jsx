@@ -17,6 +17,8 @@ import CreateListing from "./pages/CreateListing";
 import Dashboard from "./pages/Dashboard";
 import AuthCallback from "./pages/AuthCallback";
 import MyListings from "./pages/MyListings";
+import Messages from "./pages/Messages";
+import ListingDetail from "./pages/ListingDetail";
 
 function App() {
   const { initialize, initialized } = useAuthStore();
@@ -55,6 +57,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/listings" element={<Listings />} />
+            <Route path="/listings/:id" element={<ListingDetail />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
 
             {/* Protected Routes */}
@@ -86,11 +89,7 @@ function App() {
               path="/messages"
               element={
                 <ProtectedRoute>
-                  <div className="p-8 text-center">
-                    <h1 className="text-2xl font-bold">
-                      Messages - Coming Soon
-                    </h1>
-                  </div>
+                  <Messages />
                 </ProtectedRoute>
               }
             />

@@ -86,13 +86,16 @@ export const listingsAPI = {
     if (!isSupabaseConfigured || !supabase) {
       throw new Error('Supabase is not configured');
     }
-
+  
     try {
-      // Increment views count
-      await supabase.rpc('increment_listing_views', { listing_id: id }).catch(() => {
-        // If function doesn't exist, just continue without incrementing
-      });
-
+      // Try to increment views count (don't fail if function doesn't exist)
+      try {
+        await supabase.rpc('increment_listing_views', { listing_id: id });
+      } catch (rpcError) {
+        // Ignore RPC errors - view counting is not critical
+        console.log('Could not increment views (function may not exist):', rpcError.message);
+      }
+  
       const { data, error } = await supabase
         .from('listings')
         .select(`
@@ -108,11 +111,11 @@ export const listingsAPI = {
         `)
         .eq('id', id)
         .single();
-
+  
       if (error) throw error;
-
+  
       const transformedListing = transformListing(data, data.profiles);
-
+  
       return { data: transformedListing, error: null };
     } catch (error) {
       console.error('Error fetching listing:', error);

@@ -1,342 +1,306 @@
-import { useParams, useNavigate, Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { 
-  MessageSquare, 
-  ArrowLeft, 
-  MapPin, 
-  Bed, 
-  Bath, 
-  Users,
-  Calendar,
-  Home,
-  CheckCircle,
-  Mail,
-  Phone,
-  University
-} from 'lucide-react'
-import useAuthStore from '../store/authStore'
-import { listingsAPI } from '../services/api/listings'
-import { useListingStore } from '../store/listingStore'
-import { convertPrice, getCurrencySymbol } from '../utils/currency'
-import Loading from '../components/common/Loading'
-import { toast } from 'sonner'
+import React, { useState } from 'react';
+import { Home, CheckCircle, Calendar, Users, Wifi, Droplet, Flame, Archive, UtensilsCrossed, Wind, Briefcase, Car, Share2, Heart, Star } from 'lucide-react';
 
-export default function ListingDetail() {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const { user } = useAuthStore()
-  const { selectedCurrency } = useListingStore()
-  const [listing, setListing] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+export default function ListingPage() {
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    moveIn: '',
+    moveOut: '',
+    message: ''
+  });
 
-  useEffect(() => {
-    const fetchListing = async () => {
-      setLoading(true)
-      const { data, error } = await listingsAPI.getById(id)
-      
-      if (error) {
-        toast.error('Failed to load listing')
-        console.error('Error fetching listing:', error)
-      } else if (data) {
-        setListing(data)
-      }
-      
-      setLoading(false)
-    }
-    
-    fetchListing()
-  }, [id])
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Form submitted:', formData);
+    alert('Interest expressed! The host will contact you soon.');
+  };
 
-  const handleMessageHost = () => {
-    if (!user) {
-      toast.error('Please login to message the host')
-      navigate('/login', { state: { from: `/listings/${id}` } })
-      return
-    }
-    
-    if (listing._supabase?.user_id === user.id) {
-      toast.error("You can't message yourself")
-      return
-    }
-    
-    navigate(`/messages?userId=${listing._supabase.user_id}&listingId=${listing.id}`)
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loading />
-      </div>
-    )
-  }
-
-  if (!listing) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Listing not found</h1>
-          <Link 
-            to="/listings"
-            className="text-blue-600 hover:text-blue-700"
-          >
-            Back to Listings
-          </Link>
-        </div>
-      </div>
-    )
-  }
-
-  const isOwner = listing._supabase?.user_id === user?.id
-  const convertedPrice = Math.round(convertPrice(listing.price, 'USD', selectedCurrency))
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Back Button */}
-        <Link 
-          to="/listings"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Listings
-        </Link>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content - Left Side */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Image Gallery */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="relative aspect-video">
-                <img 
-                  src={listing.images[currentImageIndex]} 
-                  alt={listing.title}
-                  className="w-full h-full object-cover"
-                />
-                
-                {/* Image Navigation */}
-                {listing.images.length > 1 && (
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black bg-opacity-50 rounded-full px-3 py-2">
-                    {listing.images.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentImageIndex(index)}
-                        className={`w-2 h-2 rounded-full transition-colors ${
-                          index === currentImageIndex ? 'bg-white' : 'bg-white bg-opacity-50'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-              
-              {/* Thumbnail Gallery */}
-              {listing.images.length > 1 && (
-                <div className="grid grid-cols-5 gap-2 p-4">
-                  {listing.images.slice(0, 5).map((image, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`aspect-video rounded-lg overflow-hidden border-2 transition-all ${
-                        index === currentImageIndex 
-                          ? 'border-blue-600' 
-                          : 'border-transparent hover:border-gray-300'
-                      }`}
-                    >
-                      <img 
-                        src={image} 
-                        alt={`${listing.title} - ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
-                </div>
-              )}
+        <div className="mb-6">
+          <h1 className="text-4xl font-bold mb-4">Modern Studio near MIT</h1>
+          <div className="flex items-center gap-4 text-gray-600">
+            <div className="flex items-center gap-1">
+              <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+              <span className="font-semibold">4.9</span>
+              <span>· 12 reviews</span>
             </div>
+            <span>· Cambridge, MA</span>
+            <button className="ml-auto flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50">
+              <Share2 className="w-4 h-4" />
+              Share
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50">
+              <Heart className="w-4 h-4" />
+              Save
+            </button>
+          </div>
+        </div>
 
-            {/* Title and Location */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">{listing.title}</h1>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <MapPin className="h-4 w-4" />
-                    <p>{listing.location}</p>
-                  </div>
+        {/* Image Gallery */}
+        <div className="grid grid-cols-4 gap-2 mb-8 h-96">
+          <div className="col-span-2 row-span-2 rounded-lg overflow-hidden">
+            <img 
+              src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop" 
+              alt="Studio main view"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="col-span-2 rounded-lg overflow-hidden">
+            <img 
+              src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop" 
+              alt="Studio view 2"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="rounded-lg overflow-hidden">
+            <img 
+              src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=300&h=200&fit=crop" 
+              alt="Studio view 3"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="rounded-lg overflow-hidden">
+            <img 
+              src="https://images.unsplash.com/photo-1556912173-3bb406ef7e77?w=300&h=200&fit=crop" 
+              alt="Studio view 4"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid grid-cols-3 gap-8">
+          {/* Left Column */}
+          <div className="col-span-2">
+            {/* Property Info */}
+            <div className="border-b pb-6 mb-6">
+              <div className="flex items-center gap-2 mb-4">
+                <h2 className="text-2xl font-bold">Studio in Cambridge</h2>
+                <div className="flex items-center gap-1 ml-2">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" alt="Sarah" className="w-6 h-6 rounded-full" />
+                  <span className="text-sm font-medium">Sarah</span>
+                  <CheckCircle className="w-4 h-4 text-blue-600" />
                 </div>
-                <span className="text-sm text-gray-500 whitespace-nowrap">
-                  {listing.postedTime}
-                </span>
               </div>
-
-              {/* Key Details */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-t border-gray-200">
-                <div className="flex items-center gap-2">
-                  <Bed className="h-5 w-5 text-gray-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Bedrooms</p>
-                    <p className="font-semibold">{listing.bedrooms}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Bath className="h-5 w-5 text-gray-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Bathrooms</p>
-                    <p className="font-semibold">{listing.bathrooms}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-gray-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Roommates</p>
-                    <p className="font-semibold">{listing.roommates}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Home className="h-5 w-5 text-gray-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Type</p>
-                    <p className="font-semibold">{listing.roomType}</p>
-                  </div>
-                </div>
+              <div className="flex items-center gap-4 text-gray-600">
+                <span>1 bedroom</span>
+                <span>·</span>
+                <span>1 bathroom</span>
+                <span>·</span>
+                <span>0 roommates</span>
               </div>
             </div>
 
-            {/* Description */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Description</h2>
-              <p className="text-gray-700 whitespace-pre-wrap">{listing.description}</p>
+            {/* Features */}
+            <div className="grid grid-cols-4 gap-4 mb-8">
+              <div className="border rounded-lg p-4 text-center">
+                <Home className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                <div className="font-semibold text-sm">Entire place</div>
+                <div className="text-xs text-gray-600">Private access</div>
+              </div>
+              <div className="border rounded-lg p-4 text-center">
+                <CheckCircle className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                <div className="font-semibold text-sm">Furnished</div>
+                <div className="text-xs text-gray-600">Ready to move</div>
+              </div>
+              <div className="border rounded-lg p-4 text-center">
+                <Calendar className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                <div className="font-semibold text-sm">Flexible lease</div>
+                <div className="text-xs text-gray-600">3 months</div>
+              </div>
+              <div className="border rounded-lg p-4 text-center">
+                <Users className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                <div className="font-semibold text-sm">0 roommates</div>
+                <div className="text-xs text-gray-600">Student friendly</div>
+              </div>
+            </div>
+
+            {/* About */}
+            <div className="border-b pb-6 mb-6">
+              <h3 className="text-xl font-bold mb-4">About this place</h3>
+              <p className="text-gray-700 mb-4">
+                Beautiful modern studio perfect for students. Features large windows with natural light, fully equipped kitchen, and high-speed WiFi. Walking distance to campus.
+              </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="font-semibold text-blue-900 mb-2">Important Note</div>
+                <p className="text-sm text-blue-800">
+                  This property is verified by CampusStay and ideal for students. Flexible on move-in dates within the first week of the month.
+                </p>
+              </div>
             </div>
 
             {/* Amenities */}
-            {listing.amenities && listing.amenities.length > 0 && (
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Amenities</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {listing.amenities.map((amenity, index) => (
-                    <div key={index} className="flex items-center gap-2 text-gray-700">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span>{amenity}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Availability */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Availability</h2>
+            <div className="border-b pb-6 mb-6">
+              <h3 className="text-xl font-bold mb-4">Amenities</h3>
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Available From</p>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-gray-600" />
-                    <p className="font-medium">
-                      {listing._supabase?.available_from 
-                        ? new Date(listing._supabase.available_from).toLocaleDateString()
-                        : 'Not specified'}
-                    </p>
-                  </div>
+                <div className="flex items-center gap-3">
+                  <Wifi className="w-5 h-5 text-gray-600" />
+                  <span>WiFi</span>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Available To</p>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-gray-600" />
-                    <p className="font-medium">
-                      {listing._supabase?.available_to 
-                        ? new Date(listing._supabase.available_to).toLocaleDateString()
-                        : 'Not specified'}
-                    </p>
-                  </div>
+                <div className="flex items-center gap-3">
+                  <UtensilsCrossed className="w-5 h-5 text-gray-600" />
+                  <span>Kitchen</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Droplet className="w-5 h-5 text-gray-600" />
+                  <span>Washer</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Wind className="w-5 h-5 text-gray-600" />
+                  <span>Air Conditioning</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Flame className="w-5 h-5 text-gray-600" />
+                  <span>Heating</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Briefcase className="w-5 h-5 text-gray-600" />
+                  <span>Desk</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Archive className="w-5 h-5 text-gray-600" />
+                  <span>Closet</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Car className="w-5 h-5 text-gray-600" />
+                  <span>Parking</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Sidebar - Right Side */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24 space-y-6">
-              {/* Price */}
-              <div>
-                <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-4xl font-bold text-gray-900">
-                    {getCurrencySymbol(selectedCurrency)}{convertedPrice.toLocaleString()}
-                  </span>
+          {/* Right Column - Booking Form */}
+          <div className="col-span-1">
+            <div className="border rounded-xl p-6 sticky top-4 shadow-lg">
+              <div className="flex items-baseline justify-between mb-6">
+                <div>
+                  <span className="text-3xl font-bold">$1200</span>
                   <span className="text-gray-600">/month</span>
                 </div>
-                {selectedCurrency !== 'USD' && (
-                  <p className="text-sm text-gray-500">
-                    Original: ${listing.price.toLocaleString()} USD
-                  </p>
-                )}
+                <span className="text-sm px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
+                  Available Sep 1, 2025
+                </span>
               </div>
 
-              {/* Message Host Button */}
-              {!isOwner ? (
-                <button
-                  onClick={handleMessageHost}
-                  className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2 transition-colors"
-                >
-                  <MessageSquare className="h-5 w-5" />
-                  Message Host
-                </button>
-              ) : (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-                  <p className="text-blue-800 text-sm font-medium">This is your listing</p>
-                </div>
-              )}
-
-              {/* Host Info */}
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="font-semibold text-gray-900 mb-4">Host Information</h3>
-                <div className="flex items-center gap-3 mb-4">
-                  <img
-                    src={listing.host.avatar}
-                    alt={listing.host.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                    onError={(e) => {
-                      e.target.src = 'https://via.placeholder.com/48'
-                    }}
+              <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-2">
+                    Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    placeholder="Enter your name"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
                   />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-2">
+                    Email <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="your.email@university.edu"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-2">
+                    Phone Number <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="(555) 000-0000"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <p className="font-medium text-gray-900">{listing.host.name}</p>
-                    <p className="text-sm text-gray-500">Host</p>
+                    <label className="block text-sm font-medium mb-2">Move-in</label>
+                    <input
+                      type="date"
+                      name="moveIn"
+                      value={formData.moveIn}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Move-out</label>
+                    <input
+                      type="date"
+                      name="moveOut"
+                      value={formData.moveOut}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
                   </div>
                 </div>
-                
-                {/* Additional Host Details (if available from profiles) */}
-                {listing._supabase && (
-                  <div className="space-y-2 text-sm">
-                    {listing._supabase.university && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <University className="h-4 w-4" />
-                        <span>{listing._supabase.university}</span>
-                      </div>
-                    )}
-                  </div>
-                )}
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-2">
+                    Message (Optional)
+                  </label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder="Tell the host about yourself..."
+                    rows="4"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+                >
+                  Express Interest
+                </button>
+
+                <p className="text-xs text-center text-gray-500 mt-4">
+                  You won't be charged yet. Review details with the host first.
+                </p>
+              </form>
+
+              <div className="mt-6 pt-6 border-t">
+                <h4 className="font-semibold mb-3">How it works</h4>
+                <ol className="space-y-2 text-sm text-gray-600">
+                  <li>1. Submit your interest and meet the host on a video call</li>
+                  <li>2. Tour the space virtually or in person</li>
+                  <li>3. Complete booking with confidence</li>
+                </ol>
               </div>
-
-              {/* Pet Policy */}
-              {listing.petPolicy && (
-                <div className="border-t border-gray-200 pt-6">
-                  <h3 className="font-semibold text-gray-900 mb-2">Pet Policy</h3>
-                  <p className="text-gray-700">{listing.petPolicy}</p>
-                </div>
-              )}
-
-              {/* Views Count */}
-              {listing._supabase?.views_count > 0 && (
-                <div className="border-t border-gray-200 pt-4">
-                  <p className="text-sm text-gray-500 text-center">
-                    {listing._supabase.views_count} view{listing._supabase.views_count !== 1 ? 's' : ''}
-                  </p>
-                </div>
-              )}
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

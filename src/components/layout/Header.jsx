@@ -9,23 +9,14 @@ export default function Header() {
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const handleSignOut = async () => {
-    try {
-      const { error } = await signOut()
-      
-      if (error) {
-        toast.error('Error signing out. Please try again.')
-        console.error('Sign out error:', error)
-      } else {
-        toast.success('Logged out successfully')
-        navigate('/')
-      }
-    } catch (error) {
-      console.error('Unexpected error during sign out:', error)
-      toast.error('An error occurred while signing out')
-      // Still navigate home even if there's an error
-      navigate('/')
-    }
+  const handleSignOut = () => {
+    // Call signOut which clears state immediately (non-blocking)
+    // This makes logout feel instant
+    signOut()
+    
+    // Show success and navigate immediately (don't wait for async)
+    toast.success('Logged out successfully')
+    navigate('/')
   }
 
   return (
@@ -128,9 +119,9 @@ export default function Header() {
                   Dashboard
                 </Link>
                 <button
-                  onClick={async () => {
+                  onClick={() => {
                     setMobileMenuOpen(false)
-                    await handleSignOut()
+                    handleSignOut()
                   }}
                   className="block w-full text-left text-gray-700 hover:text-red-600"
                 >

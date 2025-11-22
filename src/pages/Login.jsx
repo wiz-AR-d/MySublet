@@ -14,17 +14,34 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    if (!email.trim() || !password.trim()) {
+      toast.error('Please enter both email and password')
+      return
+    }
+    
     setLoading(true)
 
-    const { error } = await signIn(email, password)
-    
-    setLoading(false)
-    
-    if (error) {
-      toast.error(error.message)
-    } else {
-      toast.success('Logged in successfully!')
-      navigate('/dashboard')
+    try {
+      const { error } = await signIn(email, password)
+      
+      if (error) {
+        toast.error(error.message || 'Login failed. Please check your credentials.')
+        setLoading(false)
+      } else {
+        // Show success immediately and navigate
+        // Profile will load in background
+        toast.success('Logged in successfully!')
+        
+        // Navigate immediately - dashboard will show loading while data fetches
+        setTimeout(() => {
+          navigate('/dashboard')
+        }, 100) // Small delay to show success toast
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      toast.error('An unexpected error occurred. Please try again.')
+      setLoading(false)
     }
   }
 

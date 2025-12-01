@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
 import useAuthStore from "./store/authStore";
@@ -9,6 +9,7 @@ import Footer from "./components/layout/Footer";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 // Pages
+import Landing from "./pages/Landing";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -19,6 +20,26 @@ import AuthCallback from "./pages/AuthCallback";
 import MyListings from "./pages/MyListings";
 import Messages from "./pages/Messages";
 import ListingDetail from "./pages/ListingDetail";
+
+// Layout wrapper to conditionally show header/footer
+function Layout({ children }) {
+  const location = useLocation();
+  const isLandingPage = location.pathname === '/';
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      {/* Only show header if NOT on landing page */}
+      {!isLandingPage && <Header />}
+      
+      <main className={isLandingPage ? '' : 'grow'}>
+        {children}
+      </main>
+      
+      {/* Only show footer if NOT on landing page */}
+      {!isLandingPage && <Footer />}
+    </div>
+  );
+}
 
 function App() {
   const { initialize, initialized } = useAuthStore();
@@ -48,70 +69,69 @@ function App() {
 
   return (
     <Router>
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="grow">
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/listings" element={<Listings />} />
-            <Route path="/listings/:id" element={<ListingDetail />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
+      <Layout>
+        <Routes>
+          {/* Landing Page - NO header/footer */}
+          <Route path="/" element={<Landing />} />
+          
+          {/* Public Routes - WITH header/footer */}
+          <Route path="/home" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/listings" element={<Listings />} />
+          <Route path="/listings/:id" element={<ListingDetail />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
 
-            {/* Protected Routes */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/my-listings"
-              element={
-                <ProtectedRoute requireRole="sublessor">
-                  <MyListings />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/create-listing"
-              element={
-                <ProtectedRoute requireRole="sublessor">
-                  <CreateListing />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/messages"
-              element={
-                <ProtectedRoute>
-                  <Messages />
-                </ProtectedRoute>
-              }
-            />
+          {/* Protected Routes - WITH header/footer */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-listings"
+            element={
+              <ProtectedRoute>
+                <MyListings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-listing"
+            element={
+              <ProtectedRoute>
+                <CreateListing />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <ProtectedRoute>
+                <Messages />
+              </ProtectedRoute>
+            }
+          />
 
-            {/* 404 Page */}
-            <Route
-              path="*"
-              element={
-                <div className="min-h-screen flex items-center justify-center">
-                  <div className="text-center">
-                    <h1 className="text-6xl font-bold text-gray-900 mb-4">
-                      404
-                    </h1>
-                    <p className="text-xl text-gray-600">Page not found</p>
-                  </div>
+          {/* 404 Page */}
+          <Route
+            path="*"
+            element={
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                  <h1 className="text-6xl font-bold text-gray-900 mb-4">
+                    404
+                  </h1>
+                  <p className="text-xl text-gray-600">Page not found</p>
                 </div>
-              }
-            />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+              </div>
+            }
+          />
+        </Routes>
+      </Layout>
       <Toaster position="top-right" richColors />
     </Router>
   );

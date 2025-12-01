@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 
 export default function Header() {
-  const { user, profile, signOut, isSublessor } = useAuthStore()
+  const { user, signOut } = useAuthStore()
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -37,13 +37,11 @@ export default function Header() {
             
             {user ? (
               <>
-                {/* Only show "List Your Place" for sublessors */}
-                {isSublessor() && (
-                  <Link to="/create-listing" className="text-gray-700 hover:text-blue-600 flex items-center gap-2">
-                    <PlusCircle className="h-4 w-4" />
-                    List Your Place
-                  </Link>
-                )}
+                {/* Show "List Your Place" for all logged-in users */}
+                <Link to="/create-listing" className="text-gray-700 hover:text-blue-600 flex items-center gap-2">
+                  <PlusCircle className="h-4 w-4" />
+                  List Your Place
+                </Link>
                 <Link to="/messages" className="text-gray-700 hover:text-blue-600">
                   <MessageSquare className="h-5 w-5" />
                 </Link>
@@ -94,16 +92,14 @@ export default function Header() {
             </Link>
             {user ? (
               <>
-                {/* Only show "List Your Place" for sublessors */}
-                {isSublessor() && (
-                  <Link
-                    to="/create-listing"
-                    className="block text-gray-700 hover:text-blue-600"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    List Your Place
-                  </Link>
-                )}
+                {/* Show "List Your Place" for all logged-in users */}
+                <Link
+                  to="/create-listing"
+                  className="block text-gray-700 hover:text-blue-600"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  List Your Place
+                </Link>
                 <Link
                   to="/messages"
                   className="block text-gray-700 hover:text-blue-600"

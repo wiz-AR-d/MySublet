@@ -1,69 +1,100 @@
 import { Link } from 'react-router-dom'
-import { Home } from 'lucide-react'
+import { Instagram, Linkedin, Twitter, Facebook } from 'lucide-react'
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-gray-800 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
-          <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <Home className="h-8 w-8 text-blue-500" />
-              <span className="text-xl font-bold">SubLease</span>
+          <div className="col-span-1">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold mb-2">MySublease</h2>
+              <p className="text-sm text-gray-400">support@mysublease.com</p>
+              <p className="text-sm text-gray-400">© 2025 MySublease Housing Co.</p>
             </div>
-            <p className="text-gray-400 max-w-md">
-              The easiest way for college students to find and offer short-term housing for summer internships.
-            </p>
+            {/* Social Icons */}
+            <div className="flex space-x-3">
+              <a href="#" className="text-gray-400 hover:text-white transition">
+                <Instagram className="h-5 w-5" />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-white transition">
+                <Linkedin className="h-5 w-5" />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-white transition">
+                <Twitter className="h-5 w-5" />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-white transition">
+                <Facebook className="h-5 w-5" />
+              </a>
+            </div>
           </div>
 
-          {/* Quick Links */}
+          {/* For those looking */}
           <div>
-            <h3 className="font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
+            <h3 className="font-semibold mb-4">For those looking</h3>
+            <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/listings" className="text-gray-400 hover:text-white">
+                <Link to="/listings" className="text-gray-400 hover:text-white transition">
                   Browse Listings
                 </Link>
               </li>
-              <li>
-                <Link to="/create-listing" className="text-gray-400 hover:text-white">
-                  List Your Place
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="text-gray-400 hover:text-white">
-                  About Us
-                </Link>
-              </li>
             </ul>
           </div>
 
-          {/* Support */}
+          {/* For those listing */}
           <div>
-            <h3 className="font-semibold mb-4">Support</h3>
-            <ul className="space-y-2">
+            <h3 className="font-semibold mb-4">For those listing</h3>
+            <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/help" className="text-gray-400 hover:text-white">
-                  Help Center
+                <Link to="/create-listing" className="text-gray-400 hover:text-white transition">
+                  Create a listing
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-gray-400 hover:text-white">
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/terms" className="text-gray-400 hover:text-white">
-                  Terms of Service
+                <Link to="/my-listings" className="text-gray-400 hover:text-white transition">
+                  My listings
                 </Link>
               </li>
             </ul>
           </div>
-        </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 SubLease. All rights reserved.</p>
+          {/* For everyone */}
+          <div>
+            <h3 className="font-semibold mb-4">For everyone</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link to="/" className="text-gray-400 hover:text-white transition">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/messages" className="text-gray-400 hover:text-white transition">
+                  Messages
+                </Link>
+              </li>
+              <li>
+                <Link to="/dashboard" className="text-gray-400 hover:text-white transition">
+                  Dashboard
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy" className="text-gray-400 hover:text-white transition">
+                  Datenschutz
+                </Link>
+              </li>
+              <li>
+                <Link to="/impressum" className="text-gray-400 hover:text-white transition">
+                  Impressum
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="text-gray-400 hover:text-white transition">
+                  AGB
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </footer>

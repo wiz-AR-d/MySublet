@@ -1,5 +1,5 @@
 // ProfileCard component
-export default function ProfileCard({ user }) {
+export default function ProfileCard() {
   return <div>Profile Card</div>;
 }
 

@@ -1,0 +1,23 @@
+export const AMENITIES_LIST = [
+    "Heating",
+    "Washing machine",
+    "Dryer",
+    "Wi-Fi",
+    "Dishwasher",
+    "Oven",
+    "Stove",
+    "Microwave",
+    "Kitchen",
+    "Elevator",
+    "Balcony",
+    "Rooftop",
+    "Storage room",
+    "Bike storage",
+    "Parking / Garage",
+    "Garden access",
+    "Wheelchair accessible",
+    "Gym",
+    "Doorman",
+    "In-unit laundry",
+    "Building laundry"
+];

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
+import { transformProfile } from '../utils/dataTransformers'
 
 const useAuthStore = create(
   persist(
@@ -21,25 +22,25 @@ const useAuthStore = create(
 
         try {
           console.log('[Auth] Initializing authentication...')
-          
+
           // Get session from Supabase (which reads from localStorage)
           const { data: { session }, error } = await supabase.auth.getSession()
-          
+
           if (error) {
             console.error('[Auth] Error getting session:', error)
-            set({ 
-              user: null, 
-              profile: null, 
-              session: null, 
+            set({
+              user: null,
+              profile: null,
+              session: null,
               loading: false,
-              initialized: true 
+              initialized: true
             })
             return
           }
 
           if (session?.user) {
             console.log('[Auth] Session found, fetching profile...')
-            
+
             // Fetch user profile
             const { data: profile, error: profileError } = await supabase
               .from('profiles')
@@ -53,12 +54,12 @@ const useAuthStore = create(
 
             set({
               user: session.user,
-              profile: profile || null,
+              profile: profile ? transformProfile(profile) : null,
               session: session,
               loading: false,
               initialized: true,
             })
-            
+
             console.log('[Auth] Session restored successfully')
           } else {
             console.log('[Auth] No session found')
@@ -75,7 +76,7 @@ const useAuthStore = create(
           const { data: { subscription } } = supabase.auth.onAuthStateChange(
             async (event, session) => {
               console.log('[Auth] State change:', event)
-              
+
               if (session?.user) {
                 // Fetch updated profile
                 const { data: profile } = await supabase
@@ -86,7 +87,7 @@ const useAuthStore = create(
 
                 set({
                   user: session.user,
-                  profile: profile || null,
+                  profile: profile ? transformProfile(profile) : null,
                   session: session,
                   loading: false,
                 })
@@ -105,8 +106,8 @@ const useAuthStore = create(
           return subscription
         } catch (error) {
           console.error('[Auth] Initialization error:', error)
-          set({ 
-            loading: false, 
+          set({
+            loading: false,
             initialized: true,
             user: null,
             profile: null,
@@ -121,9 +122,9 @@ const useAuthStore = create(
           console.warn('Supabase is not configured. Skipping sign up.')
           return { data: null, error: { message: 'Supabase is not configured.' } }
         }
-        
+
         set({ loading: true })
-        
+
         try {
           const { data, error } = await supabase.auth.signUp({
             email,
@@ -132,7 +133,7 @@ const useAuthStore = create(
               data: metadata,
             },
           })
-          
+
           set({ loading: false })
           return { data, error }
         } catch (error) {
@@ -147,15 +148,15 @@ const useAuthStore = create(
           console.warn('Supabase is not configured. Skipping sign in.')
           return { data: null, error: { message: 'Supabase is not configured.' } }
         }
-        
+
         set({ loading: true })
-        
+
         try {
           const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
           })
-          
+
           if (error) {
             set({ loading: false })
             return { data, error }
@@ -163,30 +164,30 @@ const useAuthStore = create(
 
           if (data.user && data.session) {
             console.log('[Auth] Sign in successful')
-            
+
             // Fetch profile after sign in
             const { data: profile, error: profileError } = await supabase
               .from('profiles')
               .select('*')
               .eq('id', data.user.id)
               .single()
-            
+
             if (profileError) {
               console.error('[Auth] Error fetching profile after sign in:', profileError)
             }
 
             // Update state - this will also persist to localStorage via middleware
-            set({ 
+            set({
               user: data.user,
               session: data.session,
-              profile: profile || null,
+              profile: profile ? transformProfile(profile) : null,
               loading: false,
               initialized: true
             })
-            
+
             return { data, error: null }
           }
-          
+
           set({ loading: false })
           return { data, error }
         } catch (error) {
@@ -202,7 +203,7 @@ const useAuthStore = create(
           console.warn('Supabase is not configured. Skipping Google sign in.')
           return { data: null, error: { message: 'Supabase is not configured.' } }
         }
-        
+
         try {
           const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
@@ -222,7 +223,7 @@ const useAuthStore = create(
           console.warn('Supabase is not configured. Skipping profile update.')
           return { data: null, error: { message: 'Supabase is not configured.' } }
         }
-        
+
         const { user } = get()
         if (!user) return { error: { message: 'No user logged in' } }
 
@@ -235,7 +236,9 @@ const useAuthStore = create(
             .single()
 
           if (!error && data) {
-            set({ profile: data })
+            // Transform the data to camelCase before storing
+            const transformedProfile = transformProfile(data)
+            set({ profile: transformedProfile })
           }
 
           return { data, error }
@@ -274,11 +277,11 @@ const useAuthStore = create(
           })
           return { error: null }
         }
-        
+
         try {
           console.log('[Auth] Signing out...')
           const { error } = await supabase.auth.signOut()
-          
+
           // Always clear local state
           set({
             user: null,
@@ -286,12 +289,12 @@ const useAuthStore = create(
             session: null,
             loading: false,
           })
-          
+
           if (error) {
             console.error('[Auth] Error signing out:', error)
             return { error }
           }
-          
+
           console.log('[Auth] Signed out successfully')
           return { error: null }
         } catch (error) {

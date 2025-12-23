@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Home, PlusCircle, MessageSquare, User, LogOut, Menu } from 'lucide-react'
+import { Home, PlusCircle, MessageSquare, User, LogOut, Menu, ChevronDown, LayoutDashboard, List } from 'lucide-react'
 import useAuthStore from '../../store/authStore'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { toast } from 'sonner'
 
 export default function Header() {
@@ -9,8 +9,13 @@ export default function Header() {
   const navigate = useNavigate()
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef(null)
 
   const handleSignOut = () => {
+    // Close dropdown
+    setDropdownOpen(false)
+
     // Call signOut which clears state immediately (non-blocking)
     // This makes logout feel instant
     signOut()
@@ -20,10 +25,21 @@ export default function Header() {
     navigate('/')
   }
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   // Check if we're on specific pages
   const isOnListings = location.pathname === '/listings' || location.pathname.startsWith('/listings/')
   const isOnCreateListing = location.pathname === '/create-listing'
-  const isOnDashboard = location.pathname === '/dashboard'
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -47,26 +63,80 @@ export default function Header() {
               <>
                 {/* Show "List Your Place" for all logged-in users */}
                 {!isOnCreateListing && (
-                  <Link to="/create-listing" className="text-base text-gray-700 hover:text-blue-600 transition-colors font-medium flex items-center gap-2">
-                    <PlusCircle className="h-4 w-4" />
+                  <Link to="/create-listing" className="text-base text-gray-700 hover:text-blue-600 transition-colors font-medium">
                     List Your Place
                   </Link>
                 )}
                 <Link to="/messages" className="text-gray-700 hover:text-blue-600 transition-colors">
                   <MessageSquare className="h-5 w-5" />
                 </Link>
-                {!isOnDashboard && (
-                  <Link to="/dashboard" className="text-base text-gray-700 hover:text-blue-600 transition-colors font-medium">
-                    Dashboard
-                  </Link>
-                )}
-                <button
-                  onClick={handleSignOut}
-                  className="text-base text-gray-700 hover:text-red-600 transition-colors font-medium flex items-center gap-2"
-                >
-                  <LogOut className="h-4 w-4" />
-                  Logout
-                </button>
+
+                {/* Profile Dropdown */}
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors"
+                  >
+                    <div className="flex items-center gap-1 bg-gray-100 hover:bg-gray-200 rounded-lg px-3 py-2 transition-colors">
+                      <Menu className="h-4 w-4" />
+                      <User className="h-5 w-5" />
+                    </div>
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {dropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+                      <Link
+                        to="/dashboard"
+                        className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <LayoutDashboard className="h-4 w-4" />
+                        <span className="font-medium">Dashboard</span>
+                      </Link>
+                      <Link
+                        to="/messages"
+                        className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                        <span className="font-medium">Chat</span>
+                      </Link>
+                      <Link
+                        to="/listings"
+                        className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <List className="h-4 w-4" />
+                        <span className="font-medium">Listings</span>
+                      </Link>
+                      <Link
+                        to="/create-listing"
+                        className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <PlusCircle className="h-4 w-4" />
+                        <span className="font-medium">List Your Place</span>
+                      </Link>
+                      <Link
+                        to="/profile"
+                        className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <User className="h-4 w-4" />
+                        <span className="font-medium">Profile</span>
+                      </Link>
+                      <hr className="my-2 border-gray-200" />
+                      <button
+                        onClick={handleSignOut}
+                        className="flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 transition-colors w-full text-left"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span className="font-medium">Log out</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </>
             ) : (
               <>
@@ -117,29 +187,34 @@ export default function Header() {
                   </Link>
                 )}
                 <Link
+                  to="/dashboard"
+                  className="block text-base text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <Link
                   to="/messages"
                   className="block text-base text-gray-700 hover:text-blue-600 transition-colors font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Messages
+                  Chat
                 </Link>
-                {!isOnDashboard && (
-                  <Link
-                    to="/dashboard"
-                    className="block text-base text-gray-700 hover:text-blue-600 transition-colors font-medium"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
-                )}
+                <Link
+                  to="/listings"
+                  className="block text-base text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Listings
+                </Link>
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false)
                     handleSignOut()
                   }}
-                  className="block w-full text-left text-base text-gray-700 hover:text-red-600 transition-colors font-medium"
+                  className="block w-full text-left text-base text-red-600 hover:text-red-700 transition-colors font-medium"
                 >
-                  Logout
+                  Log out
                 </button>
               </>
             ) : (

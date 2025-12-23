@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { listingsAPI } from '../../services/api/listings';
 import { toast } from 'sonner';
-import { ChevronLeft, ChevronRight, Check, Home, Calendar, AlertCircle, CheckCircle, XCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Home, Calendar, AlertCircle, CheckCircle, XCircle, Plus, X } from "lucide-react";
+import { AMENITIES_LIST as amenitiesList } from '../../constants/amenities';
 import CloudinaryImageUpload from "./CloudinaryImageUpload";
 
 // FIXED: Better Rent Input Component
@@ -147,8 +148,8 @@ const StepPropertyType = ({ formData, updateFormData, errors }) => (
           type="button"
           onClick={() => updateFormData({ propertyType: type.value })}
           className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${formData.propertyType === type.value
-              ? "border-orange-500 bg-orange-50 shadow-md"
-              : "border-gray-200 hover:border-gray-300"
+            ? "border-orange-500 bg-orange-50 shadow-md"
+            : "border-gray-200 hover:border-gray-300"
             }`}
         >
           <div className="text-4xl mb-2">{type.icon}</div>
@@ -188,8 +189,8 @@ const StepWhatOffering = ({ formData, updateFormData, errors }) => (
           type="button"
           onClick={() => updateFormData({ whatOffering: type.value })}
           className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${formData.whatOffering === type.value
-              ? "border-orange-500 bg-orange-50 shadow-md"
-              : "border-gray-200 hover:border-gray-300"
+            ? "border-orange-500 bg-orange-50 shadow-md"
+            : "border-gray-200 hover:border-gray-300"
             }`}
         >
           <div className="text-4xl mb-2">{type.icon}</div>
@@ -238,8 +239,8 @@ const StepFurnishing = ({ formData, updateFormData, errors }) => (
           type="button"
           onClick={() => updateFormData({ furnishing: type.value })}
           className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${formData.furnishing === type.value
-              ? "border-orange-500 bg-orange-50 shadow-md"
-              : "border-gray-200 hover:border-gray-300"
+            ? "border-orange-500 bg-orange-50 shadow-md"
+            : "border-gray-200 hover:border-gray-300"
             }`}
         >
           <div className="text-4xl mb-3">{type.icon}</div>
@@ -288,8 +289,8 @@ const StepRentalType = ({ formData, updateFormData, errors }) => (
           type="button"
           onClick={() => updateFormData({ rentalType: type.value })}
           className={`p-6 border-2 rounded-xl text-left transition-all hover:shadow-md ${formData.rentalType === type.value
-              ? "border-orange-500 bg-orange-50 shadow-md"
-              : "border-gray-200 hover:border-gray-300"
+            ? "border-orange-500 bg-orange-50 shadow-md"
+            : "border-gray-200 hover:border-gray-300"
             }`}
         >
           <div className="flex items-start space-x-4">
@@ -329,8 +330,8 @@ const StepRegistration = ({ formData, updateFormData, errors }) => (
           type="button"
           onClick={() => updateFormData({ registration: option.value })}
           className={`p-6 border-2 rounded-xl text-left transition-all hover:shadow-md ${formData.registration === option.value
-              ? "border-orange-500 bg-orange-50 shadow-md"
-              : "border-gray-200 hover:border-gray-300"
+            ? "border-orange-500 bg-orange-50 shadow-md"
+            : "border-gray-200 hover:border-gray-300"
             }`}
         >
           <div className="flex items-center space-x-4">
@@ -368,8 +369,8 @@ const StepTotalRooms = ({ formData, updateFormData, errors }) => (
           type="button"
           onClick={() => updateFormData({ totalRooms: num })}
           className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${formData.totalRooms === num
-              ? "border-orange-500 bg-orange-50 shadow-md"
-              : "border-gray-200 hover:border-gray-300"
+            ? "border-orange-500 bg-orange-50 shadow-md"
+            : "border-gray-200 hover:border-gray-300"
             }`}
         >
           <div className="text-3xl font-bold text-gray-900">{num}</div>
@@ -384,8 +385,8 @@ const StepTotalRooms = ({ formData, updateFormData, errors }) => (
       type="button"
       onClick={() => updateFormData({ totalRooms: 7 })}
       className={`w-full max-w-xs mx-auto block p-4 border-2 rounded-xl text-center transition-all hover:shadow-md ${formData.totalRooms >= 7
-          ? "border-orange-500 bg-orange-50 shadow-md"
-          : "border-gray-200 hover:border-gray-300"
+        ? "border-orange-500 bg-orange-50 shadow-md"
+        : "border-gray-200 hover:border-gray-300"
         }`}
     >
       <div className="font-semibold text-gray-900">6+ rooms</div>
@@ -417,8 +418,8 @@ const StepRoomsOffered = ({ formData, updateFormData, errors }) => {
             type="button"
             onClick={() => updateFormData({ roomsOffered: num })}
             className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${formData.roomsOffered === num
-                ? "border-orange-500 bg-orange-50 shadow-md"
-                : "border-gray-200 hover:border-gray-300"
+              ? "border-orange-500 bg-orange-50 shadow-md"
+              : "border-gray-200 hover:border-gray-300"
               }`}
           >
             <div className="text-3xl font-bold text-gray-900">{num}</div>
@@ -829,10 +830,10 @@ const StepRoommates = ({ formData, updateFormData, errors }) => {
     </div>
   );
 };
-import { AMENITIES_LIST as amenitiesList } from '../../constants/amenities';
-
 const StepAmenities = ({ formData, updateFormData, errors }) => {
   // amenitiesList imported from constants
+  const [newAmenity, setNewAmenity] = useState("");
+
   const toggleAmenity = (amenity) => {
     const current = formData.amenities || [];
     if (current.includes(amenity)) {
@@ -841,6 +842,42 @@ const StepAmenities = ({ formData, updateFormData, errors }) => {
       updateFormData({ amenities: [...current, amenity] });
     }
   };
+
+  const addCustomAmenity = () => {
+    if (!newAmenity.trim()) return;
+    const amenityToAdd = newAmenity.trim();
+    const current = formData.amenities || [];
+
+    // Check if already exists (case insensitive check against both standard and current list)
+    const existsInStandard = amenitiesList.some(a => a.toLowerCase() === amenityToAdd.toLowerCase());
+    const existsInCurrent = current.some(a => a.toLowerCase() === amenityToAdd.toLowerCase());
+
+    if (!existsInStandard && !existsInCurrent) {
+      updateFormData({ amenities: [...current, amenityToAdd] });
+    } else if (existsInStandard && !current.includes(amenitiesList.find(a => a.toLowerCase() === amenityToAdd.toLowerCase()))) {
+      // If it exists in standard list but not selected, select it
+      toggleAmenity(amenitiesList.find(a => a.toLowerCase() === amenityToAdd.toLowerCase()));
+    }
+
+    setNewAmenity("");
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addCustomAmenity();
+    }
+  };
+
+  const removeCustomAmenity = (amenity) => {
+    toggleAmenity(amenity);
+  };
+
+  // derived state: custom amenities are those in formData but NOT in the standard list
+  const customAmenities = (formData.amenities || []).filter(
+    (a) => !amenitiesList.includes(a)
+  );
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -851,24 +888,66 @@ const StepAmenities = ({ formData, updateFormData, errors }) => {
           What amenities are available?
         </h2>
       </div>
-      <div className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3">
+        {/* Standard Amenities */}
         {amenitiesList.map((amenity) => (
           <button
             key={amenity}
             type="button"
             onClick={() => toggleAmenity(amenity)}
-            className={`p-4 border-2 rounded-xl text-left transition-all hover:shadow-md ${formData.amenities?.includes(amenity)
-                ? "border-orange-500 bg-orange-50"
-                : "border-gray-200 hover:border-gray-300"
+            className={`p-4 border-2 rounded-xl text-left transition-all hover:shadow-md flex items-center justify-between group ${formData.amenities?.includes(amenity)
+              ? "border-orange-500 bg-orange-50"
+              : "border-gray-200 hover:border-gray-300"
               }`}
           >
             <span className="text-sm font-medium text-gray-900">{amenity}</span>
+            {formData.amenities?.includes(amenity) && <Check className="w-4 h-4 text-orange-500" />}
           </button>
         ))}
+
+        {/* Custom Amenities */}
+        {customAmenities.map((amenity) => (
+          <div
+            key={amenity}
+            className="p-4 border-2 border-orange-500 bg-orange-50 rounded-xl flex items-center justify-between group relative"
+          >
+            <span className="text-sm font-medium text-gray-900 pr-6 break-words">{amenity}</span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                removeCustomAmenity(amenity);
+              }}
+              className="absolute top-2 right-2 text-orange-400 hover:text-orange-600 p-1"
+              title="Remove"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+
+        {/* Add New Input Tile */}
+        <div className="p-4 border-2 border-dashed border-gray-300 rounded-xl flex items-center space-x-2 bg-gray-50 focus-within:border-orange-500 focus-within:bg-white transition-colors">
+          <input
+            type="text"
+            value={newAmenity}
+            onChange={(e) => setNewAmenity(e.target.value)}
+            onKeyDown={handleKeyPress}
+            placeholder="Other..."
+            className="flex-1 bg-transparent border-none focus:ring-0 p-0 text-sm text-gray-900 placeholder-gray-500 min-w-0"
+          />
+          <button
+            type="button"
+            onClick={addCustomAmenity}
+            disabled={!newAmenity.trim()}
+            className="p-1 bg-orange-100 text-orange-600 rounded-lg hover:bg-orange-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       <p className="text-sm text-gray-500 text-center mt-6">
-        ℹ️ Select everything included.
+        ℹ️ Select everything included. Add custom ones if missing.
       </p>
     </div>
   );
@@ -894,8 +973,8 @@ const StepPetPolicy = ({ formData, updateFormData, errors }) => (
           type="button"
           onClick={() => updateFormData({ petPolicy: option.value })}
           className={`p-6 border-2 rounded-xl text-left transition-all hover:shadow-md ${formData.petPolicy === option.value
-              ? "border-orange-500 bg-orange-50 shadow-md"
-              : "border-gray-200 hover:border-gray-300"
+            ? "border-orange-500 bg-orange-50 shadow-md"
+            : "border-gray-200 hover:border-gray-300"
             }`}
         >
           <div className="flex items-center space-x-4">
@@ -1352,8 +1431,8 @@ export default function ListingForm() {
               onClick={handleBack}
               disabled={currentStep === 1}
               className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-colors ${currentStep === 1
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
             >
               <ChevronLeft className="w-5 h-5" />

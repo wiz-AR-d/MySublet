@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { currencyRates, convertPrice, getCurrencySymbol } from '../../utils/currency';
+import {useState} from 'react';
+import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet';
+import {currencyRates, convertPrice, getCurrencySymbol} from '../../utils/currency';
 import L from 'leaflet';
 
 // Fix for default markers in React Leaflet
@@ -15,13 +15,12 @@ L.Icon.Default.mergeOptions({
 const createPriceIcon = (price, currency, isSelected = false) => {
   const convertedPrice = convertPrice(price, 'USD', currency);
   const symbol = getCurrencySymbol(currency);
-  
+
   return L.divIcon({
     html: `
-      <div class="${
-        isSelected 
-          ? 'bg-black text-white border-black' 
-          : 'bg-white text-black border-gray-300 hover:bg-gray-50'
+      <div class="${isSelected
+        ? 'bg-black text-white border-black'
+        : 'bg-white text-black border-gray-300 hover:bg-gray-50'
       } px-3 py-2 rounded-full border-2 shadow-lg font-semibold text-sm whitespace-nowrap transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-200">
         ${symbol}${Math.round(convertedPrice).toLocaleString()}
       </div>
@@ -32,27 +31,27 @@ const createPriceIcon = (price, currency, isSelected = false) => {
   });
 };
 
-export default function ListingMap({ listings, selectedCurrency, selectedListingId = null }) {
+export default function ListingMap({listings, selectedCurrency, selectedListingId = null}) {
   const [selectedListing, setSelectedListing] = useState(null);
-  
+
   // Default center (New York City)
   const defaultCenter = [40.7589, -73.9851];
   const defaultZoom = 12;
-  
+
   // Calculate map bounds based on listings
   const getMapBounds = () => {
     if (!listings || listings.length === 0) return null;
-    
+
     const bounds = L.latLngBounds();
     listings.forEach(listing => {
       if (listing.coordinates && listing.coordinates.length === 2) {
         bounds.extend([listing.coordinates[0], listing.coordinates[1]]);
       }
     });
-    
+
     return bounds.isValid() ? bounds : null;
   };
-  
+
   return (
     <div className="w-full h-96 lg:h-[600px] rounded-2xl overflow-hidden shadow-lg bg-gray-100">
       <MapContainer
@@ -60,18 +59,18 @@ export default function ListingMap({ listings, selectedCurrency, selectedListing
         zoom={defaultZoom}
         className="w-full h-full"
         bounds={getMapBounds()}
-        boundsOptions={{ padding: [20, 20] }}
+        boundsOptions={{padding: [20, 20]}}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        
+
         {listings?.map((listing) => {
           if (!listing.coordinates || listing.coordinates.length !== 2) return null;
-          
+
           const isSelected = selectedListingId === listing.id || selectedListing?.id === listing.id;
-          
+
           return (
             <Marker
               key={listing.id}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import {
   ArrowRight,
   Shield,
@@ -329,24 +329,24 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {/* Feature 1 */}
             <div className="group relative rounded-2xl overflow-hidden h-[500px]">
-              <img 
-                src="/src/assets/images/house1.jpg" 
+              <img
+                src="/src/assets/images/house1.jpg"
                 alt="Manual Verification"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/90"></div>
-              
+
               <div className="relative h-full flex flex-col justify-between p-8">
                 <div>
                   <div className="w-16 h-16 rounded-full border-4 border-orange-500 flex items-center justify-center mb-4 relative">
                     <Shield className="w-7 h-7 text-white" />
-                    <div className="absolute -inset-3 border-2 border-dashed border-orange-400 rounded-full animate-spin" style={{ animationDuration: '8s' }}></div>
+                    <div className="absolute -inset-3 border-2 border-dashed border-orange-400 rounded-full animate-spin" style={{animationDuration: '8s'}}></div>
                   </div>
                   <div className="absolute top-8 right-8 opacity-20">
                     <CheckCircle className="w-16 h-16 text-white" />
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-3">Mandatory Manual Verification</h3>
                   <p className="text-gray-300 text-lg">Every user is verified → zero scammers.</p>
@@ -356,18 +356,18 @@ export default function Landing() {
 
             {/* Feature 2 */}
             <div className="group relative rounded-2xl overflow-hidden h-[500px]">
-              <img 
-                src="/src/assets/images/house2.jpg" 
+              <img
+                src="/src/assets/images/house2.jpg"
                 alt="City-Wide Listings"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/90"></div>
-              
+
               <div className="relative h-full flex flex-col justify-between p-8">
                 <div>
                   <div className="w-16 h-16 rounded-full border-4 border-cyan-500 flex items-center justify-center mb-4 relative">
                     <HomeIcon className="w-7 h-7 text-white" />
-                    <div className="absolute -inset-3 border-2 border-dashed border-cyan-400 rounded-full animate-spin" style={{ animationDuration: '8s' }}></div>
+                    <div className="absolute -inset-3 border-2 border-dashed border-cyan-400 rounded-full animate-spin" style={{animationDuration: '8s'}}></div>
                   </div>
                   <div className="absolute top-8 right-8 space-y-2">
                     <MapPin className="w-8 h-8 text-cyan-400 opacity-60" />
@@ -375,7 +375,7 @@ export default function Landing() {
                     <MapPin className="w-8 h-8 text-cyan-400 opacity-60 ml-8" />
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-3">Verified City-Wide Listings</h3>
                   <p className="text-gray-300 text-lg">Don't limit yourself to your building group — reach the entire city.</p>
@@ -385,18 +385,18 @@ export default function Landing() {
 
             {/* Feature 3 */}
             <div className="group relative rounded-2xl overflow-hidden h-[500px]">
-              <img 
-                src="/src/assets/images/house3.jpg" 
+              <img
+                src="/src/assets/images/house3.jpg"
                 alt="Smart Filters"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/90"></div>
-              
+
               <div className="relative h-full flex flex-col justify-between p-8">
                 <div>
                   <div className="w-16 h-16 rounded-full border-4 border-green-500 flex items-center justify-center mb-4 relative">
                     <Filter className="w-7 h-7 text-white" />
-                    <div className="absolute -inset-3 border-2 border-dashed border-green-400 rounded-full animate-spin" style={{ animationDuration: '8s' }}></div>
+                    <div className="absolute -inset-3 border-2 border-dashed border-green-400 rounded-full animate-spin" style={{animationDuration: '8s'}}></div>
                   </div>
                   <div className="absolute top-8 right-8 opacity-20">
                     <div className="space-y-2">
@@ -406,7 +406,7 @@ export default function Landing() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-3">Smart Filters</h3>
                   <p className="text-gray-300 text-lg">Find matching sublets quickly without messaging 50 people.</p>
@@ -416,24 +416,24 @@ export default function Landing() {
 
             {/* Feature 4 */}
             <div className="group relative rounded-2xl overflow-hidden h-[500px]">
-              <img 
-                src="/src/assets/images/house4.jpg" 
+              <img
+                src="/src/assets/images/house4.jpg"
                 alt="Secure Messaging"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/90"></div>
-              
+
               <div className="relative h-full flex flex-col justify-between p-8">
                 <div>
                   <div className="w-16 h-16 rounded-full border-4 border-emerald-500 flex items-center justify-center mb-4 relative">
                     <Lock className="w-7 h-7 text-white" />
-                    <div className="absolute -inset-3 border-2 border-dashed border-emerald-400 rounded-full animate-spin" style={{ animationDuration: '8s' }}></div>
+                    <div className="absolute -inset-3 border-2 border-dashed border-emerald-400 rounded-full animate-spin" style={{animationDuration: '8s'}}></div>
                   </div>
                   <div className="absolute top-8 right-8 opacity-20">
                     <MessageCircle className="w-16 h-16 text-white" />
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-3">Secure In-App Messaging</h3>
                   <p className="text-gray-300 text-lg">No WhatsApp spam. No outside links.</p>
@@ -443,18 +443,18 @@ export default function Landing() {
 
             {/* Feature 5 */}
             <div className="group relative rounded-2xl overflow-hidden h-[500px]">
-              <img 
-                src="/src/assets/images/house5.jpg" 
+              <img
+                src="/src/assets/images/house5.jpg"
                 alt="Host Dashboard"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/90"></div>
-              
+
               <div className="relative h-full flex flex-col justify-between p-8">
                 <div>
                   <div className="w-16 h-16 rounded-full border-4 border-purple-500 flex items-center justify-center mb-4 relative">
                     <LayoutDashboard className="w-7 h-7 text-white" />
-                    <div className="absolute -inset-3 border-2 border-dashed border-purple-400 rounded-full animate-spin" style={{ animationDuration: '8s' }}></div>
+                    <div className="absolute -inset-3 border-2 border-dashed border-purple-400 rounded-full animate-spin" style={{animationDuration: '8s'}}></div>
                   </div>
                   <div className="absolute top-8 right-8 space-y-1 opacity-30">
                     <div className="flex items-center gap-2">
@@ -467,7 +467,7 @@ export default function Landing() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-3">Host Dashboard</h3>
                   <p className="text-gray-300 text-lg">Manage listing, verifications, and requests easily.</p>
@@ -477,21 +477,21 @@ export default function Landing() {
 
             {/* Feature 6 */}
             <div className="group relative rounded-2xl overflow-hidden h-[500px]">
-              <img 
-                src="/src/assets/images/house6.jpg" 
+              <img
+                src="/src/assets/images/house6.jpg"
                 alt="Built for Germany"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/90"></div>
-              
+
               <div className="relative h-full flex flex-col justify-between p-8">
                 <div>
                   <div className="w-16 h-16 rounded-full border-4 border-pink-500 flex items-center justify-center mb-4 relative">
                     <Globe className="w-7 h-7 text-white" />
-                    <div className="absolute -inset-3 border-2 border-dashed border-pink-400 rounded-full animate-spin" style={{ animationDuration: '8s' }}></div>
+                    <div className="absolute -inset-3 border-2 border-dashed border-pink-400 rounded-full animate-spin" style={{animationDuration: '8s'}}></div>
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-3">Built for Germany</h3>
                   <p className="text-gray-300 text-lg">Local rules, German/English support, real local understanding.</p>

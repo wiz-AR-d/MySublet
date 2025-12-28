@@ -1,11 +1,11 @@
 // Cloudinary Image Upload Component
-import { useState, useRef } from 'react';
-import { Upload, X, Loader } from 'lucide-react';
+import {useState, useRef} from 'react';
+import {Upload, X, Loader} from 'lucide-react';
 
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-export default function CloudinaryImageUpload({ images = [], onImagesChange, maxImages = 10 }) {
+export default function CloudinaryImageUpload({images = [], onImagesChange, maxImages = 10}) {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef(null);
@@ -39,9 +39,9 @@ export default function CloudinaryImageUpload({ images = [], onImagesChange, max
 
   const handleFileSelect = async (e) => {
     const files = Array.from(e.target.files);
-    
+
     if (files.length === 0) return;
-    
+
     if (images.length + files.length > maxImages) {
       alert(`You can only upload up to ${maxImages} images`);
       return;
@@ -99,11 +99,10 @@ export default function CloudinaryImageUpload({ images = [], onImagesChange, max
         type="button"
         onClick={() => fileInputRef.current?.click()}
         disabled={uploading || images.length >= maxImages}
-        className={`w-full border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
-          uploading || images.length >= maxImages
+        className={`w-full border-2 border-dashed rounded-xl p-8 text-center transition-colors ${uploading || images.length >= maxImages
             ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
             : 'border-gray-300 hover:border-orange-500 hover:bg-orange-50'
-        }`}
+          }`}
       >
         {uploading ? (
           <div>
@@ -112,7 +111,7 @@ export default function CloudinaryImageUpload({ images = [], onImagesChange, max
             <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
               <div
                 className="bg-orange-500 h-2 rounded-full transition-all"
-                style={{ width: `${uploadProgress}%` }}
+                style={{width: `${uploadProgress}%`}}
               />
             </div>
           </div>

@@ -4,7 +4,7 @@ import {
   Route
 } from "react-router-dom";
 import {useEffect, useState} from "react";
-import { useLocation } from 'react-router-dom'
+import {useLocation} from 'react-router-dom'
 import {Toaster} from "sonner";
 import useAuthStore from "./store/authStore";
 
@@ -42,7 +42,7 @@ function Layout({children}) {
   const isLandingPage = location.pathname === '/';
   return (
     <div className="flex flex-col min-h-screen">
-       {!isLandingPage && <Header />}
+      {!isLandingPage && <Header />}
 
       <main className="grow">{children}</main>
 
@@ -71,7 +71,7 @@ function App() {
     const hash = window.location.hash;
     if (hash && hash.includes('access_token')) {
       console.log('[App] OAuth callback detected, waiting for session...');
-      
+
       // Wait for user to be set by onAuthStateChange
       const checkAuth = setInterval(() => {
         if (user) {

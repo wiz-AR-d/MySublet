@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useListingStore } from '../../store/listingStore';
-import { X } from 'lucide-react';
+import {useState, useEffect} from 'react';
+import {useListingStore} from '../../store/listingStore';
+import {X} from 'lucide-react';
 
-import { AMENITIES_LIST as amenitiesList } from '../../constants/amenities';
+import {AMENITIES_LIST as amenitiesList} from '../../constants/amenities';
 
-export default function FilterModal({ isOpen, onClose }) {
-  const { filters, setFilters, clearFilters } = useListingStore();
+export default function FilterModal({isOpen, onClose}) {
+  const {filters, setFilters, clearFilters} = useListingStore();
   const [localFilters, setLocalFilters] = useState(filters);
 
   useEffect(() => {
@@ -45,9 +45,9 @@ export default function FilterModal({ isOpen, onClose }) {
     // If the value is the same as current, toggle it off (set to empty string)
     // This applies to single-select filters like bedrooms, roomType, etc.
     if (key !== 'priceRange' && key !== 'location' && key !== 'amenities' && localFilters[key] === value) {
-      setLocalFilters(prev => ({ ...prev, [key]: '' }));
+      setLocalFilters(prev => ({...prev, [key]: ''}));
     } else {
-      setLocalFilters(prev => ({ ...prev, [key]: value }));
+      setLocalFilters(prev => ({...prev, [key]: value}));
     }
   };
 

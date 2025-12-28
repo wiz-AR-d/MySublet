@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { listingsAPI } from '../../services/api/listings';
@@ -992,7 +992,7 @@ const StepPetPolicy = ({ formData, updateFormData, errors }) => (
     </p>
   </div>
 );
-const StepAboutYou = ({ formData, updateFormData, errors }) => (
+const StepAboutYou = ({ formData, updateFormData, errors, autoFilled = false }) => (
   <div className="space-y-6">
     <div className="text-center mb-8">
       <div className="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
@@ -1001,11 +1001,17 @@ const StepAboutYou = ({ formData, updateFormData, errors }) => (
       <h2 className="text-3xl font-bold text-gray-900 mb-2">
         Tell us about yourself
       </h2>
+      {autoFilled && (
+        <div className="flex items-center justify-center gap-2 mt-3 text-sm text-green-600">
+          <CheckCircle className="w-4 h-4" />
+          <span>Pre-filled from your profile</span>
+        </div>
+      )}
     </div>
     <div className="max-w-2xl mx-auto space-y-4">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Short bio
+          Short bio {autoFilled && <span className="text-green-600 text-xs">(from profile)</span>}
         </label>
         <textarea
           value={formData.bio}
@@ -1018,7 +1024,7 @@ const StepAboutYou = ({ formData, updateFormData, errors }) => (
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          University (optional)
+          University (optional) {autoFilled && formData.university && <span className="text-green-600 text-xs">(from profile)</span>}
         </label>
         <input
           type="text"
@@ -1031,7 +1037,7 @@ const StepAboutYou = ({ formData, updateFormData, errors }) => (
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Company (optional)
+          Company (optional) {autoFilled && formData.company && <span className="text-green-600 text-xs">(from profile)</span>}
         </label>
         <input
           type="text"
@@ -1044,7 +1050,7 @@ const StepAboutYou = ({ formData, updateFormData, errors }) => (
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Instagram (optional)
+          Instagram (optional) {autoFilled && formData.instagram && <span className="text-green-600 text-xs">(from profile)</span>}
         </label>
         <input
           type="text"
@@ -1057,7 +1063,7 @@ const StepAboutYou = ({ formData, updateFormData, errors }) => (
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          LinkedIn (optional)
+          LinkedIn (optional) {autoFilled && formData.linkedin && <span className="text-green-600 text-xs">(from profile)</span>}
         </label>
         <input
           type="text"
@@ -1070,7 +1076,7 @@ const StepAboutYou = ({ formData, updateFormData, errors }) => (
     </div>
 
     <p className="text-sm text-gray-500 text-center mt-6">
-      ℹ️ Guests feel safer when they know who the host is.
+      ℹ️ Guests feel safer when they know who the host is. You can edit any pre-filled information.
     </p>
   </div>
 );
@@ -1158,11 +1164,14 @@ const StepPreview = ({ formData }) => {
   );
 };
 // Main Form Component
-export default function ListingForm() {
+export default function ListingForm({ autoFillFromProfile = false, allowDraft = false, verificationPending = false }) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [autoFilledFields, setAutoFilledFields] = useState(false);
+  
+  // Initialize form data - will be populated from profile if autoFillFromProfile is true
   const [formData, setFormData] = useState({
     propertyType: "",
     whatOffering: "",
@@ -1192,8 +1201,34 @@ export default function ListingForm() {
     instagram: "",
     linkedin: "",
   });
+
+  // Auto-fill from profile on mount
+  useEffect(() => {
+    if (autoFillFromProfile && profile && !autoFilledFields) {
+      const updates = {};
+      
+      // Auto-fill personal information
+      if (profile.bio) updates.bio = profile.bio;
+      if (profile.university) updates.university = profile.university;
+      if (profile.company) updates.company = profile.company;
+      if (profile.instagram) updates.instagram = profile.instagram;
+      if (profile.linkedin) updates.linkedin = profile.linkedin;
+      
+      if (Object.keys(updates).length > 0) {
+        setFormData(prev => ({ ...prev, ...updates }));
+        setAutoFilledFields(true);
+        
+        toast.success('Profile information pre-filled! You can edit any field.', {
+          duration: 4000,
+          icon: <CheckCircle className="w-5 h-5 text-green-600" />
+        });
+      }
+    }
+  }, [autoFillFromProfile, profile, autoFilledFields]);
+
   const [errors, setErrors] = useState({});
   const TOTAL_STEPS = 19;
+  
   const steps = [
     { id: 1, component: StepPropertyType, title: "Property Type" },
     { id: 2, component: StepWhatOffering, title: "What Offering" },
@@ -1215,6 +1250,7 @@ export default function ListingForm() {
     { id: 18, component: StepAboutYou, title: "About You" },
     { id: 19, component: StepPreview, title: "Review" }
   ];
+
   const updateFormData = (updates) => {
     setFormData((prev) => ({ ...prev, ...updates }));
     const newErrors = { ...errors };
@@ -1223,6 +1259,7 @@ export default function ListingForm() {
     });
     setErrors(newErrors);
   };
+
   const validateStep = (step) => {
     const newErrors = {};
     switch (step) {
@@ -1305,6 +1342,7 @@ export default function ListingForm() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
   const handleNext = () => {
     if (validateStep(currentStep)) {
       if (currentStep < TOTAL_STEPS) {
@@ -1322,16 +1360,30 @@ export default function ListingForm() {
   };
 
   const handleSubmit = async (isDraft = false) => {
+    console.log('[ListingForm] handleSubmit called, isDraft:', isDraft);
+    console.log('[ListingForm] User:', user?.id);
+    console.log('[ListingForm] Profile verificationStatus:', profile?.verificationStatus);
+    
     if (!user?.id) {
       toast.error('Please log in to create a listing');
       navigate('/login');
       return;
     }
 
+    // Check if user is verified for publishing
+    const isVerified = profile?.verificationStatus === 'approved' || profile?.verificationStatus === 'verified';
+    console.log('[ListingForm] isVerified:', isVerified);
+    
+    if (!isDraft && !isVerified) {
+      toast.error('You must be verified to publish listings');
+      return;
+    }
+
+    console.log('[ListingForm] Starting submission...');
     setLoading(true);
 
     try {
-      // Map your enhanced form fields to the API format
+      // Map form data to API format
       const listingData = {
         propertyType: formData.propertyType,
         whatOffering: formData.whatOffering,
@@ -1365,36 +1417,48 @@ export default function ListingForm() {
         amenities: formData.amenities || [],
         petPolicy: formData.petPolicy || 'No pets',
 
-        // Status based on draft flag
-        status: isDraft ? 'draft' : 'pending',
+        // Status logic:
+        // - Verified users: 'active' if publishing, 'draft' if saving
+        // - Unverified users: always 'pending' (waiting for verification)
+        status: isDraft ? 'draft' : (isVerified ? 'active' : 'pending'),
+        verification_status: isVerified ? 'approved' : 'pending'
       };
 
-      console.log('Submitting listing:', listingData);
+      console.log('[ListingForm] Computed status:', listingData.status);
+      console.log('[ListingForm] isDraft:', isDraft, 'isVerified:', isVerified);
+      console.log('[ListingForm] Submitting listing data:', listingData);
 
       const result = await listingsAPI.create(listingData, user.id);
 
+      console.log('[ListingForm] API call completed, result:', result);
+
       if (result.error) {
-        console.error('API Error:', result.error);
+        console.error('[ListingForm] API Error:', result.error);
         toast.error(result.error.message || 'Failed to create listing');
+        setLoading(false);
         return;
       }
 
-      console.log('Listing created successfully!', result.data);
+      console.log('[ListingForm] Listing created successfully!', result.data);
 
+      // Success messages and navigation
       if (isDraft) {
-        // Saved as draft - just go to my listings
         toast.success('Listing saved as draft!');
         navigate('/my-listings');
+      } else if (isVerified) {
+        toast.success('🎉 Listing published successfully!');
+        navigate('/my-listings');
       } else {
-        // Publishing - redirect to verification flow
-        toast.success('Listing created! Please verify your identity to publish it.');
-        navigate(`/verify/${result.data.id}`);
+        toast.success("Listing created! It will be published once you're verified.");
+        navigate('/my-listings');
       }
 
     } catch (error) {
-      console.error('Error:', error);
-      toast.error(error.message || 'An error occurred');
+      console.error('[ListingForm] Catch block - Error:', error);
+      console.error('[ListingForm] Error stack:', error.stack);
+      toast.error(error.message || 'An error occurred while creating the listing');
     } finally {
+      console.log('[ListingForm] Finally block - setting loading to false');
       setLoading(false);
     }
   };
@@ -1402,9 +1466,26 @@ export default function ListingForm() {
   const CurrentStepComponent = steps[currentStep - 1]?.component;
   const progressPercentage = (currentStep / TOTAL_STEPS) * 100;
 
+  // Verification warning banner
+  const showVerificationWarning = verificationPending || (profile?.verificationStatus === 'pending');
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Verification Warning */}
+        {showVerificationWarning && (
+          <div className="mb-6 bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4">
+            <div className="flex items-start">
+              <Info className="w-5 h-5 text-yellow-600 mr-2 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-yellow-800">
+                Your listing will be saved but won't be published until your identity is verified. 
+                We'll automatically publish it once approved!
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between text-sm text-gray-600 mb-2">
             <span>Step {currentStep} of {TOTAL_STEPS}</span>
@@ -1417,15 +1498,19 @@ export default function ListingForm() {
             />
           </div>
         </div>
+
+        {/* Form Content */}
         <div className="bg-white rounded-2xl shadow-lg p-6 md:p-10 min-h-[500px]">
           {CurrentStepComponent && (
             <CurrentStepComponent
               formData={formData}
               updateFormData={updateFormData}
               errors={errors}
+              autoFilled={autoFilledFields && currentStep === 18}
             />
           )}
 
+          {/* Navigation Buttons */}
           <div className="flex justify-between mt-12 pt-6 border-t border-gray-200">
             <button
               onClick={handleBack}
@@ -1449,13 +1534,15 @@ export default function ListingForm() {
               </button>
             ) : (
               <div className="flex gap-3">
-                <button
-                  onClick={() => handleSubmit(true)}
-                  disabled={loading}
-                  className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Save as draft
-                </button>
+                {allowDraft && (
+                  <button
+                    onClick={() => handleSubmit(true)}
+                    disabled={loading}
+                    className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Save as draft
+                  </button>
+                )}
                 <button
                   onClick={() => handleSubmit(false)}
                   disabled={loading}
@@ -1470,7 +1557,7 @@ export default function ListingForm() {
                   ) : (
                     <>
                       <Check className="w-5 h-5" />
-                      <span>Publish listing</span>
+                      <span>{verificationPending ? 'Create listing' : 'Publish listing'}</span>
                     </>
                   )}
                 </button>

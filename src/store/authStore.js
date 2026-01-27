@@ -1,10 +1,167 @@
-// Auth state (Zustand)
-import { create } from 'zustand';
+import { create } from 'zustand'
+import { supabase } from '../lib/supabase'
 
-export const useAuthStore = create((set) => ({
+const useAuthStore = create((set, get) => ({
   user: null,
-  isAuthenticated: false,
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
-  clearUser: () => set({ user: null, isAuthenticated: false }),
-}));
+  profile: null,
+  session: null,
+  loading: true,
 
+  // Initialize auth
+  initialize: async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      if (session?.user) {
+        // Fetch user profile with role
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+
+        set({
+          user: session.user,
+          profile: profile,
+          session: session,
+          loading: false,
+        })
+      } else {
+        set({
+          user: null,
+          profile: null,
+          session: null,
+          loading: false,
+        })
+      }
+
+      // Listen for auth changes
+      supabase.auth.onAuthStateChange(async (_event, session) => {
+        if (session?.user) {
+          // Fetch updated profile
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single()
+
+          set({
+            user: session.user,
+            profile: profile,
+            session: session,
+          })
+        } else {
+          set({
+            user: null,
+            profile: null,
+            session: null,
+          })
+        }
+      })
+    } catch (error) {
+      console.error('Auth init error:', error)
+      set({ loading: false })
+    }
+  },
+
+  // Email/Password Sign Up
+  signUp: async (email, password, metadata) => {
+    set({ loading: true })
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: metadata,
+      },
+    })
+    set({ loading: false })
+    return { data, error }
+  },
+
+  // Email/Password Sign In
+  signIn: async (email, password) => {
+    set({ loading: true })
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    
+    if (!error && data.user) {
+      // Fetch profile after sign in
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', data.user.id)
+        .single()
+      
+      set({ 
+        profile: profile,
+        loading: false 
+      })
+    } else {
+      set({ loading: false })
+    }
+    
+    return { data, error }
+  },
+
+  // Google Sign In
+  signInWithGoogle: async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+    return { data, error }
+  },
+
+  // Update user profile (including role if needed)
+  updateProfile: async (updates) => {
+    const { user } = get()
+    if (!user) return { error: { message: 'No user logged in' } }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', user.id)
+      .select()
+      .single()
+
+    if (!error) {
+      set({ profile: data })
+    }
+
+    return { data, error }
+  },
+
+  // Check if user has a specific role
+  hasRole: (role) => {
+    const { profile } = get()
+    return profile?.user_role === role
+  },
+
+  // Check if user is sublessor
+  isSublessor: () => {
+    const { profile } = get()
+    return profile?.user_role === 'sublessor'
+  },
+
+  // Check if user is sublessee
+  isSublessee: () => {
+    const { profile } = get()
+    return profile?.user_role === 'sublessee'
+  },
+
+  // Sign Out
+  signOut: async () => {
+    await supabase.auth.signOut()
+    set({
+      user: null,
+      profile: null,
+      session: null,
+    })
+  },
+}))
+
+export default useAuthStore

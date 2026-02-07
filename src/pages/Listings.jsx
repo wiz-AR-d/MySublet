@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useListingStore } from '../store/listingStore';
 import SearchBar from '../components/listings/SearchBar';
 import FilterModal from '../components/listings/FilterModal';

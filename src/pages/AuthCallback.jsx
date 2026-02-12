@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Home, Search } from 'lucide-react'
 import useAuthStore from '../store/authStore'
-import { supabase } from '../lib/supabase'
+//updated on 11/20/2025 1:45 pm
+// import { supabase } from '../lib/supabase'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
+//
 import { toast } from 'sonner'
 
 export default function AuthCallback() {
@@ -14,6 +17,14 @@ export default function AuthCallback() {
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
+      //updated on 11/20/2025 1:45 pm
+      if (!isSupabaseConfigured || !supabase) {
+        console.warn('Supabase is not configured. Redirecting to home.')
+        toast.warning('Authentication service is not configured yet.')
+        navigate('/')
+        return
+      }
+      //
       try {
         // Get the current session
         const { data: { session }, error } = await supabase.auth.getSession()
@@ -55,6 +66,11 @@ export default function AuthCallback() {
     setSelectedRole(role)
 
     try {
+      //updated on 11/20/2025 1:45 pm
+      if (!isSupabaseConfigured || !supabase) {
+        throw new Error('Supabase is not configured.')
+      }
+      //
       const { error } = await updateProfile({ user_role: role })
       
       if (error) throw error

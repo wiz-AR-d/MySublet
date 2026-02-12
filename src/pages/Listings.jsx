@@ -151,3 +151,34 @@ export default function Listings() {
     </div>
   );
 }
+
+
+// export default function Listings() {
+//   return (
+//     <div className="p-8">
+//       <h1 className="text-3xl font-bold mb-6">Sublet Listings</h1>
+//       <p className="text-gray-600 mb-8">Welcome to your sublet listings page!</p>
+      
+//       {/* Simple test cards */}
+//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+//         <div className="bg-white rounded-lg shadow-md p-6">
+//           <h3 className="font-semibold text-lg mb-2">Test Listing 1</h3>
+//           <p className="text-gray-600">$2,500/month</p>
+//           <p className="text-sm text-gray-500">New York, NY</p>
+//         </div>
+        
+//         <div className="bg-white rounded-lg shadow-md p-6">
+//           <h3 className="font-semibold text-lg mb-2">Test Listing 2</h3>
+//           <p className="text-gray-600">$3,200/month</p>
+//           <p className="text-sm text-gray-500">Brooklyn, NY</p>
+//         </div>
+        
+//         <div className="bg-white rounded-lg shadow-md p-6">
+//           <h3 className="font-semibold text-lg mb-2">Test Listing 3</h3>
+//           <p className="text-gray-600">$1,800/month</p>
+//           <p className="text-sm text-gray-500">Queens, NY</p>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }

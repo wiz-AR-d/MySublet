@@ -194,15 +194,35 @@ const useAuthStore = create((set, get) => ({
         profile: null,
         session: null,
       })
-      return
+      return { error: null }
     }
-    //
-    await supabase.auth.signOut()
-    set({
-      user: null,
-      profile: null,
-      session: null,
-    })
+    
+    try {
+      const { error } = await supabase.auth.signOut()
+      
+      // Always clear local state regardless of error
+      set({
+        user: null,
+        profile: null,
+        session: null,
+      })
+      
+      if (error) {
+        console.error('Error signing out:', error)
+        return { error }
+      }
+      
+      return { error: null }
+    } catch (error) {
+      console.error('Unexpected error during sign out:', error)
+      // Still clear local state
+      set({
+        user: null,
+        profile: null,
+        session: null,
+      })
+      return { error }
+    }
   },
 }))
 

@@ -20,8 +20,9 @@ const locationOptions = [
 ];
 
 export default function SearchBar() {
-  const { filters, setFilters } = useListingStore();
+  const { filters, setFilters, fetchListings, searchListings } = useListingStore();
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   
   const handleLocationChange = (option) => {
     setSelectedLocation(option);
@@ -34,6 +35,24 @@ export default function SearchBar() {
   
   const handleMoveOutDateChange = (date) => {
     setFilters({ moveOutDate: date });
+  };
+
+  const handleSearch = () => {
+    // Extract city from location filter if available
+    const city = filters.location ? filters.location.split(',')[0].trim() : '';
+    
+    // Build search filters
+    const searchFilters = {
+      city: city,
+      availableFrom: filters.moveInDate ? filters.moveInDate.toISOString().split('T')[0] : null,
+      availableTo: filters.moveOutDate ? filters.moveOutDate.toISOString().split('T')[0] : null,
+    };
+
+    if (searchQuery || city) {
+      searchListings(searchQuery || city, searchFilters);
+    } else {
+      fetchListings(searchFilters);
+    }
   };
   
   const customSelectStyles = {
@@ -68,8 +87,33 @@ export default function SearchBar() {
       <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-2">
         <div className="flex flex-col lg:flex-row lg:items-center lg:divide-x lg:divide-gray-200">
           
-          {/* Location */}
+          {/* Location / Search */}
           <div className="flex-1 p-4">
+            <div className="flex items-center space-x-3">
+              <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Search
+                </label>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search by location, title, or description"
+                  className="w-full text-base text-gray-900 placeholder-gray-500 border-none focus:outline-none bg-transparent"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch();
+                    }
+                  }}
+                  data-testid="search-input"
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* Location Filter (Optional) */}
+          <div className="flex-1 p-4 hidden lg:block">
             <div className="flex items-center space-x-3">
               <MapPin className="w-5 h-5 text-gray-400 flex-shrink-0" />
               <div className="flex-1">
@@ -80,7 +124,7 @@ export default function SearchBar() {
                   value={selectedLocation}
                   onChange={handleLocationChange}
                   options={locationOptions}
-                  placeholder="New York, NY, USA"
+                  placeholder="Filter by city"
                   isClearable
                   isSearchable
                   styles={customSelectStyles}
@@ -136,6 +180,7 @@ export default function SearchBar() {
           {/* Search Button */}
           <div className="p-4">
             <button 
+              onClick={handleSearch}
               className="w-full lg:w-auto bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl font-medium transition-colors flex items-center justify-center space-x-2"
               data-testid="search-btn"
             >

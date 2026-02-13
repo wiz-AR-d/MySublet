@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useListingStore } from '../../store/listingStore';
-import { currencyRates } from '../../data/mockListings';
+import { convertPrice, getCurrencySymbol } from '../../utils/currency';
 import { ChevronLeft, ChevronRight, Heart, Bed, Bath, Users } from 'lucide-react';
 
 export default function ListingCard({ listing }) {
@@ -8,22 +8,6 @@ export default function ListingCard({ listing }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   
-  // Convert price to selected currency
-  const convertPrice = (price) => {
-    const rate = currencyRates[selectedCurrency] || 1;
-    return Math.round(price * rate);
-  };
-  
-  const getCurrencySymbol = () => {
-    const currencySymbols = {
-      USD: '$',
-      EUR: '€',
-      GBP: '£',
-      CAD: 'C$',
-      AUD: 'A$'
-    };
-    return currencySymbols[selectedCurrency] || '$';
-  };
   
   const nextImage = (e) => {
     e.stopPropagation();
@@ -132,7 +116,7 @@ export default function ListingCard({ listing }) {
         {/* Price */}
         <div className="flex items-baseline space-x-1 mb-3">
           <span className="text-2xl font-bold text-gray-900">
-            {getCurrencySymbol()}{convertPrice(listing.price).toLocaleString()}
+            {getCurrencySymbol(selectedCurrency)}{Math.round(convertPrice(listing.price, 'USD', selectedCurrency)).toLocaleString()}
           </span>
           <span className="text-gray-600 text-sm">{listing.duration}</span>
         </div>

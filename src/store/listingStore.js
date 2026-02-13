@@ -1,11 +1,14 @@
 // Listings state (Zustand)
 import { create } from 'zustand';
-import { mockListings } from '../data/mockListings';
+import { listingsAPI } from '../services/api/listings';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 export const useListingStore = create((set, get) => ({
   // Listings data
-  allListings: mockListings,
-  filteredListings: mockListings,
+  allListings: [],
+  filteredListings: [],
+  loading: false,
+  error: null,
   
   // Pagination
   currentPage: 1,
@@ -32,7 +35,49 @@ export const useListingStore = create((set, get) => ({
   showFilters: false,
   
   // Actions
-  setListings: (listings) => set({ allListings: listings, filteredListings: listings }),
+  fetchListings: async (filters = {}) => {
+    if (!isSupabaseConfigured) {
+      console.warn('Supabase is not configured. Using empty listings.');
+      set({ allListings: [], filteredListings: [], loading: false });
+      return;
+    }
+
+    set({ loading: true, error: null });
+    
+    try {
+      const { data, error } = await listingsAPI.getAll(filters);
+      
+      if (error) {
+        set({ loading: false, error, allListings: [], filteredListings: [] });
+        return;
+      }
+
+      const listings = data || [];
+      const currentFilters = get().filters;
+      const filtered = get().applyFilters(listings, currentFilters);
+      
+      set({ 
+        allListings: listings, 
+        filteredListings: filtered,
+        loading: false,
+        error: null
+      });
+    } catch (err) {
+      console.error('Error fetching listings:', err);
+      set({ 
+        loading: false, 
+        error: err, 
+        allListings: [], 
+        filteredListings: [] 
+      });
+    }
+  },
+
+  setListings: (listings) => {
+    const currentFilters = get().filters;
+    const filtered = get().applyFilters(listings, currentFilters);
+    set({ allListings: listings, filteredListings: filtered });
+  },
   
   addListing: (listing) => set((state) => ({ 
     allListings: [...state.allListings, listing],
@@ -64,6 +109,9 @@ export const useListingStore = create((set, get) => ({
         currentPage: 1 // Reset to first page when filters change
       };
     });
+    
+    // Optionally refetch from server with new filters
+    // get().fetchListings(updatedFilters);
   },
   
   clearFilters: () => {
@@ -94,15 +142,19 @@ export const useListingStore = create((set, get) => ({
   
   // Helper function to apply filters
   applyFilters: (listings, filters) => {
+    if (!listings || listings.length === 0) return [];
+    
     return listings.filter(listing => {
       // Location filter
-      if (filters.location && !listing.location.toLowerCase().includes(filters.location.toLowerCase())) {
+      if (filters.location && listing.location && !listing.location.toLowerCase().includes(filters.location.toLowerCase())) {
         return false;
       }
       
       // Price filter
-      if (listing.price < filters.priceRange[0] || listing.price > filters.priceRange[1]) {
-        return false;
+      if (listing.price !== undefined && listing.price !== null) {
+        if (listing.price < filters.priceRange[0] || listing.price > filters.priceRange[1]) {
+          return false;
+        }
       }
       
       // Bedrooms filter
@@ -115,12 +167,12 @@ export const useListingStore = create((set, get) => ({
       }
       
       // Room type filter
-      if (filters.roomType !== 'Any type' && listing.roomType !== filters.roomType) {
+      if (filters.roomType !== 'Any type' && listing.roomType && listing.roomType !== filters.roomType) {
         return false;
       }
       
       // Amenities filter
-      if (filters.amenities.length > 0) {
+      if (filters.amenities && filters.amenities.length > 0 && listing.amenities) {
         const hasAllAmenities = filters.amenities.every(amenity => 
           listing.amenities.includes(amenity)
         );
@@ -141,6 +193,48 @@ export const useListingStore = create((set, get) => ({
       
       return true;
     });
+  },
+
+  // Search listings
+  searchListings: async (query, filters = {}) => {
+    if (!isSupabaseConfigured) {
+      console.warn('Supabase is not configured. Cannot search listings.');
+      return;
+    }
+
+    set({ loading: true, error: null });
+    
+    try {
+      const searchFilters = {
+        ...get().filters,
+        ...filters
+      };
+      
+      const { data, error } = await listingsAPI.search(query, searchFilters);
+      
+      if (error) {
+        set({ loading: false, error, filteredListings: [] });
+        return;
+      }
+
+      const listings = data || [];
+      const filtered = get().applyFilters(listings, searchFilters);
+      
+      set({ 
+        allListings: listings, 
+        filteredListings: filtered,
+        loading: false,
+        error: null,
+        currentPage: 1
+      });
+    } catch (err) {
+      console.error('Error searching listings:', err);
+      set({ 
+        loading: false, 
+        error: err, 
+        filteredListings: [] 
+      });
+    }
   }
 }));
 

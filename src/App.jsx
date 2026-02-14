@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
 import useAuthStore from './store/authStore'
 
@@ -18,11 +18,30 @@ import Dashboard from './pages/Dashboard'
 import AuthCallback from './pages/AuthCallback'
 
 function App() {
-  const { initialize } = useAuthStore()
+  const { initialize, initialized } = useAuthStore()
+  const [isInitializing, setIsInitializing] = useState(true)
 
   useEffect(() => {
-    initialize()
-  }, [initialize])
+    // Initialize auth on mount
+    const initAuth = async () => {
+      await initialize()
+      setIsInitializing(false)
+    }
+    
+    initAuth()
+  }, []) // Empty dependency array - run once on mount
+
+  // Show loading screen while initializing
+  if (isInitializing || !initialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <Router>
@@ -35,6 +54,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/listings" element={<Listings />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
 
             {/* Protected Routes */}
             <Route

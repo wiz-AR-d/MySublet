@@ -1,35 +1,36 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { Toaster } from 'sonner'
-import useAuthStore from './store/authStore'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Toaster } from "sonner";
+import useAuthStore from "./store/authStore";
 
 // Layout Components
-import Header from './components/layout/Header'
-import Footer from './components/layout/Footer'
-import ProtectedRoute from './components/auth/ProtectedRoute'
+import Header from "./components/layout/Header";
+import Footer from "./components/layout/Footer";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 // Pages
-import Home from './pages/Home'
-import Login from './pages/Login'
-import Signup from './pages/Signup'
-import Listings from './pages/Listings'
-import CreateListing from './pages/CreateListing'
-import Dashboard from './pages/Dashboard'
-import AuthCallback from './pages/AuthCallback'
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Listings from "./pages/Listings";
+import CreateListing from "./pages/CreateListing";
+import Dashboard from "./pages/Dashboard";
+import AuthCallback from "./pages/AuthCallback";
+import MyListings from "./pages/MyListings";
 
 function App() {
-  const { initialize, initialized } = useAuthStore()
-  const [isInitializing, setIsInitializing] = useState(true)
+  const { initialize, initialized } = useAuthStore();
+  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
     // Initialize auth on mount
     const initAuth = async () => {
-      await initialize()
-      setIsInitializing(false)
-    }
-    
-    initAuth()
-  }, []) // Empty dependency array - run once on mount
+      await initialize();
+      setIsInitializing(false);
+    };
+
+    initAuth();
+  }, []); // Empty dependency array - run once on mount
 
   // Show loading screen while initializing
   if (isInitializing || !initialized) {
@@ -40,7 +41,7 @@ function App() {
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -66,6 +67,14 @@ function App() {
               }
             />
             <Route
+              path="/my-listings"
+              element={
+                <ProtectedRoute requireRole="sublessor">
+                  <MyListings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/create-listing"
               element={
                 <ProtectedRoute requireRole="sublessor">
@@ -78,7 +87,9 @@ function App() {
               element={
                 <ProtectedRoute>
                   <div className="p-8 text-center">
-                    <h1 className="text-2xl font-bold">Messages - Coming Soon</h1>
+                    <h1 className="text-2xl font-bold">
+                      Messages - Coming Soon
+                    </h1>
                   </div>
                 </ProtectedRoute>
               }
@@ -90,7 +101,9 @@ function App() {
               element={
                 <div className="min-h-screen flex items-center justify-center">
                   <div className="text-center">
-                    <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
+                    <h1 className="text-6xl font-bold text-gray-900 mb-4">
+                      404
+                    </h1>
                     <p className="text-xl text-gray-600">Page not found</p>
                   </div>
                 </div>
@@ -102,7 +115,7 @@ function App() {
       </div>
       <Toaster position="top-right" richColors />
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

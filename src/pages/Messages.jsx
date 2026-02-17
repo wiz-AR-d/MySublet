@@ -25,18 +25,47 @@ export default function Messages() {
   
   // Auto-select conversation from URL or first conversation
   useEffect(() => {
+    console.log('Messages page - URL params:', { urlUserId, urlListingId })
+    console.log('Messages page - Conversations:', conversations)
+    
     if (urlUserId && conversations) {
       const conversation = conversations.find(
         c => c.otherUser?.id === urlUserId
       )
+      
+      console.log('Found conversation:', conversation)
+      
       if (conversation) {
         setSelectedConversation(conversation)
         setShowConversations(false) // Hide list on mobile
+      } else {
+        // No existing conversation - create a new one for display
+        console.log('No existing conversation, creating new one')
+        
+        // Create a placeholder conversation for new chat
+        const newConversation = {
+          id: `new_conv_${urlUserId}_${urlListingId || 'general'}`,
+          otherUser: {
+            id: urlUserId,
+            full_name: 'Loading...',
+            avatar_url: null
+          },
+          listing: urlListingId ? {
+            id: urlListingId,
+            title: 'Loading...'
+          } : null,
+          lastMessage: null,
+          unreadCount: 0,
+          messages: []
+        }
+        
+        setSelectedConversation(newConversation)
+        setShowConversations(false)
       }
     } else if (!selectedConversation && conversations?.length > 0) {
       setSelectedConversation(conversations[0])
     }
-  }, [urlUserId, conversations])
+  }, [urlUserId, urlListingId, conversations])
   
   const handleSelectConversation = (conversation) => {
     setSelectedConversation(conversation)

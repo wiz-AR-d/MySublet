@@ -1,14 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import useAuthStore from '../../store/authStore'
 import { useMessages } from '../../hooks/useMessages'
 import MessageList from './MessageList'
 import MessageInput from './MessageInput'
 import { ArrowLeft, MapPin } from 'lucide-react'
 import { toast } from 'sonner'
+import { supabase } from '../../lib/supabase'
+import { listingsAPI } from '../../services/api/listings'
 
 export default function MessageThread({ conversation, onBack }) {
   const { user } = useAuthStore()
   const [sending, setSending] = useState(false)
+  const [enrichedConversation, setEnrichedConversation] = useState(conversation)
   
   // Fetch messages for this specific conversation
   const { 
@@ -20,20 +23,59 @@ export default function MessageThread({ conversation, onBack }) {
     conversation.listing?.id
   )
   
+  // Enrich conversation data if it's a new conversation
+  useEffect(() => {
+    const enrichData = async () => {
+      // If otherUser name is "Loading...", fetch real data
+      if (conversation.otherUser?.full_name === 'Loading...') {
+        try {
+          // Fetch user profile
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, email')
+            .eq('id', conversation.otherUser.id)
+            .single()
+          
+          let listingData = null
+          
+          // Fetch listing if available
+          if (conversation.listing?.id) {
+            const { data } = await listingsAPI.getById(conversation.listing.id)
+            listingData = data
+          }
+          
+          setEnrichedConversation({
+            ...conversation,
+            otherUser: profile || conversation.otherUser,
+            listing: listingData || conversation.listing
+          })
+        } catch (error) {
+          console.error('Error enriching conversation:', error)
+        }
+      } else {
+        setEnrichedConversation(conversation)
+      }
+    }
+    
+    enrichData()
+  }, [conversation])
+  
   const handleSendMessage = async (messageText) => {
-    if (!messageText.trim() || !conversation.otherUser?.id) return
+    if (!messageText.trim() || !enrichedConversation.otherUser?.id) return
     
     setSending(true)
     try {
       const { error } = await sendMessageAPI(
-        conversation.otherUser.id,
+        enrichedConversation.otherUser.id,
         messageText.trim(),
-        conversation.listing?.id || null
+        enrichedConversation.listing?.id || null
       )
       
       if (error) {
         toast.error('Failed to send message')
         console.error('Send error:', error)
+      } else {
+        toast.success('Message sent!')
       }
     } catch (error) {
       toast.error('An error occurred')
@@ -58,8 +100,8 @@ export default function MessageThread({ conversation, onBack }) {
           </button>
           
           <img
-            src={conversation.otherUser?.avatar_url || 'https://via.placeholder.com/40'}
-            alt={conversation.otherUser?.full_name}
+            src={enrichedConversation.otherUser?.avatar_url || 'https://via.placeholder.com/40'}
+            alt={enrichedConversation.otherUser?.full_name}
             className="w-10 h-10 rounded-full object-cover flex-shrink-0"
             onError={(e) => {
               e.target.src = 'https://via.placeholder.com/40'
@@ -67,12 +109,12 @@ export default function MessageThread({ conversation, onBack }) {
           />
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-semibold text-gray-900 truncate">
-              {conversation.otherUser?.full_name || 'Unknown User'}
+              {enrichedConversation.otherUser?.full_name || 'Unknown User'}
             </h2>
-            {conversation.listing && (
+            {enrichedConversation.listing && enrichedConversation.listing.title !== 'Loading...' && (
               <div className="flex items-center gap-1 text-sm text-gray-600">
                 <MapPin className="h-3 w-3 flex-shrink-0" />
-                <span className="truncate">{conversation.listing.title}</span>
+                <span className="truncate">{enrichedConversation.listing.title}</span>
               </div>
             )}
           </div>

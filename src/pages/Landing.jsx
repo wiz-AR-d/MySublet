@@ -57,18 +57,18 @@ export default function Landing() {
           </div>
 
           {/* Stats - Optional for now but ready */}
-          <div className="absolute bottom-12 left-0 right-0 flex justify-center gap-16 text-center">
+          <div className="absolute bottom-6 md:bottom-12 left-0 right-0 flex justify-center gap-4 sm:gap-8 md:gap-16 text-center px-4">
             <div>
-              <div className="text-3xl md:text-4xl font-bold">10,000+</div>
-              <div className="text-sm md:text-base text-white/80">verified listings</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold">10,000+</div>
+              <div className="text-xs sm:text-sm md:text-base text-white/80">verified listings</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-bold">5,000+</div>
-              <div className="text-sm md:text-base text-white/80">people matched</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold">5,000+</div>
+              <div className="text-xs sm:text-sm md:text-base text-white/80">people matched</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-bold">$2M+</div>
-              <div className="text-sm md:text-base text-white/80">earned by hosts</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold">$2M+</div>
+              <div className="text-xs sm:text-sm md:text-base text-white/80">earned by hosts</div>
             </div>
           </div>
         </div>
@@ -144,7 +144,7 @@ export default function Landing() {
             <div className="inline-flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-full font-semibold mb-12">
               🔔 2,361 people notified today
             </div>
-            
+
             <Link
               to="/create-listing"
               className="inline-block bg-white text-blue-600 px-10 py-4 rounded-full text-lg font-bold hover:bg-gray-100 transition-all shadow-xl"
@@ -154,32 +154,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <HomeIcon className="h-8 w-8 text-blue-400" />
-              <span className="text-2xl font-bold">MySublet</span>
-            </div>
-            <div className="flex gap-8">
-              <Link to="/listings" className="hover:text-blue-400 transition-colors">
-                Browse
-              </Link>
-              <Link to="/login" className="hover:text-blue-400 transition-colors">
-                Login
-              </Link>
-              <Link to="/signup" className="hover:text-blue-400 transition-colors">
-                Sign Up
-              </Link>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 MySublet. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

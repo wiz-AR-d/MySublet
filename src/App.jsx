@@ -7,6 +7,7 @@ import useAuthStore from "./store/authStore";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 // Pages
 import Landing from "./pages/Landing";
@@ -20,23 +21,21 @@ import AuthCallback from "./pages/AuthCallback";
 import MyListings from "./pages/MyListings";
 import Messages from "./pages/Messages";
 import ListingDetail from "./pages/ListingDetail";
+import Privacy from "./pages/Privacy";
+import Impressum from "./pages/Impressum";
+import Terms from "./pages/Terms";
 
-// Layout wrapper to conditionally show header/footer
+// Layout wrapper
 function Layout({ children }) {
-  const location = useLocation();
-  const isLandingPage = location.pathname === '/';
-
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Only show header if NOT on landing page */}
-      {!isLandingPage && <Header />}
-      
-      <main className={isLandingPage ? '' : 'grow'}>
+      <Header />
+
+      <main className="grow">
         {children}
       </main>
-      
-      {/* Only show footer if NOT on landing page */}
-      {!isLandingPage && <Footer />}
+
+      <Footer />
     </div>
   );
 }
@@ -69,11 +68,12 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Layout>
         <Routes>
-          {/* Landing Page - NO header/footer */}
+          {/* Landing Page with video - Main home */}
           <Route path="/" element={<Landing />} />
-          
+
           {/* Public Routes - WITH header/footer */}
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -81,6 +81,11 @@ function App() {
           <Route path="/listings" element={<Listings />} />
           <Route path="/listings/:id" element={<ListingDetail />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+
+          {/* Legal Pages */}
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/impressum" element={<Impressum />} />
+          <Route path="/terms" element={<Terms />} />
 
           {/* Protected Routes - WITH header/footer */}
           <Route

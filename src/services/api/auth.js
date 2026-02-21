@@ -60,7 +60,6 @@ export const authAPI = {
             full_name: userData.full_name || '',
             university: userData.university || '',
             phone: userData.phone || '',
-            user_role: userData.user_role || 'sublessee'
           }
         }
       });

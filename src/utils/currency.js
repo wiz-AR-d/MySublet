@@ -1,37 +1,37 @@
-// Currency conversion rates and utilities
-// This is static data, not database-dependent
+// Currency utilities - EUR only
+// Updated to only support Euro currency
 
 export const currencyRates = {
-  USD: 1,
-  EUR: 0.85,
-  GBP: 0.73,
-  CAD: 1.25,
-  AUD: 1.45
+  EUR: 1,
 };
 
 export const currencies = [
-  { code: 'USD', symbol: '$', name: 'US Dollar' },
   { code: 'EUR', symbol: '€', name: 'Euro' },
-  { code: 'GBP', symbol: '£', name: 'British Pound' },
-  { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
-  { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' }
 ];
 
-export function convertPrice(price, fromCurrency, toCurrency) {
-  if (!price || !fromCurrency || !toCurrency) return price;
+// Since we only support EUR, conversion is straightforward
+export function convertPrice(price, fromCurrency = 'EUR', toCurrency = 'EUR') {
+  if (!price) return 0;
   
-  const fromRate = currencyRates[fromCurrency] || 1;
-  const toRate = currencyRates[toCurrency] || 1;
-  
-  // Convert to USD first, then to target currency
-  const priceInUSD = price / fromRate;
-  const convertedPrice = priceInUSD * toRate;
-  
-  return Math.round(convertedPrice * 100) / 100; // Round to 2 decimal places
+  // Always return price as-is since we only support EUR
+  return parseFloat(price);
 }
 
-export function getCurrencySymbol(currency) {
-  const currencyObj = currencies.find(c => c.code === currency);
-  return currencyObj?.symbol || '$';
+export function getCurrencySymbol(currency = 'EUR') {
+  return '€';
 }
 
+export function formatPrice(price, currency = 'EUR') {
+  if (!price) return '€0';
+  
+  const numPrice = parseFloat(price);
+  return `€${numPrice.toLocaleString('nl-NL', { 
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0 
+  })}`;
+}
+
+// Helper to format price with per month suffix
+export function formatMonthlyPrice(price) {
+  return `${formatPrice(price)}/month`;
+}

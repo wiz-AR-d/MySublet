@@ -143,8 +143,14 @@ export const listingsAPI = {
       console.log('Transformed Supabase listing:', supabaseListing);
 
       // Validate required fields
-      if (!supabaseListing.title || !supabaseListing.address || !supabaseListing.city || !supabaseListing.state) {
-        throw new Error('Missing required fields: title, address, city, and state are required');
+      if (!supabaseListing.title) {
+        throw new Error('Title is required');
+      }
+      if (!supabaseListing.city) {
+        throw new Error('City is required');
+      }
+      if (!supabaseListing.street || !supabaseListing.house_number) {
+        throw new Error('Street and house number are required');
       }
 
       const { data, error } = await supabase

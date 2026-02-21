@@ -311,11 +311,11 @@ const useAuthStore = create(
       name: 'auth-storage', // localStorage key
       storage: createJSONStorage(() => localStorage),
       // Only persist essential auth data
+      // Note: Don't persist 'initialized' to avoid timing issues on app reload
       partialize: (state) => ({
         user: state.user,
         session: state.session,
         profile: state.profile,
-        initialized: state.initialized,
       }),
       // Handle hydration
       onRehydrateStorage: () => (state) => {

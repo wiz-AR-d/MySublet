@@ -1,12 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Mail, Lock, User, Chrome, GraduationCap, Home, Search } from 'lucide-react'
+import { Mail, Lock, User, Chrome, GraduationCap } from 'lucide-react'
 import useAuthStore from '../store/authStore'
 import { toast } from 'sonner'
 
 export default function Signup() {
-  const [step, setStep] = useState(1) // Step 1: Role selection, Step 2: Form
-  const [userRole, setUserRole] = useState(null) // 'sublessor' or 'sublessee'
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -25,11 +23,6 @@ export default function Signup() {
       ...formData,
       [e.target.name]: e.target.value
     })
-  }
-
-  const handleRoleSelect = (role) => {
-    setUserRole(role)
-    setStep(2)
   }
 
   const handleSubmit = async (e) => {
@@ -56,7 +49,6 @@ export default function Signup() {
         full_name: formData.fullName,
         university: formData.university,
         phone: formData.phone,
-        user_role: userRole, // Add role to metadata
       }
     )
     
@@ -71,14 +63,6 @@ export default function Signup() {
   }
 
   const handleGoogleSignIn = async () => {
-    if (!userRole) {
-      toast.error('Please select your account type first')
-      return
-    }
-    
-    // Store role in sessionStorage to use after OAuth redirect
-    sessionStorage.setItem('pending_user_role', userRole)
-    
     const { error } = await signInWithGoogle()
     if (error) {
       toast.error(error.message)
@@ -87,134 +71,34 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl w-full">
-        {/* Step 1: Role Selection */}
-        {step === 1 && (
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900">Join SubLease</h2>
-              <p className="mt-2 text-gray-600">How do you plan to use SubLease?</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              {/* Sublessee Card */}
-              <button
-                onClick={() => handleRoleSelect('sublessee')}
-                className="p-8 border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-left group"
-              >
-                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-200">
-                  <Search className="h-8 w-8 text-blue-600" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  I'm Looking for Housing
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Find and book short-term apartments for internships or summer stays
-                </p>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
-                    Search apartments by city and dates
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
-                    Message apartment owners
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
-                    Book and pay securely
-                  </li>
-                </ul>
-              </button>
-
-              {/* Sublessor Card */}
-              <button
-                onClick={() => handleRoleSelect('sublessor')}
-                className="p-8 border-2 border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all text-left group"
-              >
-                <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-200">
-                  <Home className="h-8 w-8 text-green-600" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  I'm Listing My Apartment
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Earn money by subletting your apartment while you're away
-                </p>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
-                    Create apartment listings
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
-                    Manage availability & bookings
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
-                    Receive secure payments
-                  </li>
-                </ul>
-              </button>
-            </div>
-
-            <p className="text-center text-sm text-gray-600">
-              Already have an account?{' '}
-              <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
-                Log in
-              </Link>
-            </p>
+      <div className="max-w-md w-full">
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900">Join SubLease</h2>
+            <p className="mt-2 text-gray-600">Create your account to get started</p>
           </div>
-        )}
 
-        {/* Step 2: Registration Form */}
-        {step === 2 && (
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            {/* Header with Role Badge */}
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full mb-4">
-                {userRole === 'sublessee' ? (
-                  <>
-                    <Search className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-medium text-gray-700">Looking for Housing</span>
-                  </>
-                ) : (
-                  <>
-                    <Home className="h-4 w-4 text-green-600" />
-                    <span className="text-sm font-medium text-gray-700">Listing Apartment</span>
-                  </>
-                )}
-                <button
-                  onClick={() => setStep(1)}
-                  className="text-xs text-blue-600 hover:text-blue-700 ml-2"
-                >
-                  Change
-                </button>
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900">Create Your Account</h2>
-              <p className="mt-2 text-gray-600">Fill in your details to get started</p>
+          {/* Google Sign In */}
+          <button
+            onClick={handleGoogleSignIn}
+            className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-300 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-50 font-medium mb-4"
+          >
+            <Chrome className="h-5 w-5" />
+            Continue with Google
+          </button>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
             </div>
-
-            {/* Google Sign In */}
-            <button
-              onClick={handleGoogleSignIn}
-              className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-300 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-50 font-medium mb-4"
-            >
-              <Chrome className="h-5 w-5" />
-              Continue with Google
-            </button>
-
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with email</span>
-              </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">Or continue with email</span>
             </div>
+          </div>
 
-            {/* Registration Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Registration Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Full Name
@@ -344,17 +228,16 @@ export default function Signup() {
               >
                 {loading ? 'Creating Account...' : 'Create Account'}
               </button>
-            </form>
+          </form>
 
-            {/* Login Link */}
-            <p className="mt-6 text-center text-sm text-gray-600">
-              Already have an account?{' '}
-              <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
-                Log in
-              </Link>
-            </p>
-          </div>
-        )}
+          {/* Login Link */}
+          <p className="mt-6 text-center text-sm text-gray-600">
+            Already have an account?{' '}
+            <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+              Log in
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   )

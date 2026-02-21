@@ -1,78 +1,102 @@
-// Transform data between Supabase schema and app format
+// Data transformers for European listing structure
+// Transforms between app format and Supabase format
 
 /**
- * Transform Supabase listing to app format
+ * Transform listing from Supabase format to app format
  */
-export function transformListing(supabaseListing, profile = null) {
+export function transformListing(supabaseListing, profile) {
   if (!supabaseListing) return null;
-
-  // Parse location from address, city, state, zip_code
-  const locationParts = [
-    supabaseListing.address,
-    supabaseListing.city,
-    supabaseListing.state,
-    supabaseListing.zip_code
-  ].filter(Boolean);
-  const location = locationParts.join(', ');
-
-  // Extract coordinates from amenities if stored, or default to NYC
-  const coordinates = supabaseListing.amenities?.coordinates || [40.7128, -74.0060];
-
-  // Format posted time
-  const postedTime = formatPostedTime(supabaseListing.created_at);
-
-  // Get host info from profile or default
-  const host = profile ? {
-    name: profile.full_name || 'Unknown',
-    avatar: profile.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b742?ixlib=rb-4.0.3&w=150&h=150&fit=crop&crop=face'
-  } : {
-    name: 'Unknown',
-    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b742?ixlib=rb-4.0.3&w=150&h=150&fit=crop&crop=face'
-  };
-
-  // Parse amenities
-  const amenitiesList = Array.isArray(supabaseListing.amenities?.list) 
-    ? supabaseListing.amenities.list 
-    : typeof supabaseListing.amenities === 'object' && supabaseListing.amenities !== null
-    ? Object.keys(supabaseListing.amenities).filter(key => supabaseListing.amenities[key])
-    : [];
-
-  // Determine room type from bedrooms
-  let roomType = 'Private room';
-  if (supabaseListing.bedrooms === 1 && supabaseListing.bathrooms >= 1) {
-    roomType = 'Entire home';
-  }
-
-  // Determine pet policy from amenities
-  const petPolicy = supabaseListing.amenities?.pets === true ? 'Pets allowed' : 'No pets';
-
-  // Format bedrooms (handle studio/loft)
-  let bedroomsDisplay = supabaseListing.bedrooms;
-  if (supabaseListing.bedrooms === 0 || supabaseListing.bedrooms === null) {
-    bedroomsDisplay = 'SL'; // Studio/Loft
-  }
 
   return {
     id: supabaseListing.id,
+    
+    // Basic Info
     title: supabaseListing.title,
-    description: supabaseListing.description || '',
-    location: location,
-    coordinates: coordinates,
-    price: parseFloat(supabaseListing.price_per_month || 0),
-    currency: 'USD', // Default currency
+    description: supabaseListing.description,
+    propertyType: supabaseListing.property_type,
+    whatOffering: supabaseListing.what_offering,
+    furnishing: supabaseListing.furnishing,
+    rentalType: supabaseListing.rental_type,
+    registration: supabaseListing.registration,
+    
+    // Property Details
+    totalRooms: supabaseListing.total_rooms,
+    roomsOffered: supabaseListing.rooms_offered,
+    bathrooms: supabaseListing.bathrooms,
+    
+    // BACKWARD COMPATIBILITY: Map to old field names
+    bedrooms: supabaseListing.total_rooms, // For components still using bedrooms
+    
+    // Location
+    street: supabaseListing.street,
+    houseNumber: supabaseListing.house_number,
+    city: supabaseListing.city,
+    postalCode: supabaseListing.postal_code,
+    location: `${supabaseListing.street} ${supabaseListing.house_number}, ${supabaseListing.city}`,
+    coordinates: null,
+    // coordinates: supabaseListing.coordinates,
+    
+    // BACKWARD COMPATIBILITY: Old location fields
+    address: `${supabaseListing.street} ${supabaseListing.house_number}`,
+    zip_code: supabaseListing.postal_code,
+    state: '', // Not used in Europe
+    
+    // Pricing
+    monthlyRent: supabaseListing.monthly_rent,
+    deposit: supabaseListing.deposit,
+    price: supabaseListing.monthly_rent, // For backward compatibility
+    currency: 'EUR',
     duration: '/mo',
-    bedrooms: bedroomsDisplay,
-    bathrooms: supabaseListing.bathrooms || 1,
-    roommates: supabaseListing.amenities?.roommates || 1,
-    images: supabaseListing.images && supabaseListing.images.length > 0 
-      ? supabaseListing.images 
-      : ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&w=800&h=600&fit=crop'],
-    host: host,
-    postedTime: postedTime,
-    amenities: amenitiesList,
-    petPolicy: petPolicy,
-    roomType: roomType,
-    // Include all Supabase fields for reference
+    
+    // BACKWARD COMPATIBILITY: Old pricing field
+    price_per_month: supabaseListing.monthly_rent,
+    
+    // Availability
+    availabilityDates: supabaseListing.availability_dates || [
+      {
+        moveIn: supabaseListing.available_from,
+        moveOut: supabaseListing.available_to,
+      }
+    ],
+    available_from: supabaseListing.available_from,
+    available_to: supabaseListing.available_to,
+    
+    // Images
+    images: supabaseListing.images || [],
+    photos: supabaseListing.images || [], // Alias
+    
+    // Amenities & Policies
+    amenities: supabaseListing.amenities || [],
+    petPolicy: supabaseListing.pet_policy,
+    
+    // Roommates
+    roommatesCount: supabaseListing.roommates?.length || 0,
+    roommates: supabaseListing.roommates || [],
+    
+    // Host Info
+    host: profile ? {
+      id: profile.id,
+      name: profile.full_name,
+      avatar: profile.avatar_url,
+      email: profile.email,
+      bio: profile.bio,
+      university: profile.university,
+      company: profile.company,
+      instagram: profile.instagram,
+      linkedin: profile.linkedin,
+    } : null,
+    
+    // Metadata
+    status: supabaseListing.status,
+    views: supabaseListing.views || 0,
+    views_count: supabaseListing.views || 0, // Backward compatibility
+    created_at: supabaseListing.created_at,
+    updated_at: supabaseListing.updated_at,
+    
+    // Computed fields
+    postedTime: getRelativeTime(supabaseListing.created_at),
+    
+    // Include Supabase fields for reference
     _supabase: {
       user_id: supabaseListing.user_id,
       available_from: supabaseListing.available_from,
@@ -88,64 +112,78 @@ export function transformListing(supabaseListing, profile = null) {
 }
 
 /**
- * Transform app listing format to Supabase format
+ * Transform listing from app format to Supabase format
  */
 export function transformListingToSupabase(appListing, userId) {
-  // Parse location to extract city, state, address
-  const locationParts = appListing.location?.split(',').map(s => s.trim()) || [];
-  
-  let address = '';
-  let city = '';
-  let state = '';
-  let zip_code = '';
-
-  if (locationParts.length > 0) {
-    address = locationParts[0] || '';
-    city = locationParts.length > 1 ? locationParts[locationParts.length - 2] || '' : '';
-    state = locationParts.length > 2 ? locationParts[locationParts.length - 1] || '' : '';
-    // If last part looks like zip code, extract it
-    if (locationParts[locationParts.length - 1]?.match(/^\d{5}(-\d{4})?$/)) {
-      zip_code = locationParts[locationParts.length - 1];
-      state = locationParts.length > 2 ? locationParts[locationParts.length - 2] || '' : '';
-      city = locationParts.length > 3 ? locationParts[locationParts.length - 3] || '' : '';
-    }
-  }
-
-  // Parse bedrooms (handle SL)
-  const bedrooms = appListing.bedrooms === 'SL' ? 0 : parseInt(appListing.bedrooms) || 0;
-
-  // Build amenities object
-  const amenities = {
-    list: Array.isArray(appListing.amenities) ? appListing.amenities : [],
-    pets: appListing.petPolicy === 'Pets allowed',
-    roommates: appListing.roommates || 1,
-    coordinates: appListing.coordinates || null
+  // Extract first availability date (primary)
+  const primaryDate = appListing.availabilityDates?.[0] || {
+    moveIn: appListing.available_from,
+    moveOut: appListing.available_to,
   };
 
-  // Use direct fields if provided, otherwise parse from location
-  const finalAddress = appListing.address || address || appListing.location || '';
-  const finalCity = appListing.city || city || '';
-  const finalState = appListing.state || state || '';
-  const finalZip = appListing.zip_code || zip_code || '';
-
+  // Build the full address from parts
+  const fullAddress = `${appListing.street || ''} ${appListing.houseNumber || ''}`.trim();
+  
   return {
+    // User
     user_id: userId,
-    title: appListing.title,
-    description: appListing.description || '',
-    address: finalAddress,
-    city: finalCity,
-    state: finalState,
-    zip_code: finalZip,
-    price_per_month: appListing.price || 0,
-    available_from: appListing.available_from || appListing._supabase?.available_from || new Date().toISOString().split('T')[0],
-    available_to: appListing.available_to || appListing._supabase?.available_to || new Date().toISOString().split('T')[0],
-    bedrooms: bedrooms,
-    bathrooms: parseFloat(appListing.bathrooms) || 1,
-    images: Array.isArray(appListing.images) ? appListing.images : (appListing.images ? [appListing.images] : []),
-    amenities: amenities,
+    
+    // Basic Info
+    title: appListing.title?.trim(),
+    description: appListing.description?.trim(),
+    property_type: appListing.propertyType,
+    what_offering: appListing.whatOffering,
+    furnishing: appListing.furnishing,
+    rental_type: appListing.rentalType,
+    registration: appListing.registration,
+    
+    // Property Details
+    total_rooms: appListing.totalRooms || appListing.bedrooms, // Support old field
+    rooms_offered: appListing.roomsOffered || appListing.bedrooms, // Support old field
+    bedrooms: appListing.totalRooms || appListing.bedrooms, // Keep for backward compatibility
+    bathrooms: appListing.bathrooms,
+    
+    // Location - NEW FIELDS
+    street: appListing.street?.trim(),
+    house_number: appListing.houseNumber?.trim(),
+    city: appListing.city?.trim(),
+    postal_code: appListing.postalCode?.trim() || appListing.zip_code?.trim(), // Support old field
+    
+    // Location - OLD FIELDS (required by database constraint)
+    address: fullAddress || appListing.address?.trim(), // Build from parts or use existing
+    state: appListing.state?.trim() || '', // Empty string if not provided
+    zip_code: appListing.postalCode?.trim() || appListing.zip_code?.trim() || '', // Support both
+    
+    // coordinates: appListing.coordinates || null,
+    
+    // Pricing - NEW FIELDS (EUR only)
+    monthly_rent: parseFloat(appListing.monthlyRent || appListing.price || appListing.price_per_month || 0),
+    deposit: parseFloat(appListing.deposit || appListing.monthlyRent || appListing.price || 0),
+    
+    // Pricing - OLD FIELDS (required by database constraint)
+    price_per_month: parseFloat(appListing.monthlyRent || appListing.price || appListing.price_per_month || 0),
+    
+    // Availability
+    available_from: primaryDate.moveIn || appListing.available_from,
+    available_to: primaryDate.moveOut || appListing.available_to,
+    availability_dates: appListing.availabilityDates || [],
+    
+    // Images (Cloudinary URLs)
+    images: appListing.photos || appListing.images || [],
+    
+    // Amenities & Policies
+    amenities: appListing.amenities || [],
+    pet_policy: appListing.petPolicy,
+    
+    // Roommates
+    roommates: appListing.roommates || [],
+    
+    // Status
     status: appListing.status || 'active',
-    square_feet: appListing.square_feet || appListing._supabase?.square_feet || null,
-    house_rules: appListing.house_rules || appListing._supabase?.house_rules || null
+    
+    // Optional fields
+    square_feet: appListing.square_feet || null,
+    house_rules: appListing.house_rules || null,
   };
 }
 
@@ -166,7 +204,7 @@ export function transformBooking(supabaseBooking, listing = null, profile = null
     special_requests: supabaseBooking.special_requests || '',
     created_at: supabaseBooking.created_at,
     updated_at: supabaseBooking.updated_at,
-    listing: listing ? transformListing(listing) : null,
+    listing: listing ? transformListing(listing, listing.profiles) : null,
     tenant: profile ? {
       id: profile.id,
       name: profile.full_name || 'Unknown',
@@ -204,26 +242,129 @@ export function transformMessage(supabaseMessage, senderProfile = null, receiver
 }
 
 /**
- * Format posted time relative to now
+ * Transform user profile data
  */
-function formatPostedTime(dateString) {
-  if (!dateString) return 'Recently posted';
-  
-  const now = new Date();
-  const posted = new Date(dateString);
-  const diffMs = now - posted;
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffHours / 24);
+export function transformProfile(supabaseProfile) {
+  if (!supabaseProfile) return null;
 
-  if (diffHours < 1) return 'Posted just now';
-  if (diffHours < 24) return `Posted ${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-  if (diffDays === 1) return 'Posted yesterday';
-  if (diffDays < 7) return `Posted ${diffDays} days ago`;
-  if (diffDays < 30) {
-    const weeks = Math.floor(diffDays / 7);
-    return `Posted ${weeks} week${weeks > 1 ? 's' : ''} ago`;
-  }
-  
-  return `Posted on ${posted.toLocaleDateString()}`;
+  return {
+    id: supabaseProfile.id,
+    full_name: supabaseProfile.full_name,
+    avatar_url: supabaseProfile.avatar_url,
+    email: supabaseProfile.email,
+    phone: supabaseProfile.phone,
+    bio: supabaseProfile.bio,
+    university: supabaseProfile.university,
+    company: supabaseProfile.company,
+    instagram: supabaseProfile.instagram,
+    linkedin: supabaseProfile.linkedin,
+    created_at: supabaseProfile.created_at,
+    updated_at: supabaseProfile.updated_at,
+  };
 }
 
+/**
+ * Get relative time from timestamp
+ */
+function getRelativeTime(timestamp) {
+  if (!timestamp) return 'Just now';
+  
+  const now = new Date();
+  const then = new Date(timestamp);
+  const diffMs = now - then;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? 's' : ''} ago`;
+  if (diffDays < 365) return `${Math.floor(diffDays / 30)} month${Math.floor(diffDays / 30) > 1 ? 's' : ''} ago`;
+  return `${Math.floor(diffDays / 365)} year${Math.floor(diffDays / 365) > 1 ? 's' : ''} ago`;
+}
+
+/**
+ * Validate listing data before submission
+ */
+export function validateListingData(listing) {
+  const errors = [];
+
+  // Required fields
+  if (!listing.title || listing.title.trim().length < 10) {
+    errors.push('Title must be at least 10 characters');
+  }
+  
+  if (!listing.description || listing.description.trim().length < 50) {
+    errors.push('Description must be at least 50 characters');
+  }
+  
+  if (!listing.propertyType) errors.push('Property type is required');
+  if (!listing.whatOffering) errors.push('What you are offering is required');
+  if (!listing.furnishing) errors.push('Furnishing status is required');
+  if (!listing.rentalType) errors.push('Rental type is required');
+  if (!listing.registration) errors.push('Registration option is required');
+  
+  const totalRooms = listing.totalRooms || listing.bedrooms;
+  const roomsOffered = listing.roomsOffered || listing.bedrooms;
+  
+  if (!totalRooms || totalRooms < 1) {
+    errors.push('Total rooms must be at least 1');
+  }
+  
+  if (!roomsOffered || roomsOffered < 1) {
+    errors.push('Rooms offered must be at least 1');
+  }
+  
+  if (!listing.bathrooms || listing.bathrooms < 1) {
+    errors.push('Number of bathrooms is required');
+  }
+  
+  // Location - check new fields
+  if (!listing.street) errors.push('Street is required');
+  if (!listing.houseNumber) errors.push('House number is required');
+  if (!listing.city) errors.push('City is required');
+  
+  const postalCode = listing.postalCode || listing.zip_code;
+  if (!postalCode) errors.push('Postal code is required');
+  
+  // Pricing
+  const monthlyRent = listing.monthlyRent || listing.price || listing.price_per_month;
+  if (!monthlyRent || parseFloat(monthlyRent) <= 0) {
+    errors.push('Monthly rent must be greater than 0');
+  }
+  
+  const deposit = listing.deposit;
+  if (deposit !== undefined && deposit !== null && parseFloat(deposit) < 0) {
+    errors.push('Deposit cannot be negative');
+  }
+  
+  // Availability
+  const primaryDate = listing.availabilityDates?.[0];
+  const moveIn = primaryDate?.moveIn || listing.available_from;
+  const moveOut = primaryDate?.moveOut || listing.available_to;
+  
+  if (!moveIn) errors.push('Move-in date is required');
+  if (!moveOut) errors.push('Move-out date is required');
+  
+  if (moveIn && moveOut) {
+    if (new Date(moveOut) <= new Date(moveIn)) {
+      errors.push('Move-out date must be after move-in date');
+    }
+  }
+  
+  // Images
+  const images = listing.photos || listing.images || [];
+  if (images.length < 1) {
+    errors.push('At least 1 photo is required');
+  }
+  
+  // Pet policy
+  if (!listing.petPolicy) errors.push('Pet policy is required');
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+}

@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
 import useAuthStore from "./store/authStore";
@@ -24,6 +29,10 @@ import ListingDetail from "./pages/ListingDetail";
 import Privacy from "./pages/Privacy";
 import Impressum from "./pages/Impressum";
 import Terms from "./pages/Terms";
+import VerifyIdentity from "./pages/VerifyIdentity";
+import Profile from "./pages/Profile";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminVerifications from "./pages/admin/AdminVerifications";
 
 // Layout wrapper
 function Layout({ children }) {
@@ -31,9 +40,7 @@ function Layout({ children }) {
     <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="grow">
-        {children}
-      </main>
+      <main className="grow">{children}</main>
 
       <Footer />
     </div>
@@ -120,6 +127,48 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/verify-identity"
+            element={
+              <ProtectedRoute>
+                <VerifyIdentity />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/verify/:listingId"
+            element={
+              <ProtectedRoute>
+                <VerifyIdentity />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/verifications"
+            element={
+              <ProtectedRoute>
+                <AdminVerifications />
+              </ProtectedRoute>
+            }
+          />
 
           {/* 404 Page */}
           <Route
@@ -127,9 +176,7 @@ function App() {
             element={
               <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                  <h1 className="text-6xl font-bold text-gray-900 mb-4">
-                    404
-                  </h1>
+                  <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
                   <p className="text-xl text-gray-600">Page not found</p>
                 </div>
               </div>

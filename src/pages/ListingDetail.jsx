@@ -189,7 +189,11 @@ export default function ListingDetail() {
                   <Users className="h-5 w-5 text-gray-600" />
                   <div>
                     <p className="text-sm text-gray-600">Roommates</p>
-                    <p className="font-semibold">{listing.roommates}</p>
+                    <p className="font-semibold">
+                      {Array.isArray(listing.roommates) && listing.roommates.length > 0
+                        ? listing.roommates.length
+                        : 'None'}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

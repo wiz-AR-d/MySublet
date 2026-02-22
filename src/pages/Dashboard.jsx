@@ -11,9 +11,9 @@ export default function Dashboard() {
   const userIsSublessor = isSublessor()
   const userIsSublessee = isSublessee()
 
-  // Fetch user's listings (only for sublessors)
+  // Fetch user's listings (only for sublessors) - ALL statuses
   const { listings: myListings, loading: listingsLoading } = useListings(
-    userIsSublessor && user?.id ? { userId: user.id, status: 'active' } : {}
+    userIsSublessor && user?.id ? { userId: user.id } : {}
   )
 
   // Fetch all bookings (for both roles)

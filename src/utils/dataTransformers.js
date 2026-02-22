@@ -1,5 +1,5 @@
+// src/utils/dataTransformers.js
 // Data transformers for European listing structure
-// Transforms between app format and Supabase format
 
 /**
  * Transform listing from Supabase format to app format
@@ -23,9 +23,7 @@ export function transformListing(supabaseListing, profile) {
     totalRooms: supabaseListing.total_rooms,
     roomsOffered: supabaseListing.rooms_offered,
     bathrooms: supabaseListing.bathrooms,
-    
-    // BACKWARD COMPATIBILITY: Map to old field names
-    bedrooms: supabaseListing.total_rooms, // For components still using bedrooms
+    bedrooms: supabaseListing.total_rooms, // Backward compatibility
     
     // Location
     street: supabaseListing.street,
@@ -33,23 +31,17 @@ export function transformListing(supabaseListing, profile) {
     city: supabaseListing.city,
     postalCode: supabaseListing.postal_code,
     location: `${supabaseListing.street} ${supabaseListing.house_number}, ${supabaseListing.city}`,
-    coordinates: null,
-    // coordinates: supabaseListing.coordinates,
-    
-    // BACKWARD COMPATIBILITY: Old location fields
     address: `${supabaseListing.street} ${supabaseListing.house_number}`,
     zip_code: supabaseListing.postal_code,
-    state: '', // Not used in Europe
+    state: '',
     
     // Pricing
     monthlyRent: supabaseListing.monthly_rent,
     deposit: supabaseListing.deposit,
-    price: supabaseListing.monthly_rent, // For backward compatibility
+    price: supabaseListing.monthly_rent,
+    price_per_month: supabaseListing.monthly_rent,
     currency: 'EUR',
     duration: '/mo',
-    
-    // BACKWARD COMPATIBILITY: Old pricing field
-    price_per_month: supabaseListing.monthly_rent,
     
     // Availability
     availabilityDates: supabaseListing.availability_dates || [
@@ -63,7 +55,7 @@ export function transformListing(supabaseListing, profile) {
     
     // Images
     images: supabaseListing.images || [],
-    photos: supabaseListing.images || [], // Alias
+    photos: supabaseListing.images || [],
     
     // Amenities & Policies
     amenities: supabaseListing.amenities || [],
@@ -84,24 +76,27 @@ export function transformListing(supabaseListing, profile) {
       company: profile.company,
       instagram: profile.instagram,
       linkedin: profile.linkedin,
+      verificationStatus: profile.verification_status,
+      verified: profile.verified,
     } : null,
     
     // Metadata
     status: supabaseListing.status,
+    verificationStatus: supabaseListing.verification_status || 'pending',
+    publishedAt: supabaseListing.published_at,
     views: supabaseListing.views || 0,
-    views_count: supabaseListing.views || 0, // Backward compatibility
+    views_count: supabaseListing.views || 0,
     created_at: supabaseListing.created_at,
     updated_at: supabaseListing.updated_at,
-    
-    // Computed fields
     postedTime: getRelativeTime(supabaseListing.created_at),
     
-    // Include Supabase fields for reference
+    // Supabase reference
     _supabase: {
       user_id: supabaseListing.user_id,
       available_from: supabaseListing.available_from,
       available_to: supabaseListing.available_to,
       status: supabaseListing.status,
+      verification_status: supabaseListing.verification_status,
       square_feet: supabaseListing.square_feet,
       house_rules: supabaseListing.house_rules,
       views_count: supabaseListing.views_count,
@@ -115,17 +110,14 @@ export function transformListing(supabaseListing, profile) {
  * Transform listing from app format to Supabase format
  */
 export function transformListingToSupabase(appListing, userId) {
-  // Extract first availability date (primary)
   const primaryDate = appListing.availabilityDates?.[0] || {
     moveIn: appListing.available_from,
     moveOut: appListing.available_to,
   };
 
-  // Build the full address from parts
   const fullAddress = `${appListing.street || ''} ${appListing.houseNumber || ''}`.trim();
   
   return {
-    // User
     user_id: userId,
     
     // Basic Info
@@ -138,29 +130,25 @@ export function transformListingToSupabase(appListing, userId) {
     registration: appListing.registration,
     
     // Property Details
-    total_rooms: appListing.totalRooms || appListing.bedrooms, // Support old field
-    rooms_offered: appListing.roomsOffered || appListing.bedrooms, // Support old field
-    bedrooms: appListing.totalRooms || appListing.bedrooms, // Keep for backward compatibility
+    total_rooms: appListing.totalRooms || appListing.bedrooms,
+    rooms_offered: appListing.roomsOffered || appListing.bedrooms,
+    bedrooms: appListing.totalRooms || appListing.bedrooms,
     bathrooms: appListing.bathrooms,
     
     // Location - NEW FIELDS
     street: appListing.street?.trim(),
     house_number: appListing.houseNumber?.trim(),
     city: appListing.city?.trim(),
-    postal_code: appListing.postalCode?.trim() || appListing.zip_code?.trim(), // Support old field
+    postal_code: appListing.postalCode?.trim() || appListing.zip_code?.trim(),
     
-    // Location - OLD FIELDS (required by database constraint)
-    address: fullAddress || appListing.address?.trim(), // Build from parts or use existing
-    state: appListing.state?.trim() || '', // Empty string if not provided
-    zip_code: appListing.postalCode?.trim() || appListing.zip_code?.trim() || '', // Support both
+    // Location - OLD FIELDS (backward compatibility)
+    address: fullAddress || appListing.address?.trim(),
+    state: appListing.state?.trim() || '',
+    zip_code: appListing.postalCode?.trim() || appListing.zip_code?.trim() || '',
     
-    // coordinates: appListing.coordinates || null,
-    
-    // Pricing - NEW FIELDS (EUR only)
+    // Pricing
     monthly_rent: parseFloat(appListing.monthlyRent || appListing.price || appListing.price_per_month || 0),
     deposit: parseFloat(appListing.deposit || appListing.monthlyRent || appListing.price || 0),
-    
-    // Pricing - OLD FIELDS (required by database constraint)
     price_per_month: parseFloat(appListing.monthlyRent || appListing.price || appListing.price_per_month || 0),
     
     // Availability
@@ -168,18 +156,19 @@ export function transformListingToSupabase(appListing, userId) {
     available_to: primaryDate.moveOut || appListing.available_to,
     availability_dates: appListing.availabilityDates || [],
     
-    // Images (Cloudinary URLs)
+    // Images
     images: appListing.photos || appListing.images || [],
     
     // Amenities & Policies
     amenities: appListing.amenities || [],
-    pet_policy: appListing.petPolicy,
+    pet_policy: appListing.petPolicy || 'No pets',
     
     // Roommates
     roommates: appListing.roommates || [],
     
-    // Status
-    status: appListing.status || 'active',
+    // Status - IMPORTANT: Listings start as pending until verified
+    status: 'pending',
+    verification_status: 'pending',
     
     // Optional fields
     square_feet: appListing.square_feet || null,
@@ -188,7 +177,55 @@ export function transformListingToSupabase(appListing, userId) {
 }
 
 /**
- * Transform Supabase booking to app format
+ * Transform profile data
+ */
+export function transformProfile(supabaseProfile) {
+  if (!supabaseProfile) return null;
+
+  return {
+    id: supabaseProfile.id,
+    email: supabaseProfile.email,
+    fullName: supabaseProfile.full_name,
+    avatarUrl: supabaseProfile.avatar_url,
+    phone: supabaseProfile.phone,
+    bio: supabaseProfile.bio,
+    university: supabaseProfile.university,
+    company: supabaseProfile.company,
+    instagram: supabaseProfile.instagram,
+    linkedin: supabaseProfile.linkedin,
+    userRole: supabaseProfile.user_role,
+    verified: supabaseProfile.verified,
+    verificationStatus: supabaseProfile.verification_status || 'unverified',
+    verificationMethod: supabaseProfile.verification_method,
+    verifiedAt: supabaseProfile.verified_at,
+    createdAt: supabaseProfile.created_at,
+    updatedAt: supabaseProfile.updated_at
+  };
+}
+
+/**
+ * Transform verification data
+ */
+export function transformVerification(supabaseVerification) {
+  if (!supabaseVerification) return null;
+
+  return {
+    id: supabaseVerification.id,
+    userId: supabaseVerification.user_id,
+    method: supabaseVerification.method,
+    status: supabaseVerification.status,
+    documentUrl: supabaseVerification.document_url,
+    emailUsed: supabaseVerification.email_used,
+    rejectionReason: supabaseVerification.rejection_reason,
+    reviewedBy: supabaseVerification.reviewed_by,
+    createdAt: supabaseVerification.created_at,
+    reviewedAt: supabaseVerification.reviewed_at,
+    metadata: supabaseVerification.metadata
+  };
+}
+
+/**
+ * Transform booking data
  */
 export function transformBooking(supabaseBooking, listing = null, profile = null) {
   if (!supabaseBooking) return null;
@@ -215,7 +252,7 @@ export function transformBooking(supabaseBooking, listing = null, profile = null
 }
 
 /**
- * Transform Supabase message to app format
+ * Transform message data
  */
 export function transformMessage(supabaseMessage, senderProfile = null, receiverProfile = null) {
   if (!supabaseMessage) return null;
@@ -238,28 +275,6 @@ export function transformMessage(supabaseMessage, senderProfile = null, receiver
       name: receiverProfile.full_name || 'Unknown',
       avatar: receiverProfile.avatar_url || ''
     } : null
-  };
-}
-
-/**
- * Transform user profile data
- */
-export function transformProfile(supabaseProfile) {
-  if (!supabaseProfile) return null;
-
-  return {
-    id: supabaseProfile.id,
-    full_name: supabaseProfile.full_name,
-    avatar_url: supabaseProfile.avatar_url,
-    email: supabaseProfile.email,
-    phone: supabaseProfile.phone,
-    bio: supabaseProfile.bio,
-    university: supabaseProfile.university,
-    company: supabaseProfile.company,
-    instagram: supabaseProfile.instagram,
-    linkedin: supabaseProfile.linkedin,
-    created_at: supabaseProfile.created_at,
-    updated_at: supabaseProfile.updated_at,
   };
 }
 
@@ -291,7 +306,6 @@ function getRelativeTime(timestamp) {
 export function validateListingData(listing) {
   const errors = [];
 
-  // Required fields
   if (!listing.title || listing.title.trim().length < 10) {
     errors.push('Title must be at least 10 characters');
   }
@@ -321,7 +335,6 @@ export function validateListingData(listing) {
     errors.push('Number of bathrooms is required');
   }
   
-  // Location - check new fields
   if (!listing.street) errors.push('Street is required');
   if (!listing.houseNumber) errors.push('House number is required');
   if (!listing.city) errors.push('City is required');
@@ -329,7 +342,6 @@ export function validateListingData(listing) {
   const postalCode = listing.postalCode || listing.zip_code;
   if (!postalCode) errors.push('Postal code is required');
   
-  // Pricing
   const monthlyRent = listing.monthlyRent || listing.price || listing.price_per_month;
   if (!monthlyRent || parseFloat(monthlyRent) <= 0) {
     errors.push('Monthly rent must be greater than 0');
@@ -340,7 +352,6 @@ export function validateListingData(listing) {
     errors.push('Deposit cannot be negative');
   }
   
-  // Availability
   const primaryDate = listing.availabilityDates?.[0];
   const moveIn = primaryDate?.moveIn || listing.available_from;
   const moveOut = primaryDate?.moveOut || listing.available_to;
@@ -354,13 +365,11 @@ export function validateListingData(listing) {
     }
   }
   
-  // Images
   const images = listing.photos || listing.images || [];
   if (images.length < 1) {
     errors.push('At least 1 photo is required');
   }
   
-  // Pet policy
   if (!listing.petPolicy) errors.push('Pet policy is required');
   
   return {

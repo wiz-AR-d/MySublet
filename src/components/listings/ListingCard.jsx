@@ -139,7 +139,11 @@ export default function ListingCard({ listing }) {
             </div>
             <div className="flex items-center space-x-1">
               <Users className="w-4 h-4" />
-              <span>{listing.roommates} roommate{listing.roommates !== 1 ? 's' : ''}</span>
+              <span>
+                {Array.isArray(listing.roommates) && listing.roommates.length > 0
+                  ? `${listing.roommates.length} roommate${listing.roommates.length !== 1 ? 's' : ''}`
+                  : '0 roommates'}
+              </span>
             </div>
           </div>
           

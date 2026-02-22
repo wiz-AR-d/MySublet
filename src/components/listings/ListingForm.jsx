@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { listingsAPI } from '../../services/api/listings';
 import { toast } from 'sonner';
-import { ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Home, Calendar, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import CloudinaryImageUpload from "./CloudinaryImageUpload";
 
 // FIXED: Better Rent Input Component
@@ -160,8 +160,9 @@ const StepPropertyType = ({ formData, updateFormData, errors }) => (
       ))}
     </div>
 
-    <p className="text-sm text-gray-500 text-center mt-4">
-      ⚠️ Choose the option that best matches your place.
+    <p className="text-sm text-gray-500 text-center mt-4 flex items-center justify-center gap-2">
+      <AlertCircle className="w-4 h-4" />
+      Choose the option that best matches your place.
     </p>
   </div>
 );
@@ -221,7 +222,7 @@ const StepFurnishing = ({ formData, updateFormData, errors }) => (
           value: "Move-in ready",
           label: "Move-in ready",
           desc: "Fully equipped with essentials included",
-          icon: "✅",
+          icon: <Home className="w-6 h-6" />,
         },
         {
           value: "Furnished",
@@ -325,8 +326,8 @@ const StepRegistration = ({ formData, updateFormData, errors }) => (
 
     <div className="grid grid-cols-1 gap-4 max-w-2xl mx-auto">
       {[
-        { value: "Yes", label: "Yes, registration is possible", icon: "✅" },
-        { value: "No", label: "No, registration is not possible", icon: "❌" },
+        { value: "Yes", label: "Yes, registration is possible", icon: <CheckCircle className="w-5 h-5 text-green-600" /> },
+        { value: "No", label: "No, registration is not possible", icon: <XCircle className="w-5 h-5 text-red-600" /> },
         { value: "Long stay only", label: "Only for long stay", icon: "📅" },
       ].map((option) => (
         <button
@@ -1025,7 +1026,7 @@ const StepPreview = ({ formData }) => {
     <div className="space-y-6">
       <div className="text-center mb-8">
         <div className="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
-          ✓
+          <CheckCircle className="w-5 h-5" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Review Your Listing</h2>
         <p className="text-gray-600">Check everything before publishing</p>
@@ -1228,13 +1229,13 @@ export default function ListingForm() {
           newErrors.photos = "Please add at least 3 photos";
         break;
       case 13:
-        if (!formData.title || formData.title.trim().length < 10) {
-          newErrors.title = "Title must be at least 10 characters";
+        if (!formData.title || formData.title.trim().length === 0) {
+          newErrors.title = "Title is required";
         }
         break;
       case 14:
-        if (!formData.description || formData.description.trim().length < 50) {
-          newErrors.description = "Description must be at least 50 characters";
+        if (!formData.description || formData.description.trim().length === 0) {
+          newErrors.description = "Description is required";
         }
         break;
       case 17:
@@ -1242,8 +1243,8 @@ export default function ListingForm() {
           newErrors.petPolicy = "Please select a pet policy";
         break;
       case 18:
-        if (!formData.bio || formData.bio.trim().length < 20) {
-          newErrors.bio = "Please write at least 20 characters about yourself";
+        if (!formData.bio || formData.bio.trim().length === 0) {
+          newErrors.bio = "Please write something about yourself";
         }
         break;
     }
@@ -1267,72 +1268,83 @@ export default function ListingForm() {
     }
   };
 
-  const handleSubmit = async () => {
-    if (!user?.id) {
-      toast.error('Please log in to create a listing');
-      navigate('/login');
+const handleSubmit = async (isDraft = false) => {
+  if (!user?.id) {
+    toast.error('Please log in to create a listing');
+    navigate('/login');
+    return;
+  }
+
+  setLoading(true);
+  
+  try {
+    // Map your enhanced form fields to the API format
+    const listingData = {
+      propertyType: formData.propertyType,
+      whatOffering: formData.whatOffering,
+      furnishing: formData.furnishing,
+      rentalType: formData.rentalType,
+      registration: formData.registration,
+      
+      totalRooms: formData.totalRooms,
+      roomsOffered: formData.roomsOffered,
+      bathrooms: formData.bathrooms,
+      
+      street: formData.street?.trim(),
+      houseNumber: formData.houseNumber?.trim(),
+      city: formData.city?.trim(),
+      postalCode: formData.postalCode?.trim(),
+      
+      monthlyRent: formData.monthlyRent,
+      deposit: formData.deposit,
+      
+      availabilityDates: formData.availabilityDates,
+      available_from: formData.availabilityDates[0]?.moveIn,
+      available_to: formData.availabilityDates[0]?.moveOut,
+      
+      photos: formData.photos || [],
+      images: formData.photos || [],
+      
+      title: formData.title?.trim(),
+      description: formData.description?.trim(),
+      
+      roommates: formData.roommates || [],
+      amenities: formData.amenities || [],
+      petPolicy: formData.petPolicy || 'No pets',
+      
+      // Status based on draft flag
+      status: isDraft ? 'draft' : 'pending',
+    };
+
+    console.log('Submitting listing:', listingData);
+
+    const result = await listingsAPI.create(listingData, user.id);
+    
+    if (result.error) {
+      console.error('API Error:', result.error);
+      toast.error(result.error.message || 'Failed to create listing');
       return;
     }
 
-    setLoading(true);
+    console.log('Listing created successfully!', result.data);
     
-    try {
-      // Map your enhanced form fields to the API format
-      const listingData = {
-        // Map new fields to transformer-compatible format
-        propertyType: formData.propertyType,
-        whatOffering: formData.whatOffering,
-        furnishing: formData.furnishing,
-        rentalType: formData.rentalType,
-        registration: formData.registration,
-        
-        totalRooms: formData.totalRooms,
-        roomsOffered: formData.roomsOffered,
-        bathrooms: formData.bathrooms,
-        
-        street: formData.street?.trim(),
-        houseNumber: formData.houseNumber?.trim(),
-        city: formData.city?.trim(),
-        postalCode: formData.postalCode?.trim(),
-        
-        monthlyRent: formData.monthlyRent,
-        deposit: formData.deposit,
-        
-        availabilityDates: formData.availabilityDates,
-        available_from: formData.availabilityDates[0]?.moveIn,
-        available_to: formData.availabilityDates[0]?.moveOut,
-        
-        photos: formData.photos || [],
-        images: formData.photos || [],
-        
-        title: formData.title?.trim(),
-        description: formData.description?.trim(),
-        
-        roommates: formData.roommates || [],
-        amenities: formData.amenities || [],
-        petPolicy: formData.petPolicy || 'No pets',
-      };
-
-      console.log('Submitting listing:', listingData);
-
-      const result = await listingsAPI.create(listingData, user.id);
-      
-      if (result.error) {
-        console.error('API Error:', result.error);
-        toast.error(result.error.message || 'Failed to create listing');
-        return;
-      }
-
-      toast.success('Listing created successfully!');
-      navigate('/listings');
-      
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error(error.message || 'An error occurred');
-    } finally {
-      setLoading(false);
+    if (isDraft) {
+      // Saved as draft - just go to my listings
+      toast.success('Listing saved as draft!');
+      navigate('/my-listings');
+    } else {
+      // Publishing - redirect to verification flow
+      toast.success('Listing created! Please verify your identity to publish it.');
+      navigate(`/verify/${result.data.id}`);
     }
-  };
+    
+  } catch (error) {
+    console.error('Error:', error);
+    toast.error(error.message || 'An error occurred');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const CurrentStepComponent = steps[currentStep - 1]?.component;
   const progressPercentage = (currentStep / TOTAL_STEPS) * 100;
@@ -1384,25 +1396,34 @@ export default function ListingForm() {
                 <ChevronRight className="w-5 h-5" />
               </button>
             ) : (
-              <button
-                onClick={handleSubmit}
-                disabled={loading}
-                className={`flex items-center space-x-2 bg-green-600 text-white px-8 py-3 rounded-xl font-medium transition-colors shadow-md ${
-                  loading ? "bg-green-400 cursor-not-allowed" : "hover:bg-green-700"
-                }`}
-              >
-                {loading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Publishing...</span>
-                  </>
-                ) : (
-                  <>
-                    <Check className="w-5 h-5" />
-                    <span>Publish Listing</span>
-                  </>
-                )}
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => handleSubmit(true)}
+                  disabled={loading}
+                  className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Save as draft
+                </button>
+                <button
+                  onClick={() => handleSubmit(false)}
+                  disabled={loading}
+                  className={`flex items-center space-x-2 bg-green-600 text-white px-8 py-3 rounded-xl font-medium transition-colors shadow-md ${
+                    loading ? "bg-green-400 cursor-not-allowed" : "hover:bg-green-700"
+                  }`}
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Publishing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-5 h-5" />
+                      <span>Publish listing</span>
+                    </>
+                  )}
+                </button>
+              </div>
             )}
           </div>
         </div>

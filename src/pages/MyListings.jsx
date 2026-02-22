@@ -1,3 +1,4 @@
+// src/pages/MyListings.jsx
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { 
@@ -12,12 +13,14 @@ import {
   Bath,
   Calendar,
   TrendingUp,
-  AlertCircle
+  AlertCircle,
+  Shield
 } from 'lucide-react'
 import useAuthStore from '../store/authStore'
 import { useListings } from '../hooks/useListings'
 import { listingsAPI } from '../services/api/listings'
 import { toast } from 'sonner'
+import { ListingVerificationBadge } from '../components/verification/VerificationBadge'
 
 export default function MyListings() {
   const { user, profile, isSublessor } = useAuthStore()
@@ -35,6 +38,10 @@ export default function MyListings() {
   const { listings, loading, error, refetch } = useListings(
     user?.id ? { userId: user.id } : {}
   )
+
+  // Check verification status
+  const needsVerification = profile?.verificationStatus !== 'approved'
+  const hasPendingListings = listings?.some(l => l.verificationStatus === 'pending') || false
 
   // Redirect if not sublessor
   useEffect(() => {
@@ -192,6 +199,35 @@ export default function MyListings() {
           </div>
         </div>
 
+        {/* Verification Alert Banner */}
+        {needsVerification && hasPendingListings && (
+          <div className="mb-6 bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-6">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <Shield className="w-8 h-8 text-yellow-600" />
+              </div>
+              <div className="ml-4 flex-1">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  Verify your identity to publish your listings
+                </h3>
+                <p className="text-gray-700 mb-4">
+                  {profile?.verificationStatus === 'pending' 
+                    ? "We're reviewing your verification. This usually takes 5-30 minutes. Your listings will go live automatically once approved."
+                    : "Your listings are waiting for you to verify your identity. This takes less than 1 minute."}
+                </p>
+                {profile?.verificationStatus !== 'pending' && (
+                  <Link
+                    to="/verify-identity"
+                    className="inline-block bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition font-medium"
+                  >
+                    Start Verification
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-md p-6">
@@ -304,17 +340,16 @@ export default function MyListings() {
                     alt={listing.title}
                     className="w-full h-full object-cover"
                   />
+                  
+                  {/* Verification Badge */}
                   <div className="absolute top-3 right-3">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        listing._supabase?.status === 'active'
-                          ? 'bg-green-500 text-white'
-                          : 'bg-gray-500 text-white'
-                      }`}
-                    >
-                      {listing._supabase?.status === 'active' ? 'Active' : 'Inactive'}
-                    </span>
+                    <ListingVerificationBadge 
+                      status={listing.verificationStatus || 'pending'} 
+                      size="sm" 
+                    />
                   </div>
+                  
+                  {/* Views Counter */}
                   <div className="absolute top-3 left-3 bg-white px-2 py-1 rounded flex items-center gap-1">
                     <Eye className="h-3 w-3 text-gray-600" />
                     <span className="text-xs font-medium text-gray-700">
@@ -362,40 +397,70 @@ export default function MyListings() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 pt-4 border-t border-gray-200">
-                    <Link
-                      to={`/listings/${listing.id}`}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                    >
-                      <Eye className="h-4 w-4" />
-                      View
-                    </Link>
+                    {listing.verificationStatus === 'pending' ? (
+                      <>
+                        <button
+                          disabled
+                          className="flex-1 px-4 py-2 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed text-sm"
+                        >
+                          Awaiting Verification
+                        </button>
+                        <Link
+                          to={`/listings/${listing.id}/edit`}
+                          className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                        >
+                          <Edit className="h-4 w-4" />
+                          Edit
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          to={`/listings/${listing.id}`}
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                        >
+                          <Eye className="h-4 w-4" />
+                          View
+                        </Link>
 
-                    <Link
-                      to={`/listings/${listing.id}/edit`}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
-                    >
-                      <Edit className="h-4 w-4" />
-                      Edit
-                    </Link>
+                        <Link
+                          to={`/listings/${listing.id}/edit`}
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                        >
+                          <Edit className="h-4 w-4" />
+                          Edit
+                        </Link>
 
-                    <button
-                      onClick={() => handleToggleStatus(listing)}
-                      className={`flex-1 px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
-                        listing._supabase?.status === 'active'
-                          ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                          : 'bg-green-100 text-green-700 hover:bg-green-200'
-                      }`}
-                    >
-                      {listing._supabase?.status === 'active' ? 'Deactivate' : 'Activate'}
-                    </button>
+                        <button
+                          onClick={() => handleToggleStatus(listing)}
+                          className={`flex-1 px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
+                            listing._supabase?.status === 'active'
+                              ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              : 'bg-green-100 text-green-700 hover:bg-green-200'
+                          }`}
+                        >
+                          {listing._supabase?.status === 'active' ? 'Deactivate' : 'Activate'}
+                        </button>
 
-                    <button
-                      onClick={() => handleDeleteClick(listing)}
-                      className="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                        <button
+                          onClick={() => handleDeleteClick(listing)}
+                          className="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </>
+                    )}
                   </div>
+
+                  {/* Additional pending listing info */}
+                  {listing.verificationStatus === 'pending' && (
+                    <div className="mt-3 pt-3 border-t border-gray-100 flex items-start">
+                      <AlertCircle className="w-4 h-4 text-yellow-600 mr-2 flex-shrink-0 mt-0.5" />
+                      <p className="text-xs text-gray-600">
+                        This listing will go live once your identity is verified
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

@@ -12,7 +12,7 @@ export default function Profile() {
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [verification, setVerification] = useState(null);
-  
+
   const [formData, setFormData] = useState({
     full_name: profile?.fullName || '',
     phone: profile?.phone || '',
@@ -22,6 +22,21 @@ export default function Profile() {
     instagram: profile?.instagram || '',
     linkedin: profile?.linkedin || ''
   });
+
+  // Sync formData with profile changes
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        full_name: profile.fullName || '',
+        phone: profile.phone || '',
+        bio: profile.bio || '',
+        university: profile.university || '',
+        company: profile.company || '',
+        instagram: profile.instagram || '',
+        linkedin: profile.linkedin || ''
+      });
+    }
+  }, [profile]);
 
   useEffect(() => {
     if (user?.id) {
@@ -39,7 +54,7 @@ export default function Profile() {
     try {
       const { error } = await updateProfile(formData);
       if (error) throw error;
-      
+
       toast.success('Profile updated successfully!');
       setEditing(false);
     } catch (error) {
@@ -51,7 +66,7 @@ export default function Profile() {
 
   const getVerificationBadge = () => {
     const status = profile?.verificationStatus || 'unverified';
-    
+
     const badges = {
       approved: {
         icon: CheckCircle,
@@ -108,7 +123,7 @@ export default function Profile() {
                 {getVerificationBadge()}
               </div>
             </div>
-            
+
             {!editing ? (
               <button
                 onClick={() => setEditing(true)}
@@ -214,7 +229,7 @@ export default function Profile() {
         {/* Profile Details */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Profile Information</h2>
-          
+
           <div className="space-y-6">
             {/* Full Name */}
             <div>

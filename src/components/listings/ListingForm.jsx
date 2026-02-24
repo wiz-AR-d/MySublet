@@ -46,9 +46,8 @@ const StepRentDeposit = ({ formData, updateFormData, errors }) => {
               value={formData.monthlyRent}
               onChange={handleRentChange}
               placeholder="1200"
-              className={`w-full pl-10 pr-4 py-4 border-2 rounded-lg text-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
-                errors.monthlyRent ? "border-red-500" : "border-gray-300"
-              }`}
+              className={`w-full pl-10 pr-4 py-4 border-2 rounded-lg text-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${errors.monthlyRent ? "border-red-500" : "border-gray-300"
+                }`}
             />
           </div>
           {errors.monthlyRent && (
@@ -70,9 +69,8 @@ const StepRentDeposit = ({ formData, updateFormData, errors }) => {
               value={formData.deposit}
               onChange={handleDepositChange}
               placeholder="1200"
-              className={`w-full pl-10 pr-4 py-4 border-2 rounded-lg text-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
-                errors.deposit ? "border-red-500" : "border-gray-300"
-              }`}
+              className={`w-full pl-10 pr-4 py-4 border-2 rounded-lg text-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${errors.deposit ? "border-red-500" : "border-gray-300"
+                }`}
             />
           </div>
           {errors.deposit && (
@@ -148,11 +146,10 @@ const StepPropertyType = ({ formData, updateFormData, errors }) => (
           key={type.value}
           type="button"
           onClick={() => updateFormData({ propertyType: type.value })}
-          className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${
-            formData.propertyType === type.value
+          className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${formData.propertyType === type.value
               ? "border-orange-500 bg-orange-50 shadow-md"
               : "border-gray-200 hover:border-gray-300"
-          }`}
+            }`}
         >
           <div className="text-4xl mb-2">{type.icon}</div>
           <div className="font-semibold text-gray-900">{type.label}</div>
@@ -190,11 +187,10 @@ const StepWhatOffering = ({ formData, updateFormData, errors }) => (
           key={type.value}
           type="button"
           onClick={() => updateFormData({ whatOffering: type.value })}
-          className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${
-            formData.whatOffering === type.value
+          className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${formData.whatOffering === type.value
               ? "border-orange-500 bg-orange-50 shadow-md"
               : "border-gray-200 hover:border-gray-300"
-          }`}
+            }`}
         >
           <div className="text-4xl mb-2">{type.icon}</div>
           <div className="font-semibold text-gray-900">{type.label}</div>
@@ -241,11 +237,10 @@ const StepFurnishing = ({ formData, updateFormData, errors }) => (
           key={type.value}
           type="button"
           onClick={() => updateFormData({ furnishing: type.value })}
-          className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${
-            formData.furnishing === type.value
+          className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${formData.furnishing === type.value
               ? "border-orange-500 bg-orange-50 shadow-md"
               : "border-gray-200 hover:border-gray-300"
-          }`}
+            }`}
         >
           <div className="text-4xl mb-3">{type.icon}</div>
           <div className="font-semibold text-gray-900 mb-2">{type.label}</div>
@@ -292,11 +287,10 @@ const StepRentalType = ({ formData, updateFormData, errors }) => (
           key={type.value}
           type="button"
           onClick={() => updateFormData({ rentalType: type.value })}
-          className={`p-6 border-2 rounded-xl text-left transition-all hover:shadow-md ${
-            formData.rentalType === type.value
+          className={`p-6 border-2 rounded-xl text-left transition-all hover:shadow-md ${formData.rentalType === type.value
               ? "border-orange-500 bg-orange-50 shadow-md"
               : "border-gray-200 hover:border-gray-300"
-          }`}
+            }`}
         >
           <div className="flex items-start space-x-4">
             <div className="text-4xl">{type.icon}</div>
@@ -334,11 +328,10 @@ const StepRegistration = ({ formData, updateFormData, errors }) => (
           key={option.value}
           type="button"
           onClick={() => updateFormData({ registration: option.value })}
-          className={`p-6 border-2 rounded-xl text-left transition-all hover:shadow-md ${
-            formData.registration === option.value
+          className={`p-6 border-2 rounded-xl text-left transition-all hover:shadow-md ${formData.registration === option.value
               ? "border-orange-500 bg-orange-50 shadow-md"
               : "border-gray-200 hover:border-gray-300"
-          }`}
+            }`}
         >
           <div className="flex items-center space-x-4">
             <div className="text-3xl">{option.icon}</div>
@@ -374,11 +367,10 @@ const StepTotalRooms = ({ formData, updateFormData, errors }) => (
           key={num}
           type="button"
           onClick={() => updateFormData({ totalRooms: num })}
-          className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${
-            formData.totalRooms === num
+          className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${formData.totalRooms === num
               ? "border-orange-500 bg-orange-50 shadow-md"
               : "border-gray-200 hover:border-gray-300"
-          }`}
+            }`}
         >
           <div className="text-3xl font-bold text-gray-900">{num}</div>
           <div className="text-sm text-gray-600 mt-1">
@@ -391,11 +383,10 @@ const StepTotalRooms = ({ formData, updateFormData, errors }) => (
     <button
       type="button"
       onClick={() => updateFormData({ totalRooms: 7 })}
-      className={`w-full max-w-xs mx-auto block p-4 border-2 rounded-xl text-center transition-all hover:shadow-md ${
-        formData.totalRooms >= 7
+      className={`w-full max-w-xs mx-auto block p-4 border-2 rounded-xl text-center transition-all hover:shadow-md ${formData.totalRooms >= 7
           ? "border-orange-500 bg-orange-50 shadow-md"
           : "border-gray-200 hover:border-gray-300"
-      }`}
+        }`}
     >
       <div className="font-semibold text-gray-900">6+ rooms</div>
     </button>
@@ -425,11 +416,10 @@ const StepRoomsOffered = ({ formData, updateFormData, errors }) => {
             key={num}
             type="button"
             onClick={() => updateFormData({ roomsOffered: num })}
-            className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${
-              formData.roomsOffered === num
+            className={`p-6 border-2 rounded-xl text-center transition-all hover:shadow-md ${formData.roomsOffered === num
                 ? "border-orange-500 bg-orange-50 shadow-md"
                 : "border-gray-200 hover:border-gray-300"
-            }`}
+              }`}
           >
             <div className="text-3xl font-bold text-gray-900">{num}</div>
             <div className="text-sm text-gray-600 mt-1">
@@ -839,24 +829,10 @@ const StepRoommates = ({ formData, updateFormData, errors }) => {
     </div>
   );
 };
+import { AMENITIES_LIST as amenitiesList } from '../../constants/amenities';
+
 const StepAmenities = ({ formData, updateFormData, errors }) => {
-  const amenitiesList = [
-    "Heating",
-    "Washing machine",
-    "Dryer",
-    "Wifi",
-    "Dishwasher",
-    "Oven",
-    "Stove",
-    "Microwave",
-    "Elevator",
-    "Balcony",
-    "Storage room",
-    "Bike storage",
-    "Parking / Garage",
-    "Garden access",
-    "Wheelchair accessible",
-  ];
+  // amenitiesList imported from constants
   const toggleAmenity = (amenity) => {
     const current = formData.amenities || [];
     if (current.includes(amenity)) {
@@ -881,11 +857,10 @@ const StepAmenities = ({ formData, updateFormData, errors }) => {
             key={amenity}
             type="button"
             onClick={() => toggleAmenity(amenity)}
-            className={`p-4 border-2 rounded-xl text-left transition-all hover:shadow-md ${
-              formData.amenities?.includes(amenity)
+            className={`p-4 border-2 rounded-xl text-left transition-all hover:shadow-md ${formData.amenities?.includes(amenity)
                 ? "border-orange-500 bg-orange-50"
                 : "border-gray-200 hover:border-gray-300"
-            }`}
+              }`}
           >
             <span className="text-sm font-medium text-gray-900">{amenity}</span>
           </button>
@@ -918,11 +893,10 @@ const StepPetPolicy = ({ formData, updateFormData, errors }) => (
           key={option.value}
           type="button"
           onClick={() => updateFormData({ petPolicy: option.value })}
-          className={`p-6 border-2 rounded-xl text-left transition-all hover:shadow-md ${
-            formData.petPolicy === option.value
+          className={`p-6 border-2 rounded-xl text-left transition-all hover:shadow-md ${formData.petPolicy === option.value
               ? "border-orange-500 bg-orange-50 shadow-md"
               : "border-gray-200 hover:border-gray-300"
-          }`}
+            }`}
         >
           <div className="flex items-center space-x-4">
             <div className="text-4xl">{option.icon}</div>
@@ -1268,87 +1242,87 @@ export default function ListingForm() {
     }
   };
 
-const handleSubmit = async (isDraft = false) => {
-  if (!user?.id) {
-    toast.error('Please log in to create a listing');
-    navigate('/login');
-    return;
-  }
-
-  setLoading(true);
-  
-  try {
-    // Map your enhanced form fields to the API format
-    const listingData = {
-      propertyType: formData.propertyType,
-      whatOffering: formData.whatOffering,
-      furnishing: formData.furnishing,
-      rentalType: formData.rentalType,
-      registration: formData.registration,
-      
-      totalRooms: formData.totalRooms,
-      roomsOffered: formData.roomsOffered,
-      bathrooms: formData.bathrooms,
-      
-      street: formData.street?.trim(),
-      houseNumber: formData.houseNumber?.trim(),
-      city: formData.city?.trim(),
-      postalCode: formData.postalCode?.trim(),
-      
-      monthlyRent: formData.monthlyRent,
-      deposit: formData.deposit,
-      
-      availabilityDates: formData.availabilityDates,
-      available_from: formData.availabilityDates[0]?.moveIn,
-      available_to: formData.availabilityDates[0]?.moveOut,
-      
-      photos: formData.photos || [],
-      images: formData.photos || [],
-      
-      title: formData.title?.trim(),
-      description: formData.description?.trim(),
-      
-      roommates: formData.roommates || [],
-      amenities: formData.amenities || [],
-      petPolicy: formData.petPolicy || 'No pets',
-      
-      // Status based on draft flag
-      status: isDraft ? 'draft' : 'pending',
-    };
-
-    console.log('Submitting listing:', listingData);
-
-    const result = await listingsAPI.create(listingData, user.id);
-    
-    if (result.error) {
-      console.error('API Error:', result.error);
-      toast.error(result.error.message || 'Failed to create listing');
+  const handleSubmit = async (isDraft = false) => {
+    if (!user?.id) {
+      toast.error('Please log in to create a listing');
+      navigate('/login');
       return;
     }
 
-    console.log('Listing created successfully!', result.data);
-    
-    if (isDraft) {
-      // Saved as draft - just go to my listings
-      toast.success('Listing saved as draft!');
-      navigate('/my-listings');
-    } else {
-      // Publishing - redirect to verification flow
-      toast.success('Listing created! Please verify your identity to publish it.');
-      navigate(`/verify/${result.data.id}`);
+    setLoading(true);
+
+    try {
+      // Map your enhanced form fields to the API format
+      const listingData = {
+        propertyType: formData.propertyType,
+        whatOffering: formData.whatOffering,
+        furnishing: formData.furnishing,
+        rentalType: formData.rentalType,
+        registration: formData.registration,
+
+        totalRooms: formData.totalRooms,
+        roomsOffered: formData.roomsOffered,
+        bathrooms: formData.bathrooms,
+
+        street: formData.street?.trim(),
+        houseNumber: formData.houseNumber?.trim(),
+        city: formData.city?.trim(),
+        postalCode: formData.postalCode?.trim(),
+
+        monthlyRent: formData.monthlyRent,
+        deposit: formData.deposit,
+
+        availabilityDates: formData.availabilityDates,
+        available_from: formData.availabilityDates[0]?.moveIn,
+        available_to: formData.availabilityDates[0]?.moveOut,
+
+        photos: formData.photos || [],
+        images: formData.photos || [],
+
+        title: formData.title?.trim(),
+        description: formData.description?.trim(),
+
+        roommates: formData.roommates || [],
+        amenities: formData.amenities || [],
+        petPolicy: formData.petPolicy || 'No pets',
+
+        // Status based on draft flag
+        status: isDraft ? 'draft' : 'pending',
+      };
+
+      console.log('Submitting listing:', listingData);
+
+      const result = await listingsAPI.create(listingData, user.id);
+
+      if (result.error) {
+        console.error('API Error:', result.error);
+        toast.error(result.error.message || 'Failed to create listing');
+        return;
+      }
+
+      console.log('Listing created successfully!', result.data);
+
+      if (isDraft) {
+        // Saved as draft - just go to my listings
+        toast.success('Listing saved as draft!');
+        navigate('/my-listings');
+      } else {
+        // Publishing - redirect to verification flow
+        toast.success('Listing created! Please verify your identity to publish it.');
+        navigate(`/verify/${result.data.id}`);
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error(error.message || 'An error occurred');
+    } finally {
+      setLoading(false);
     }
-    
-  } catch (error) {
-    console.error('Error:', error);
-    toast.error(error.message || 'An error occurred');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const CurrentStepComponent = steps[currentStep - 1]?.component;
   const progressPercentage = (currentStep / TOTAL_STEPS) * 100;
-  
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1377,11 +1351,10 @@ const handleSubmit = async (isDraft = false) => {
             <button
               onClick={handleBack}
               disabled={currentStep === 1}
-              className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-colors ${
-                currentStep === 1
+              className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-colors ${currentStep === 1
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+                }`}
             >
               <ChevronLeft className="w-5 h-5" />
               <span>Back</span>
@@ -1407,9 +1380,8 @@ const handleSubmit = async (isDraft = false) => {
                 <button
                   onClick={() => handleSubmit(false)}
                   disabled={loading}
-                  className={`flex items-center space-x-2 bg-green-600 text-white px-8 py-3 rounded-xl font-medium transition-colors shadow-md ${
-                    loading ? "bg-green-400 cursor-not-allowed" : "hover:bg-green-700"
-                  }`}
+                  className={`flex items-center space-x-2 bg-green-600 text-white px-8 py-3 rounded-xl font-medium transition-colors shadow-md ${loading ? "bg-green-400 cursor-not-allowed" : "hover:bg-green-700"
+                    }`}
                 >
                   {loading ? (
                     <>

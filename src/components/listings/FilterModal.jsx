@@ -71,7 +71,7 @@ export default function FilterModal({ isOpen, onClose }) {
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px]" onClick={onClose} />
 
-        <div className="relative bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[85vh] overflow-y-auto">
+        <div className="relative bg-white/90 backdrop-blur-md rounded-xl shadow-2xl max-w-md w-full max-h-[85vh] overflow-y-auto">
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <h2 className="text-xl font-semibold text-gray-900">Filters</h2>
@@ -131,8 +131,8 @@ export default function FilterModal({ isOpen, onClose }) {
                     key={bedroom}
                     onClick={() => updateLocalFilter('bedrooms', bedroom)}
                     className={`flex-1 min-w-[42px] px-3 py-2 text-sm rounded-lg border font-medium transition-colors text-center ${localFilters.bedrooms === bedroom
-                        ? 'bg-gray-900 text-white border-gray-900'
-                        : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'
+                      ? 'bg-gray-900 text-white border-gray-900'
+                      : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'
                       }`}
                     data-testid={`bedroom-${bedroom.toLowerCase()}`}
                   >

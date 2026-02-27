@@ -1,11 +1,11 @@
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Home, PlusCircle, MessageSquare, User, LogOut, Menu, ChevronDown, LayoutDashboard, List } from 'lucide-react'
+import {Link, useNavigate, useLocation} from 'react-router-dom'
+import {Home, PlusCircle, MessageSquare, User, LogOut, Menu, ChevronDown, LayoutDashboard, List, HelpCircle} from 'lucide-react'
 import useAuthStore from '../../store/authStore'
-import { useState, useRef, useEffect } from 'react'
-import { toast } from 'sonner'
+import {useState, useRef, useEffect} from 'react'
+import {toast} from 'sonner'
 
 export default function Header() {
-  const { user, signOut } = useAuthStore()
+  const {user, signOut} = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -119,6 +119,14 @@ export default function Header() {
                         <span className="font-medium">List Your Place</span>
                       </Link>
                       <Link
+                        to="/faq"
+                        className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <HelpCircle className="h-4 w-4" />
+                        <span className="font-medium">FAQ</span>
+                      </Link>
+                      <Link
                         to="/profile"
                         className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
                         onClick={() => setDropdownOpen(false)}
@@ -206,6 +214,13 @@ export default function Header() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Listings
+                </Link>
+                <Link
+                  to="/faq"
+                  className="block text-base text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  FAQ
                 </Link>
                 <button
                   onClick={() => {

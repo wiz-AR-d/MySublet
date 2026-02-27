@@ -4,8 +4,8 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Toaster } from "sonner";
+import {useEffect, useState} from "react";
+import {Toaster} from "sonner";
 import useAuthStore from "./store/authStore";
 
 // Layout Components
@@ -31,11 +31,12 @@ import Impressum from "./pages/Impressum";
 import Terms from "./pages/Terms";
 import VerifyIdentity from "./pages/VerifyIdentity";
 import Profile from "./pages/Profile";
+import FAQ from "./pages/FAQ";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminVerifications from "./pages/admin/AdminVerifications";
 
 // Layout wrapper
-function Layout({ children }) {
+function Layout({children}) {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -48,7 +49,7 @@ function Layout({ children }) {
 }
 
 function App() {
-  const { initialize, initialized } = useAuthStore();
+  const {initialize, initialized} = useAuthStore();
   const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
@@ -93,6 +94,7 @@ function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/impressum" element={<Impressum />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/faq" element={<FAQ />} />
 
           {/* Protected Routes - WITH header/footer */}
           <Route

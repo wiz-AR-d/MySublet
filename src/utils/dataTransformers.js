@@ -166,9 +166,10 @@ export function transformListingToSupabase(appListing, userId) {
     // Roommates
     roommates: appListing.roommates || [],
     
-    // Status - IMPORTANT: Listings start as pending until verified
-    status: 'pending',
-    verification_status: 'pending',
+    // Status - Use the status from the form (determined by user's verification status)
+    // If not provided, default to 'pending'
+    status: appListing.status || 'pending',
+    verification_status: appListing.verification_status || 'pending',
     
     // Optional fields
     square_feet: appListing.square_feet || null,

@@ -23,9 +23,8 @@ import { toast } from 'sonner'
 import { ListingVerificationBadge } from '../components/verification/VerificationBadge'
 
 export default function MyListings() {
-  const { user, profile, isSublessor } = useAuthStore()
+  const { user, profile } = useAuthStore()
   const navigate = useNavigate()
-  const userIsSublessor = isSublessor()
 
   // State
   const [filter, setFilter] = useState('all') // all, active, inactive
@@ -43,13 +42,7 @@ export default function MyListings() {
   const needsVerification = profile?.verificationStatus !== 'approved'
   const hasPendingListings = listings?.some(l => l.verificationStatus === 'pending') || false
 
-  // Redirect if not sublessor
-  useEffect(() => {
-    if (!userIsSublessor && !loading) {
-      toast.error('Only sublessors can access this page')
-      navigate('/dashboard')
-    }
-  }, [userIsSublessor, loading, navigate])
+  // Removed role-based access restriction - all users can manage their listings
 
   // Filter listings
   const filteredListings = listings?.filter(listing => {

@@ -95,6 +95,14 @@ export default function Header() {
                         <span className="font-medium">Dashboard</span>
                       </Link>
                       <Link
+                        to="/my-listings"
+                        className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <Home className="h-4 w-4" />
+                        <span className="font-medium">My Listings</span>
+                      </Link>
+                      <Link
                         to="/messages"
                         className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
                         onClick={() => setDropdownOpen(false)}
@@ -200,6 +208,13 @@ export default function Header() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Dashboard
+                </Link>
+                <Link
+                  to="/my-listings"
+                  className="block text-base text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Listings
                 </Link>
                 <Link
                   to="/messages"

@@ -1,8 +1,7 @@
 import {
   BrowserRouter as Router,
   Routes,
-  Route,
-  useLocation,
+  Route
 } from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Toaster} from "sonner";
@@ -16,7 +15,7 @@ import ScrollToTop from "./components/common/ScrollToTop";
 
 // Pages
 import Landing from "./pages/Landing";
-import Home from "./pages/Home";
+// import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Listings from "./pages/Listings";
@@ -49,7 +48,7 @@ function Layout({children}) {
 }
 
 function App() {
-  const {initialize, initialized} = useAuthStore();
+  const {initialize, initialized, user} = useAuthStore();
   const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
@@ -61,6 +60,36 @@ function App() {
 
     initAuth();
   }, []); // Empty dependency array - run once on mount
+
+  // Handle OAuth callback redirect
+  useEffect(() => {
+    // Check if we have OAuth tokens in the URL hash
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token')) {
+      console.log('[App] OAuth callback detected, waiting for session...');
+      
+      // Wait for user to be set by onAuthStateChange
+      const checkAuth = setInterval(() => {
+        if (user) {
+          console.log('[App] User authenticated, redirecting to dashboard');
+          clearInterval(checkAuth);
+          // Clear hash and redirect to dashboard
+          window.location.href = '/dashboard';
+        }
+      }, 100); // Check every 100ms
+
+      // Timeout after 5 seconds
+      setTimeout(() => {
+        clearInterval(checkAuth);
+        if (!user) {
+          console.error('[App] OAuth timeout, redirecting to login');
+          window.location.href = '/login';
+        }
+      }, 5000);
+
+      return () => clearInterval(checkAuth);
+    }
+  }, [user]);
 
   // Show loading screen while initializing
   if (isInitializing || !initialized) {
@@ -83,7 +112,7 @@ function App() {
           <Route path="/" element={<Landing />} />
 
           {/* Public Routes - WITH header/footer */}
-          <Route path="/home" element={<Home />} />
+          {/* <Route path="/home" element={<Home />} /> */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/listings" element={<Listings />} />
@@ -186,7 +215,7 @@ function App() {
           />
         </Routes>
       </Layout>
-      <Toaster position="top-right" richColors />
+      <Toaster position="top-right" richColors duration={2000} />
     </Router>
   );
 }

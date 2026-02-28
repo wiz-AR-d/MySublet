@@ -228,6 +228,8 @@ const useAuthStore = create(
         if (!user) return { error: { message: 'No user logged in' } }
 
         try {
+          console.log('[AuthStore] Updating profile for user:', user.id, 'with updates:', updates);
+          
           const { data, error } = await supabase
             .from('profiles')
             .update(updates)
@@ -235,14 +237,23 @@ const useAuthStore = create(
             .select()
             .single()
 
-          if (!error && data) {
+          if (error) {
+            console.error('[AuthStore] Profile update failed:', error);
+            return { data: null, error };
+          }
+
+          console.log('[AuthStore] Profile update successful, raw data:', data);
+
+          if (data) {
             // Transform the data to camelCase before storing
             const transformedProfile = transformProfile(data)
+            console.log('[AuthStore] Transformed profile:', transformedProfile);
             set({ profile: transformedProfile })
           }
 
-          return { data, error }
+          return { data, error: null }
         } catch (error) {
+          console.error('[AuthStore] Profile update exception:', error);
           return { data: null, error }
         }
       },

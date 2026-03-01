@@ -12,7 +12,8 @@ import {
   CheckCircle,
   Mail,
   Phone,
-  University
+  University,
+  Bookmark
 } from 'lucide-react'
 import useAuthStore from '../store/authStore'
 import { listingsAPI } from '../services/api/listings'
@@ -20,6 +21,7 @@ import { useListingStore } from '../store/listingStore'
 import { convertPrice, getCurrencySymbol } from '../utils/currency'
 import Loading from '../components/common/Loading'
 import { toast } from 'sonner'
+import { useSavedListings } from '../hooks/useSavedListings'
 
 export default function ListingDetail() {
   const { id } = useParams()
@@ -29,6 +31,8 @@ export default function ListingDetail() {
   const [listing, setListing] = useState(null)
   const [loading, setLoading] = useState(true)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const { toggleSave, isListingSaved } = useSavedListings()
+  const [bookmarkLoading, setBookmarkLoading] = useState(false)
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -61,6 +65,24 @@ export default function ListingDetail() {
     }
     
     navigate(`/messages?userId=${listing._supabase.user_id}&listingId=${listing.id}`)
+  }
+
+  const handleBookmark = async () => {
+    if (!user) {
+      toast.error('Please login to save listings')
+      navigate('/login', { state: { from: `/listings/${id}` } })
+      return
+    }
+
+    setBookmarkLoading(true)
+    const result = await toggleSave(listing.id)
+    
+    if (result.success) {
+      toast.success(result.action === 'saved' ? 'Listing saved' : 'Listing removed from bookmarks')
+    } else {
+      toast.error('Failed to update bookmark')
+    }
+    setBookmarkLoading(false)
   }
 
   if (loading) {
@@ -277,13 +299,27 @@ export default function ListingDetail() {
 
               {/* Message Host Button */}
               {!isOwner ? (
-                <button
-                  onClick={handleMessageHost}
-                  className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2 transition-colors"
-                >
-                  <MessageSquare className="h-5 w-5" />
-                  Message Host
-                </button>
+                <div className="space-y-3">
+                  <button
+                    onClick={handleMessageHost}
+                    className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <MessageSquare className="h-5 w-5" />
+                    Message Host
+                  </button>
+                  <button
+                    onClick={handleBookmark}
+                    disabled={bookmarkLoading}
+                    className={`w-full px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-colors border-2 ${
+                      isListingSaved(listing.id)
+                        ? 'border-blue-600 text-blue-600 bg-blue-50 hover:bg-blue-100'
+                        : 'border-gray-300 text-gray-700 hover:border-blue-600 hover:text-blue-600'
+                    }`}
+                  >
+                    <Bookmark className={`h-5 w-5 ${isListingSaved(listing.id) ? 'fill-blue-600' : ''}`} />
+                    {bookmarkLoading ? 'Saving...' : (isListingSaved(listing.id) ? 'Saved' : 'Save Listing')}
+                  </button>
+                </div>
               ) : (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
                   <p className="text-blue-800 text-sm font-medium">This is your listing</p>

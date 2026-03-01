@@ -1,5 +1,5 @@
 import {Link, useNavigate, useLocation} from 'react-router-dom'
-import {Home, PlusCircle, MessageSquare, User, LogOut, Menu, ChevronDown, LayoutDashboard, List, HelpCircle} from 'lucide-react'
+import {Home, PlusCircle, MessageSquare, User, LogOut, Menu, ChevronDown, LayoutDashboard, List, HelpCircle, Bookmark} from 'lucide-react'
 import useAuthStore from '../../store/authStore'
 import {useState, useRef, useEffect} from 'react'
 import {toast} from 'sonner'
@@ -101,6 +101,14 @@ export default function Header() {
                       >
                         <Home className="h-4 w-4" />
                         <span className="font-medium">My Listings</span>
+                      </Link>
+                      <Link
+                        to="/saved-listings"
+                        className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <Bookmark className="h-4 w-4" />
+                        <span className="font-medium">Saved Listings</span>
                       </Link>
                       <Link
                         to="/messages"

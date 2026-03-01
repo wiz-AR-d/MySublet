@@ -1,13 +1,19 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useListingStore } from '../../store/listingStore';
 import { convertPrice, getCurrencySymbol } from '../../utils/currency';
-import { ChevronLeft, ChevronRight, Heart, Bed, Bath, Users } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Bookmark, Bed, Bath, Users } from 'lucide-react';
+import { useSavedListings } from '../../hooks/useSavedListings';
+import useAuthStore from '../../store/authStore';
+import { toast } from 'sonner';
 
 export default function ListingCard({ listing }) {
   const { selectedCurrency } = useListingStore();
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
+  const { toggleSave, isListingSaved } = useSavedListings();
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
   
   
   const nextImage = (e) => {
@@ -32,10 +38,33 @@ export default function ListingCard({ listing }) {
     setCurrentImageIndex(index);
   };
   
-  const toggleLike = (e) => {
+  
+  const handleBookmark = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsLiked(!isLiked);
+    
+    // Check if user is logged in
+    if (!user) {
+      toast.error('Please login to save listings');
+      navigate('/login');
+      return;
+    }
+    
+    // Check if it's user's own listing
+    if (listing._supabase?.user_id === user.id) {
+      toast.error("You can't bookmark your own listing");
+      return;
+    }
+    
+    setBookmarkLoading(true);
+    const result = await toggleSave(listing.id);
+    
+    if (result.success) {
+      toast.success(result.action === 'saved' ? 'Listing saved' : 'Removed from bookmarks');
+    } else {
+      toast.error('Failed to update bookmark');
+    }
+    setBookmarkLoading(false);
   };
   
   return (
@@ -88,15 +117,16 @@ export default function ListingCard({ listing }) {
             </div>
           )}
           
-          {/* Like Button */}
+          {/* Bookmark Button */}
           <button
-            onClick={toggleLike}
-            className="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full flex items-center justify-center shadow-md transition-all duration-200"
-            data-testid="like-btn"
+            onClick={handleBookmark}
+            disabled={bookmarkLoading}
+            className="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full flex items-center justify-center shadow-md transition-all duration-200 disabled:opacity-50"
+            data-testid="bookmark-btn"
           >
-            <Heart 
+            <Bookmark 
               className={`w-4 h-4 transition-colors duration-200 ${
-                isLiked ? 'text-red-500 fill-current' : 'text-gray-700'
+                isListingSaved(listing.id) ? 'text-blue-600 fill-current' : 'text-gray-700'
               }`} 
             />
           </button>

@@ -4,6 +4,7 @@ import {
   Route
 } from "react-router-dom";
 import {useEffect, useState} from "react";
+import { useLocation } from 'react-router-dom'
 import {Toaster} from "sonner";
 import useAuthStore from "./store/authStore";
 
@@ -37,9 +38,11 @@ import AdminVerifications from "./pages/admin/AdminVerifications";
 
 // Layout wrapper
 function Layout({children}) {
+  const location = useLocation();
+  const isLandingPage = location.pathname === '/';
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
+       {!isLandingPage && <Header />}
 
       <main className="grow">{children}</main>
 

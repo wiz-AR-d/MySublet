@@ -95,8 +95,8 @@ export default function MessageList({messages, currentUserId, loading}) {
 
               <div
                 className={`rounded-2xl px-4 py-2 transition-all duration-300 hover:scale-[1.02] ${isSent
-                    ? 'bg-neutral-700 text-white rounded-br-none shadow-lg hover:bg-neutral-600'
-                    : 'bg-neutral-800 text-neutral-100 rounded-bl-none border border-neutral-700 hover:bg-neutral-750'
+                  ? 'bg-neutral-700 text-white rounded-br-none shadow-lg hover:bg-neutral-600'
+                  : 'bg-neutral-800 text-neutral-100 rounded-bl-none border border-neutral-700 hover:bg-neutral-750'
                   }`}
               >
                 <p className="text-sm whitespace-pre-wrap break-words">

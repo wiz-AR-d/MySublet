@@ -1,17 +1,17 @@
 // src/pages/VerifyIdentity.jsx
-import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Shield, Upload, Mail, Camera, CheckCircle, X, Loader } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
-import { verificationAPI } from '../services/api/verification';
-import { toast } from 'sonner';
+import {useState, useRef} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {Shield, Upload, Mail, Camera, CheckCircle, X, Loader} from 'lucide-react';
+import {useAuth} from '../hooks/useAuth';
+import {verificationAPI} from '../services/api/verification';
+import {toast} from 'sonner';
 
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 export default function VerifyIdentity() {
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const {user, profile} = useAuth();
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -28,7 +28,7 @@ export default function VerifyIdentity() {
 
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-      { method: 'POST', body: formData }
+      {method: 'POST', body: formData}
     );
 
     if (!response.ok) throw new Error('Upload failed');
@@ -45,11 +45,11 @@ export default function VerifyIdentity() {
     setUploading(true);
     try {
       const documentUrl = await uploadToCloudinary(idFile);
-      
-      const { data, error } = await verificationAPI.submit(user.id, {
+
+      const {data, error} = await verificationAPI.submit(user.id, {
         method: 'id',
         documentUrl,
-        metadata: { fileName: idFile.name }
+        metadata: {fileName: idFile.name}
       });
 
       if (error) throw error;
@@ -86,10 +86,10 @@ export default function VerifyIdentity() {
 
     setUploading(true);
     try {
-      const { data, error } = await verificationAPI.submit(user.id, {
+      const {data, error} = await verificationAPI.submit(user.id, {
         method: type,
         emailUsed: email,
-        metadata: { domain, verified: false }
+        metadata: {domain, verified: false}
       });
 
       if (error) throw error;
@@ -172,7 +172,7 @@ export default function VerifyIdentity() {
                     onChange={(e) => setIdFile(e.target.files[0])}
                     className="hidden"
                   />
-                  
+
                   {!idFile ? (
                     <button
                       onClick={() => fileInputRef.current?.click()}
@@ -283,10 +283,10 @@ export default function VerifyIdentity() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           {[
-            { icon: '✓', text: 'Safer for you' },
-            { icon: '✓', text: 'Safer for guests' },
-            { icon: '✓', text: 'No scams' },
-            { icon: '✓', text: 'Free verification' }
+            {icon: '✓', text: 'Safer for you'},
+            {icon: '✓', text: 'Safer for guests'},
+            {icon: '✓', text: 'No scams'},
+            {icon: '✓', text: 'Free verification'}
           ].map((badge, idx) => (
             <div key={idx} className="bg-white rounded-xl p-4 shadow text-center">
               <div className="text-2xl mb-2">{badge.icon}</div>

@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useListingStore } from '../store/listingStore';
+// src/pages/Listings.jsx
+import {useState, useEffect, useRef} from 'react';
+import {useListingStore} from '../store/listingStore';
 import SearchBar from '../components/listings/SearchBar';
 import FilterModal from '../components/listings/FilterModal';
 import ListingGrid from '../components/listings/ListingGrid';
@@ -8,7 +9,44 @@ import Pagination from '../components/common/Pagination';
 import CurrencySelector from '../components/listings/CurrencySelector';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
-import { Filter, MapPin } from 'lucide-react';
+import {Filter, MapPin, List, LayoutGrid, Map as MapIcon} from 'lucide-react';
+
+// Scroll Reveal Component
+const ScrollReveal = ({children, delay = 0}) => {
+  const [isVisible, setIsVisible] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          observer.disconnect()
+        }
+      },
+      {threshold: 0.1}
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 transform ${isVisible
+        ? 'opacity-100 translate-y-0'
+        : 'opacity-0 translate-y-10'
+        }`}
+      style={{transitionDelay: `${delay}ms`}}
+    >
+      {children}
+    </div>
+  )
+}
 
 export default function Listings() {
   const {
@@ -27,94 +65,101 @@ export default function Listings() {
   useEffect(() => {
     fetchListings();
   }, [fetchListings]);
-  
+
   const [viewMode, setViewMode] = useState('split'); // 'list', 'map', 'split'
-  
+
   // Calculate pagination
   const totalItems = filteredListings.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentListings = filteredListings.slice(startIndex, endIndex);
-  
+
   if (loading && filteredListings.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loading />
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin-reverse"></div>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error && filteredListings.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <ErrorMessage error={error} onRetry={fetchListings} />
       </div>
     );
   }
-  
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-black via-neutral-900 to-black text-white">
       {/* Header Section */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <div className="bg-neutral-900/60 backdrop-blur-2xl border-b border-white/5 sticky top-0 z-40 transition-all duration-300 shadow-2xl shadow-black/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Search Bar */}
-          <SearchBar />
-          
+          {/* Search Bar Container */}
+          <div className="py-6">
+            <SearchBar />
+          </div>
+
           {/* Controls */}
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between pb-6 gap-4">
+            <div className="flex items-center space-x-4 w-full sm:w-auto justify-between sm:justify-start">
               <button
                 onClick={toggleFilters}
-                className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-center space-x-2 px-5 py-2.5 bg-white/[0.03] border border-white/10 rounded-xl hover:bg-white/[0.08] hover:border-white/20 transition-all hover:scale-105 text-gray-200 group"
                 data-testid="filter-toggle-btn"
               >
-                <Filter className="w-4 h-4" />
-                <span>Filters</span>
+                <Filter className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                <span className="font-medium">Filters</span>
               </button>
-              
-              <div className="text-sm text-gray-600">
-                <span className="font-semibold">{totalItems}</span> listings
+
+              <div className="text-sm text-gray-400">
+                <span className="font-bold text-white">{totalItems}</span> listings
               </div>
             </div>
-            
-            <div className="flex items-center space-x-4">
+
+            <div className="flex items-center space-x-4 w-full sm:w-auto justify-between sm:justify-end">
               {/* Currency Selector */}
               <CurrencySelector />
-              
+
               {/* View Mode Toggle */}
-              <div className="hidden lg:flex bg-gray-100 rounded-lg p-1">
+              <div className="hidden lg:flex bg-black/40 rounded-xl p-1 border border-white/5 backdrop-blur-md">
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                    viewMode === 'list'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${viewMode === 'list'
+                    ? 'bg-white/10 text-white shadow-lg shadow-black/20'
+                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                    }`}
                   data-testid="list-view-btn"
                 >
+                  <List className="w-4 h-4" />
                   List
                 </button>
                 <button
                   onClick={() => setViewMode('split')}
-                  className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                    viewMode === 'split'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${viewMode === 'split'
+                    ? 'bg-white/10 text-white shadow-lg shadow-black/20'
+                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                    }`}
                   data-testid="split-view-btn"
                 >
+                  <LayoutGrid className="w-4 h-4" />
                   Split
                 </button>
                 <button
                   onClick={() => setViewMode('map')}
-                  className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                    viewMode === 'map'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${viewMode === 'map'
+                    ? 'bg-white/10 text-white shadow-lg shadow-black/20'
+                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                    }`}
                   data-testid="map-view-btn"
                 >
+                  <MapIcon className="w-4 h-4" />
                   Map
                 </button>
               </div>
@@ -122,33 +167,33 @@ export default function Listings() {
           </div>
         </div>
       </div>
-      
+
       {/* Filter Modal */}
       <FilterModal isOpen={showFilters} onClose={toggleFilters} />
-      
+
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className={`flex gap-8 ${
-          viewMode === 'list' ? 'flex-col' : 
+        <div className={`flex gap-8 ${viewMode === 'list' ? 'flex-col' :
           viewMode === 'map' ? 'flex-col lg:flex-row-reverse' :
-          'flex-col lg:flex-row'
-        }`}>
-          
-          {/* Listings Grid */}
-          <div className={`${
-            viewMode === 'split' ? 'lg:w-3/5' : 
-            viewMode === 'map' ? 'lg:w-2/5' : 
-            'w-full'
+            'flex-col lg:flex-row'
           }`}>
-            <ListingGrid 
-              listings={currentListings} 
-              viewMode={viewMode}
-            />
-            
+
+          {/* Listings Grid */}
+          <div className={`${viewMode === 'split' ? 'lg:w-3/5' :
+            viewMode === 'map' ? 'lg:w-2/5' :
+              'w-full'
+            }`}>
+            <ScrollReveal>
+              <ListingGrid
+                listings={currentListings}
+                viewMode={viewMode}
+              />
+            </ScrollReveal>
+
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="mt-8 flex justify-center">
-                <Pagination 
+              <div className="mt-12 flex justify-center">
+                <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
                   onPageChange={useListingStore.getState().setCurrentPage}
@@ -156,16 +201,15 @@ export default function Listings() {
               </div>
             )}
           </div>
-          
+
           {/* Map */}
           {(viewMode === 'split' || viewMode === 'map') && (
-            <div className={`${
-              viewMode === 'split' ? 'lg:w-2/5' : 
-              viewMode === 'map' ? 'lg:w-3/5' : 
-              'w-full'
-            } ${viewMode === 'map' ? 'order-first lg:order-last' : ''}`}>
-              <div className="sticky top-32">
-                <ListingMap 
+            <div className={`${viewMode === 'split' ? 'lg:w-2/5' :
+              viewMode === 'map' ? 'lg:w-3/5' :
+                'w-full'
+              } ${viewMode === 'map' ? 'order-first lg:order-last' : ''}`}>
+              <div className="sticky top-48 h-[calc(100vh-14rem)] rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                <ListingMap
                   listings={currentListings}
                   selectedCurrency={selectedCurrency}
                 />
@@ -174,37 +218,15 @@ export default function Listings() {
           )}
         </div>
       </div>
+      <style>{`
+        @keyframes spin-reverse {
+          from { transform: rotate(360deg); }
+          to { transform: rotate(0deg); }
+        }
+        .animate-spin-reverse {
+          animation: spin-reverse 1s linear infinite;
+        }
+      `}</style>
     </div>
   );
 }
-
-
-// export default function Listings() {
-//   return (
-//     <div className="p-8">
-//       <h1 className="text-3xl font-bold mb-6">Sublet Listings</h1>
-//       <p className="text-gray-600 mb-8">Welcome to your sublet listings page!</p>
-      
-//       {/* Simple test cards */}
-//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-//         <div className="bg-white rounded-lg shadow-md p-6">
-//           <h3 className="font-semibold text-lg mb-2">Test Listing 1</h3>
-//           <p className="text-gray-600">$2,500/month</p>
-//           <p className="text-sm text-gray-500">New York, NY</p>
-//         </div>
-        
-//         <div className="bg-white rounded-lg shadow-md p-6">
-//           <h3 className="font-semibold text-lg mb-2">Test Listing 2</h3>
-//           <p className="text-gray-600">$3,200/month</p>
-//           <p className="text-sm text-gray-500">Brooklyn, NY</p>
-//         </div>
-        
-//         <div className="bg-white rounded-lg shadow-md p-6">
-//           <h3 className="font-semibold text-lg mb-2">Test Listing 3</h3>
-//           <p className="text-gray-600">$1,800/month</p>
-//           <p className="text-sm text-gray-500">Queens, NY</p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }

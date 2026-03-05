@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { Instagram, Linkedin, Twitter, Facebook, Home, Mail, MapPin } from 'lucide-react'
+import {Link} from 'react-router-dom'
+import {Instagram, Linkedin, Twitter, Facebook, Home, Mail, MapPin} from 'lucide-react'
 
 export default function Footer() {
   return (
@@ -11,7 +11,7 @@ export default function Footer() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
-          
+
           {/* Brand Section - Takes 2 columns on large screens */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-3 mb-6">
@@ -21,7 +21,7 @@ export default function Footer() {
             <p className="text-gray-400 mb-6 leading-relaxed max-w-sm">
               The safest way to sublease in Germany. Connecting verified users across major cities.
             </p>
-            
+
             {/* Contact Info */}
             <div className="space-y-3 mb-8">
               <a href="mailto:support@mysublet.com" className="flex items-center gap-3 text-gray-400 hover:text-orange-400 transition group">

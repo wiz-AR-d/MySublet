@@ -1,5 +1,5 @@
 import React from "react";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   ArrowRight,
   Shield,
@@ -22,9 +22,8 @@ import Spline from "@splinetool/react-spline";
 import {motion, useScroll, useTransform} from "framer-motion";
 
 export default function Landing() {
-
   return (
-    <div className="min-h-screen bg-black overflow-x-hidden">
+    <div className="min-h-screen bg-white">
       {/* Hero Section with Video Background */}
       <section className="relative h-screen w-full overflow-hidden">
         {/* Video Background */}
@@ -39,138 +38,87 @@ export default function Landing() {
         </video>
 
         {/* Overlay */}
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-black/60" />
 
         {/* Content */}
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-white px-6">
           {/* Logo */}
-          <motion.div
-            initial={{opacity: 0, y: -20}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.8}}
-            className="flex items-center space-x-3 mb-12"
-          >
-            <HomeIcon className="h-10 w-10 text-white" />
-            <h1 className="text-3xl font-light tracking-wide">SubLease</h1>
-          </motion.div>
+          <div className="flex items-center space-x-3 mb-12 opacity-0 animate-fade-in">
+            <HomeIcon className="h-10 w-10 text-orange-400" />
+            <h1 className="text-3xl font-light tracking-wide">MySublet</h1>
+          </div>
 
           {/* Main Headline */}
-          <motion.h2
-            initial={{opacity: 0, y: 30}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.8, delay: 0.2}}
-            className="text-4xl md:text-6xl lg:text-7xl font-light text-center mb-8 max-w-5xl leading-tight"
-          >
+          <h2 className="text-5xl md:text-7xl lg:text-8xl font-light text-center mb-8 max-w-5xl leading-tight opacity-0 animate-fade-in-up animation-delay-200">
             Sublease from real people
             <br />
-            <span className="text-blue-500">with confidence</span>
-          </motion.h2>
+            <span className="text-orange-400">with confidence</span>
+          </h2>
 
           {/* Subheadline */}
-          <motion.p
-            initial={{opacity: 0, y: 20}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.8, delay: 0.4}}
-            className="text-lg md:text-xl text-center mb-16 text-white/90 font-light max-w-2xl"
-          >
-            The safest way to sublease in Germany. Verified, trusted, and scam-free.
-          </motion.p>
+          <p className="text-xl md:text-2xl text-center mb-16 text-white/90 font-light opacity-0 animate-fade-in-up animation-delay-400">
+            The safest way to sublease in Germany
+          </p>
 
           {/* CTA Buttons */}
-          <motion.div
-            initial={{opacity: 0, y: 20}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.8, delay: 0.6}}
-            className="flex flex-col sm:flex-row gap-6"
-          >
+          <div className="flex flex-col sm:flex-row gap-4 opacity-0 animate-fade-in-up animation-delay-600">
             <Link
               to="/listings"
-              className="group bg-blue-600 text-white px-10 py-4 rounded-2xl text-lg font-bold hover:bg-blue-500 transition-all flex items-center gap-3 shadow-2xl shadow-blue-600/20 hover:scale-105 active:scale-95"
+              className="group bg-white text-black px-10 py-4 text-base font-medium hover:bg-gray-100 transition-all flex items-center gap-2"
             >
               Find your home
               <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               to="/create-listing"
-              className="bg-white/5 text-white px-10 py-4 rounded-2xl text-lg font-bold hover:bg-white/10 transition-all border border-white/10 backdrop-blur-xl hover:scale-105 active:scale-95"
+              className="bg-transparent text-white px-10 py-4 text-base font-medium hover:bg-white/10 transition-all border border-white/60"
             >
               List your place
             </Link>
-          </motion.div>
+          </div>
         </div>
 
         {/* Scroll Indicator */}
-        <motion.div
-          animate={{y: [0, 10, 0]}}
-          transition={{duration: 2, repeat: Infinity}}
-          className="absolute bottom-12 left-1/2 transform -translate-x-1/2"
-        >
-          <div className="w-6 h-10 border-2 border-white/20 rounded-full flex justify-center pt-2">
-            <div className="w-1 h-3 bg-white/40 rounded-full"></div>
+        <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 opacity-0 animate-bounce-slow animation-delay-1000">
+          <div className="w-6 h-10 border-2 border-white/40 rounded-full flex justify-center pt-2">
+            <div className="w-1 h-3 bg-white/60 rounded-full animate-scroll-down"></div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
-      {/* Why SubLease Section */}
-      <section className="relative py-32 bg-black text-white overflow-hidden">
+      {/* Why MySublet Section */}
+      <section className="relative py-32 bg-gradient-to-b from-black via-neutral-900 to-black text-white overflow-hidden">
         {/* Animated gradient orbs */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] animate-pulse" style={{animationDelay: '2s'}} />
-        </div>
+        <div className="absolute top-20 left-10 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse-slow animation-delay-1000"></div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
           <div className="max-w-4xl mx-auto text-center">
-            <motion.h2
-              initial={{opacity: 0, scale: 0.9}}
-              whileInView={{opacity: 1, scale: 1}}
-              viewport={{once: true}}
-              className="text-4xl md:text-5xl font-light mb-8 text-white"
-            >
-              Why SubLease?
-            </motion.h2>
-            <motion.div
-              initial={{opacity: 0, y: 20}}
-              whileInView={{opacity: 1, y: 0}}
-              viewport={{once: true}}
-              className="text-xl md:text-2xl font-light text-white mb-12 leading-relaxed"
-            >
+            <h2 className="text-5xl md:text-6xl font-light mb-8 text-white">
+              Why MySublet?
+            </h2>
+            <div className="text-2xl md:text-3xl font-light text-white mb-6 leading-relaxed">
               Real People. Verified. Zero Stress. City-wide reach.
-            </motion.div>
+            </div>
 
             <div className="mt-12 text-left space-y-6 text-lg text-gray-300 leading-relaxed">
-              <motion.p
-                initial={{opacity: 0, x: -20}}
-                whileInView={{opacity: 1, x: 0}}
-                viewport={{once: true}}
-              >
+              <p>
                 Finding a safe sublet in Germany is usually a mess — small
                 WhatsApp groups, building chats, university groups, Facebook
                 chaos, and endless "Is this still available?" messages.
-              </motion.p>
-              <motion.p
-                initial={{opacity: 0, x: -20}}
-                whileInView={{opacity: 1, x: 0}}
-                viewport={{once: true}}
-                transition={{delay: 0.2}}
-                className="font-light text-white text-xl"
-              >
-                SubLease changes everything.
-              </motion.p>
-              <motion.p
-                initial={{opacity: 0, x: -20}}
-                whileInView={{opacity: 1, x: 0}}
-                viewport={{once: true}}
-                transition={{delay: 0.4}}
-              >
+              </p>
+              <p className="font-medium text-white">
+                MySublet changes everything.
+              </p>
+              <p>
                 Instead of limiting your search to your dorm, your building, or
                 a tiny community group…
                 <br />
-                <span className="font-light text-blue-500 text-xl mt-4 block">
+                <span className="font-medium text-orange-400">
                   👉 we connect you with the entire city
-                </span>
-              </motion.p>
-
+                </span>{" "}
+                — verified, trusted, scam-free.
+              </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12">
                 {[
                   {icon: Zap, text: "faster matches", color: "text-orange-400"},
@@ -195,154 +143,363 @@ export default function Landing() {
                   </motion.div>
                 ))}
               </div>
+
+
+              <p className="text-2xl font-light text-white pt-8 text-center">
+                MySublet is the first place where you list once, and the whole
+                city sees it.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+         {/* Journey Section */}
+      <JourneySection />
+
+
+      {/* Key Benefits Section */}
+      <section className="relative py-32 bg-gradient-to-b from-black via-slate-900 to-black overflow-hidden">
+        {/* Animated gradient orbs */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 -left-48 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-3xl"></div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl md:text-6xl font-light mb-6 text-white">
+              Key Benefits
+            </h2>
+            <p className="text-xl text-gray-400 font-light">
+              Everything you need for stress-free subletting
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Benefit 1 */}
+            <div className="group p-8 rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105">
+              <div className="w-16 h-16 mb-6 flex items-center justify-center rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 border border-orange-500/30">
+                <Globe className="w-8 h-8 text-orange-400" />
+              </div>
+              <h3 className="text-2xl font-light text-white mb-4">
+                City-Wide Reach
+              </h3>
+              <p className="text-gray-400 mb-4 leading-relaxed">
+                Stop limiting your search to small groups. Your listing reaches
+                the entire city instantly.
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm text-gray-300">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span>List once, city sees it</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-300">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span>10x faster matches</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-300">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span>No more ping-pong messaging</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Benefit 2 */}
+            <div className="group p-8 rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105">
+              <div className="w-16 h-16 mb-6 flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-500/30">
+                <Shield className="w-8 h-8 text-blue-400" />
+              </div>
+              <h3 className="text-2xl font-light text-white mb-4">
+                100% Verified Users
+              </h3>
+              <p className="text-gray-400 mb-4 leading-relaxed">
+                Manual ID verification for every user. Zero scammers, zero fake
+                profiles.
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm text-gray-300">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span>No anonymous profiles</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-300">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span>No scam listings</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-300">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span>No fake landlords</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Benefit 3 */}
+            <div className="group p-8 rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105">
+              <div className="w-16 h-16 mb-6 flex items-center justify-center rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/20 border border-green-500/30">
+                <CheckCircle className="w-8 h-8 text-green-400" />
+              </div>
+              <h3 className="text-2xl font-light text-white mb-4">
+                Safe & Legal
+              </h3>
+              <p className="text-gray-400 mb-4 leading-relaxed">
+                All listings comply with German subletting regulations.
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm text-gray-300">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span>Landlord permission verified</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-300">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span>Anmeldung information</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-300">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span>Clear rental conditions</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Benefit 4 */}
+            <div className="group p-8 rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105">
+              <div className="w-16 h-16 mb-6 flex items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 border border-purple-500/30">
+                <Users className="w-8 h-8 text-purple-400" />
+              </div>
+              <h3 className="text-2xl font-light text-white mb-4">
+                Built for You
+              </h3>
+              <p className="text-gray-400 mb-4 leading-relaxed">
+                Perfect for students, expats, interns, and short-term renters
+                across Germany.
+              </p>
+              <div className="grid grid-cols-2 gap-2 text-sm text-gray-300">
+                <span>• Erasmus students</span>
+                <span>• Young professionals</span>
+                <span>• Interns</span>
+                <span>• Digital nomads</span>
+              </div>
+            </div>
+
+            {/* Benefit 5 */}
+            <div className="group p-8 rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105">
+              <div className="w-16 h-16 mb-6 flex items-center justify-center rounded-xl bg-gradient-to-br from-pink-500/20 to-pink-600/20 border border-pink-500/30">
+                <Search className="w-8 h-8 text-pink-400" />
+              </div>
+              <h3 className="text-2xl font-light text-white mb-4">
+                Smart Search
+              </h3>
+              <p className="text-gray-400 mb-4 leading-relaxed">
+                Search across major German cities with powerful filters.
+              </p>
+              <div className="grid grid-cols-2 gap-2 text-sm text-gray-300">
+                <span>• Berlin</span>
+                <span>• Munich</span>
+                <span>• Hamburg</span>
+                <span>• Frankfurt</span>
+                <span>• Düsseldorf</span>
+                <span>• & more</span>
+              </div>
+            </div>
+
+            {/* Benefit 6 */}
+            <div className="group p-8 rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105">
+              <div className="w-16 h-16 mb-6 flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/20 to-indigo-600/20 border border-indigo-500/30">
+                <Lock className="w-8 h-8 text-indigo-400" />
+              </div>
+              <h3 className="text-2xl font-light text-white mb-4">
+                Verified Listings
+              </h3>
+              <p className="text-gray-400 mb-4 leading-relaxed">
+                Manual screening removes suspicious prices, fake photos, and
+                scam patterns.
+              </p>
+              <div className="text-sm text-gray-300">
+                If something feels unsafe → we remove it immediately.
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Journey Section */}
-      <JourneySection />
-
-      {/* Key Benefits Section */}
-      <section className="relative py-32 bg-black overflow-hidden">
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-20">
-            <motion.h2
-              initial={{opacity: 0, y: 20}}
-              whileInView={{opacity: 1, y: 0}}
-              viewport={{once: true}}
-              className="text-4xl md:text-5xl font-light mb-6 text-white"
-            >
-              Key Benefits
-            </motion.h2>
-            <motion.p
-              initial={{opacity: 0, y: 20}}
-              whileInView={{opacity: 1, y: 0}}
-              viewport={{once: true}}
-              transition={{delay: 0.2}}
-              className="text-lg text-gray-400 font-light"
-            >
-              Everything you need for stress-free subletting
-            </motion.p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Globe,
-                title: "City-Wide Reach",
-                desc: "Stop limiting your search to small groups. Your listing reaches the entire city instantly.",
-                items: ["List once, city sees it", "10x faster matches", "No more ping-pong messaging"],
-                color: "orange"
-              },
-              {
-                icon: Shield,
-                title: "100% Verified Users",
-                desc: "Manual ID verification for every user. Zero scammers, zero fake profiles.",
-                items: ["No anonymous profiles", "No scam listings", "No fake landlords"],
-                color: "blue"
-              },
-              {
-                icon: CheckCircle,
-                title: "Safe & Legal",
-                desc: "All listings comply with German subletting regulations.",
-                items: ["Landlord permission verified", "Anmeldung information", "Clear rental conditions"],
-                color: "green"
-              },
-              {
-                icon: Users,
-                title: "Built for You",
-                desc: "Perfect for students, expats, interns, and short-term renters across Germany.",
-                items: ["Erasmus students", "Young professionals", "Interns", "Digital nomads"],
-                color: "purple"
-              },
-              {
-                icon: Search,
-                title: "Smart Search",
-                desc: "Search across major German cities with powerful filters.",
-                items: ["Berlin", "Munich", "Hamburg", "Frankfurt"],
-                color: "pink"
-              },
-              {
-                icon: Lock,
-                title: "Verified Listings",
-                desc: "Manual screening removes suspicious prices, fake photos, and scam patterns.",
-                items: ["Manual screening", "Scam detection", "Safety first"],
-                color: "indigo"
-              }
-            ].map((benefit, i) => (
-              <motion.div
-                key={i}
-                initial={{opacity: 0, y: 30}}
-                whileInView={{opacity: 1, y: 0}}
-                viewport={{once: true}}
-                transition={{delay: 0.1 * i}}
-                className="group p-8 rounded-[2.5rem] bg-white/[0.03] backdrop-blur-2xl border border-white/10 hover:bg-white/[0.06] hover:border-white/20 transition-all duration-500"
-              >
-                <div className={`w-14 h-14 mb-8 flex items-center justify-center rounded-2xl bg-${benefit.color}-500/10 border border-${benefit.color}-500/20 group-hover:scale-110 transition-transform duration-500`}>
-                  <benefit.icon className={`w-7 h-7 text-${benefit.color}-400`} />
-                </div>
-                <h3 className="text-xl font-light text-white mb-4">
-                  {benefit.title}
-                </h3>
-                <p className="text-base text-gray-400 mb-8 leading-relaxed font-light">
-                  {benefit.desc}
-                </p>
-                <div className="space-y-3">
-                  {benefit.items.map((item, j) => (
-                    <div key={j} className="flex items-center gap-3 text-sm text-gray-300 font-bold">
-                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                      <span>{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Key Features Section - ADVANCED ANIMATION */}
-      <section className="relative py-32 bg-black overflow-hidden">
+      {/* Key Features Section */}
+      <section className="relative py-32 bg-gradient-to-b from-black to-[#0e0e0e] overflow-hidden">
         <div className="container mx-auto px-6 relative z-10">
-          <motion.h2
-            initial={{opacity: 0, y: 20}}
-            whileInView={{opacity: 1, y: 0}}
-            viewport={{once: true}}
-            className="text-4xl md:text-5xl font-light text-center mb-24 text-white"
-          >
-            Advanced Features
-          </motion.h2>
+          <h2 className="text-5xl md:text-6xl font-light text-center mb-20 text-white">
+            Key Features at a Glance
+          </h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
-            {[
-              {
-                img: "/src/assets/images/house1.jpg",
-                title: "Mandatory Manual Verification",
-                desc: "Every user is verified → zero scammers.",
-                icon: Shield,
-                color: "orange"
-              },
-              {
-                img: "/src/assets/images/house2.jpg",
-                title: "Verified City-Wide Listings",
-                desc: "Don't limit yourself to your building group — reach the entire city.",
-                icon: HomeIcon,
-                color: "cyan"
-              },
-              {
-                img: "/src/assets/images/house3.jpg",
-                title: "Smart Filters",
-                desc: "Find matching sublets quickly without messaging 50 people.",
-                icon: Filter,
-                color: "green"
-              }
-            ].map((feature, i) => {
-              // Create unique scroll progress for each card
-              return (
-                <FeatureCard key={i} feature={feature} index={i} />
-              );
-            })}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {/* Feature 1 */}
+            <div className="group relative rounded-2xl overflow-hidden h-[500px]">
+              <img 
+                src="/src/assets/images/house1.jpg" 
+                alt="Manual Verification"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/90"></div>
+              
+              <div className="relative h-full flex flex-col justify-between p-8">
+                <div>
+                  <div className="w-16 h-16 rounded-full border-4 border-orange-500 flex items-center justify-center mb-4 relative">
+                    <Shield className="w-7 h-7 text-white" />
+                    <div className="absolute -inset-3 border-2 border-dashed border-orange-400 rounded-full animate-spin" style={{ animationDuration: '8s' }}></div>
+                  </div>
+                  <div className="absolute top-8 right-8 opacity-20">
+                    <CheckCircle className="w-16 h-16 text-white" />
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-3">Mandatory Manual Verification</h3>
+                  <p className="text-gray-300 text-lg">Every user is verified → zero scammers.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 2 */}
+            <div className="group relative rounded-2xl overflow-hidden h-[500px]">
+              <img 
+                src="/src/assets/images/house2.jpg" 
+                alt="City-Wide Listings"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/90"></div>
+              
+              <div className="relative h-full flex flex-col justify-between p-8">
+                <div>
+                  <div className="w-16 h-16 rounded-full border-4 border-cyan-500 flex items-center justify-center mb-4 relative">
+                    <HomeIcon className="w-7 h-7 text-white" />
+                    <div className="absolute -inset-3 border-2 border-dashed border-cyan-400 rounded-full animate-spin" style={{ animationDuration: '8s' }}></div>
+                  </div>
+                  <div className="absolute top-8 right-8 space-y-2">
+                    <MapPin className="w-8 h-8 text-cyan-400 opacity-60" />
+                    <MapPin className="w-6 h-6 text-cyan-400 opacity-40 ml-4" />
+                    <MapPin className="w-8 h-8 text-cyan-400 opacity-60 ml-8" />
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-3">Verified City-Wide Listings</h3>
+                  <p className="text-gray-300 text-lg">Don't limit yourself to your building group — reach the entire city.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 3 */}
+            <div className="group relative rounded-2xl overflow-hidden h-[500px]">
+              <img 
+                src="/src/assets/images/house3.jpg" 
+                alt="Smart Filters"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/90"></div>
+              
+              <div className="relative h-full flex flex-col justify-between p-8">
+                <div>
+                  <div className="w-16 h-16 rounded-full border-4 border-green-500 flex items-center justify-center mb-4 relative">
+                    <Filter className="w-7 h-7 text-white" />
+                    <div className="absolute -inset-3 border-2 border-dashed border-green-400 rounded-full animate-spin" style={{ animationDuration: '8s' }}></div>
+                  </div>
+                  <div className="absolute top-8 right-8 opacity-20">
+                    <div className="space-y-2">
+                      <div className="w-12 h-2 bg-white rounded"></div>
+                      <div className="w-16 h-2 bg-white rounded"></div>
+                      <div className="w-10 h-2 bg-white rounded"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-3">Smart Filters</h3>
+                  <p className="text-gray-300 text-lg">Find matching sublets quickly without messaging 50 people.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 4 */}
+            <div className="group relative rounded-2xl overflow-hidden h-[500px]">
+              <img 
+                src="/src/assets/images/house4.jpg" 
+                alt="Secure Messaging"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/90"></div>
+              
+              <div className="relative h-full flex flex-col justify-between p-8">
+                <div>
+                  <div className="w-16 h-16 rounded-full border-4 border-emerald-500 flex items-center justify-center mb-4 relative">
+                    <Lock className="w-7 h-7 text-white" />
+                    <div className="absolute -inset-3 border-2 border-dashed border-emerald-400 rounded-full animate-spin" style={{ animationDuration: '8s' }}></div>
+                  </div>
+                  <div className="absolute top-8 right-8 opacity-20">
+                    <MessageCircle className="w-16 h-16 text-white" />
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-3">Secure In-App Messaging</h3>
+                  <p className="text-gray-300 text-lg">No WhatsApp spam. No outside links.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 5 */}
+            <div className="group relative rounded-2xl overflow-hidden h-[500px]">
+              <img 
+                src="/src/assets/images/house5.jpg" 
+                alt="Host Dashboard"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/90"></div>
+              
+              <div className="relative h-full flex flex-col justify-between p-8">
+                <div>
+                  <div className="w-16 h-16 rounded-full border-4 border-purple-500 flex items-center justify-center mb-4 relative">
+                    <LayoutDashboard className="w-7 h-7 text-white" />
+                    <div className="absolute -inset-3 border-2 border-dashed border-purple-400 rounded-full animate-spin" style={{ animationDuration: '8s' }}></div>
+                  </div>
+                  <div className="absolute top-8 right-8 space-y-1 opacity-30">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-white rounded-sm"></div>
+                      <div className="w-8 h-2 bg-white rounded"></div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-white rounded-sm"></div>
+                      <div className="w-6 h-2 bg-white rounded"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-3">Host Dashboard</h3>
+                  <p className="text-gray-300 text-lg">Manage listing, verifications, and requests easily.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 6 */}
+            <div className="group relative rounded-2xl overflow-hidden h-[500px]">
+              <img 
+                src="/src/assets/images/house6.jpg" 
+                alt="Built for Germany"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/90"></div>
+              
+              <div className="relative h-full flex flex-col justify-between p-8">
+                <div>
+                  <div className="w-16 h-16 rounded-full border-4 border-pink-500 flex items-center justify-center mb-4 relative">
+                    <Globe className="w-7 h-7 text-white" />
+                    <div className="absolute -inset-3 border-2 border-dashed border-pink-400 rounded-full animate-spin" style={{ animationDuration: '8s' }}></div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-3">Built for Germany</h3>
+                  <p className="text-gray-300 text-lg">Local rules, German/English support, real local understanding.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -358,50 +515,120 @@ export default function Landing() {
         </div>
 
         {/* Reduced overlay for better visibility */}
-        <div className="absolute inset-0 bg-black/40 pointer-events-none backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
         {/* Content */}
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-          <motion.h2
-            initial={{opacity: 0, scale: 0.9}}
-            whileInView={{opacity: 1, scale: 1}}
-            viewport={{once: true}}
-            className="text-4xl md:text-5xl font-light mb-8 drop-shadow-2xl"
-          >
-            Ready to find your <span className="text-blue-500">next home?</span>
-          </motion.h2>
-          <motion.p
-            initial={{opacity: 0, y: 20}}
-            whileInView={{opacity: 1, y: 0}}
-            viewport={{once: true}}
-            transition={{delay: 0.2}}
-            className="text-lg font-light mb-12 text-white/90 drop-shadow-lg"
-          >
+          <h2 className="text-5xl md:text-6xl font-light mb-8 drop-shadow-2xl">
+            Ready to find your next home?
+          </h2>
+          <p className="text-xl font-light mb-12 text-white/90 drop-shadow-lg">
             Join thousands of verified users across Germany
-          </motion.p>
-          <motion.div
-            initial={{opacity: 0, y: 20}}
-            whileInView={{opacity: 1, y: 0}}
-            viewport={{once: true}}
-            transition={{delay: 0.4}}
-            className="flex flex-col sm:flex-row gap-6 justify-center"
-          >
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/listings"
-              className="bg-blue-600 text-white px-12 py-5 rounded-2xl text-lg font-black hover:bg-blue-500 transition-all inline-flex items-center justify-center gap-3 shadow-2xl shadow-blue-600/40 hover:scale-105 active:scale-95"
+              className="bg-white text-black px-10 py-4 text-base font-medium hover:bg-gray-100 transition-all inline-flex items-center justify-center gap-2 shadow-2xl"
             >
               Browse Listings
-              <ArrowRight className="h-6 w-6" />
+              <ArrowRight className="h-5 w-5" />
             </Link>
             <Link
               to="/create-listing"
-              className="bg-white/5 text-white px-12 py-5 rounded-2xl text-lg font-black hover:bg-white/10 transition-all border border-white/10 backdrop-blur-xl shadow-xl hover:scale-105 active:scale-95"
+              className="bg-transparent text-white px-10 py-4 text-base font-medium hover:bg-white/20 transition-all border border-white/80 backdrop-blur-sm shadow-xl"
             >
               List Your Place
             </Link>
-          </motion.div>
+          </div>
         </div>
       </section>
+
+      <style>{`
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes fade-in-up {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes bounce-slow {
+          0%, 100% {
+            transform: translateY(0) translateX(-50%);
+            opacity: 0;
+          }
+          50% {
+            transform: translateY(-10px) translateX(-50%);
+            opacity: 1;
+          }
+        }
+        @keyframes scroll-down {
+          0% {
+            opacity: 0;
+            transform: translateY(0);
+          }
+          50% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(12px);
+          }
+        }
+        @keyframes pulse-slow {
+          0%, 100% {
+            opacity: 0.3;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.5;
+            transform: scale(1.1);
+          }
+        }
+        @keyframes grid-move {
+          0% {
+            transform: translateY(0);
+          }
+          100% {
+            transform: translateY(4rem);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 1.2s ease-out forwards;
+        }
+        .animate-fade-in-up {
+          animation: fade-in-up 1.2s ease-out forwards;
+        }
+        .animate-bounce-slow {
+          animation: bounce-slow 3s ease-in-out infinite;
+        }
+        .animate-scroll-down {
+          animation: scroll-down 2s ease-in-out infinite;
+        }
+        .animate-pulse-slow {
+          animation: pulse-slow 8s ease-in-out infinite;
+        }
+        
+        .animation-delay-200 {
+          animation-delay: 0.2s;
+        }
+        .animation-delay-400 {
+          animation-delay: 0.4s;
+        }
+        .animation-delay-600 {
+          animation-delay: 0.6s;
+        }
+        .animation-delay-1000 {
+          animation-delay: 1s;
+        }
+      `}</style>
     </div>
   );
 }
@@ -490,7 +717,10 @@ function JourneyStep({step}) {
   const scale = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
 
   return (
-    <div ref={ref} className={`relative flex items-center ${step.side === "left" ? "justify-start" : "justify-end"} md:px-12`}>
+    <div ref={ref} 
+    className={`relative flex items-center ${
+      step.side === "left" ? "justify-start" : "justify-end"
+      } md:px-12`}>
       {/* Dot on path */}
       <motion.div
         style={{scale: scrollYProgress}}
@@ -499,7 +729,7 @@ function JourneyStep({step}) {
 
       <motion.div
         style={{x, opacity, scale}}
-        className={`w-full md:w-[45%] p-8 rounded-[2rem] bg-white/[0.03] backdrop-blur-2xl border border-white/10 hover:bg-white/[0.05] transition-colors`}
+        className="w-full md:w-[45%] p-8 rounded-[2rem] bg-white/[0.03] backdrop-blur-2xl border border-white/10 hover:bg-white/[0.05] transition-colors"
       >
         <div className="flex items-center gap-6 mb-6">
           <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20">

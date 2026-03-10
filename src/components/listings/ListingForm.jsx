@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../../hooks/useAuth';
 import {listingsAPI} from '../../services/api/listings';
 import {toast} from 'sonner';
-import {ChevronLeft, ChevronRight, Check, Home, Calendar, AlertCircle, CheckCircle, XCircle, Plus, X} from "lucide-react";
+import {ChevronLeft, ChevronRight, Check, Home, Calendar, AlertCircle, CheckCircle, XCircle, Plus, X, Info, MapPin, Euro, Camera, FileText, Sparkles} from "lucide-react";
 import {AMENITIES_LIST as amenitiesList} from '../../constants/amenities';
 import CloudinaryImageUpload from "./CloudinaryImageUpload";
 
@@ -1517,6 +1517,7 @@ export default function ListingForm({autoFillFromProfile = false, allowDraft = f
 
     if (!isDraft && !isVerified) {
       toast.error('You must be verified to publish listings');
+      setLoading(false);
       return;
     }
 
@@ -1569,7 +1570,15 @@ export default function ListingForm({autoFillFromProfile = false, allowDraft = f
       console.log('[ListingForm] isDraft:', isDraft, 'isVerified:', isVerified);
       console.log('[ListingForm] Submitting listing data:', listingData);
 
-      const result = await listingsAPI.create(listingData, user.id);
+      // Add timeout protection
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timed out after 30 seconds')), 30000)
+      );
+
+      const result = await Promise.race([
+        listingsAPI.create(listingData, user.id),
+        timeoutPromise
+      ]);
 
       console.log('[ListingForm] API call completed, result:', result);
 
@@ -1598,6 +1607,7 @@ export default function ListingForm({autoFillFromProfile = false, allowDraft = f
       console.error('[ListingForm] Catch block - Error:', error);
       console.error('[ListingForm] Error stack:', error.stack);
       toast.error(error.message || 'An error occurred while creating the listing');
+      setLoading(false);
     } finally {
       console.log('[ListingForm] Finally block - setting loading to false');
       setLoading(false);

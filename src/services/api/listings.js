@@ -141,6 +141,7 @@ export const listingsAPI = {
       
       const supabaseListing = transformListingToSupabase(listing, userId);
       console.log('Transformed Supabase listing:', supabaseListing);
+      console.log('Transformed listing JSON:', JSON.stringify(supabaseListing, null, 2));
 
       // Validate required fields
       if (!supabaseListing.title) {
@@ -153,18 +154,13 @@ export const listingsAPI = {
         throw new Error('Street and house number are required');
       }
 
+      console.log('About to insert into Supabase...');
+      
+      // First, try a simple insert without the join to avoid potential JOIN timeout issues
       const { data, error } = await supabase
         .from('listings')
         .insert(supabaseListing)
-        .select(`
-          *,
-          profiles!listings_user_id_fkey (
-            id,
-            full_name,
-            avatar_url,
-            email
-          )
-        `)
+        .select()
         .single();
 
       console.log('Supabase insert response:', { data, error });
@@ -183,7 +179,20 @@ export const listingsAPI = {
         throw new Error('No data returned from database');
       }
 
-      const transformedListing = transformListing(data, data.profiles);
+      // Fetch the profile separately if needed
+      let profile = null;
+      try {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url, email')
+          .eq('id', userId)
+          .single();
+        profile = profileData;
+      } catch (profileError) {
+        console.warn('Could not fetch profile:', profileError);
+      }
+
+      const transformedListing = transformListing(data, profile);
       console.log('Final transformed listing:', transformedListing);
 
       return { data: transformedListing, error: null };

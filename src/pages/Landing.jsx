@@ -21,6 +21,15 @@ import {
 import Spline from "@splinetool/react-spline";
 import {motion, useScroll, useTransform} from "framer-motion";
 
+// Asset imports — required for Vite production builds
+import landingVideo from "../assets/videos/landing_page.mp4";
+import house1Img from "../assets/images/house1.jpg";
+import house2Img from "../assets/images/house2.jpg";
+import house3Img from "../assets/images/house3.jpg";
+import house4Img from "../assets/images/house4.jpg";
+import house5Img from "../assets/images/house5.jpg";
+import house6Img from "../assets/images/house6.jpg";
+
 export default function Landing() {
   return (
     <div className="min-h-screen bg-white">
@@ -34,7 +43,7 @@ export default function Landing() {
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
         >
-          <source src="/src/assets/videos/landing_page.mp4" type="video/mp4" />
+          <source src={landingVideo} type="video/mp4" />
         </video>
 
         {/* Overlay */}
@@ -332,7 +341,7 @@ export default function Landing() {
             {/* Feature 1 */}
             <div className="group relative rounded-2xl overflow-hidden h-[500px]">
               <img 
-                src="/src/assets/images/house1.jpg" 
+                src={house1Img} 
                 alt="Manual Verification"
                 className="absolute inset-0 w-full h-full object-cover"
               />
@@ -359,7 +368,7 @@ export default function Landing() {
             {/* Feature 2 */}
             <div className="group relative rounded-2xl overflow-hidden h-[500px]">
               <img 
-                src="/src/assets/images/house2.jpg" 
+                src={house2Img} 
                 alt="City-Wide Listings"
                 className="absolute inset-0 w-full h-full object-cover"
               />
@@ -388,7 +397,7 @@ export default function Landing() {
             {/* Feature 3 */}
             <div className="group relative rounded-2xl overflow-hidden h-[500px]">
               <img 
-                src="/src/assets/images/house3.jpg" 
+                src={house3Img} 
                 alt="Smart Filters"
                 className="absolute inset-0 w-full h-full object-cover"
               />
@@ -419,7 +428,7 @@ export default function Landing() {
             {/* Feature 4 */}
             <div className="group relative rounded-2xl overflow-hidden h-[500px]">
               <img 
-                src="/src/assets/images/house4.jpg" 
+                src={house4Img} 
                 alt="Secure Messaging"
                 className="absolute inset-0 w-full h-full object-cover"
               />
@@ -446,7 +455,7 @@ export default function Landing() {
             {/* Feature 5 */}
             <div className="group relative rounded-2xl overflow-hidden h-[500px]">
               <img 
-                src="/src/assets/images/house5.jpg" 
+                src={house5Img} 
                 alt="Host Dashboard"
                 className="absolute inset-0 w-full h-full object-cover"
               />
@@ -480,7 +489,7 @@ export default function Landing() {
             {/* Feature 6 */}
             <div className="group relative rounded-2xl overflow-hidden h-[500px]">
               <img 
-                src="/src/assets/images/house6.jpg" 
+                src={house6Img} 
                 alt="Built for Germany"
                 className="absolute inset-0 w-full h-full object-cover"
               />

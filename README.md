@@ -1,4 +1,4 @@
-# LiveOhana
+# MySublet
 
 Finding temporary housing, standard subleasing, and short-term rentals is often a stressful and fragmented experience. Students, young professionals, and digital nomads frequently rely on scattered social media groups or disjointed community boards to find living spaces. However, most of these platforms lack built-in security, streamlined communication, and property verification.
 
@@ -27,7 +27,7 @@ Without a robust subleasing platform:
 - Users drop off due to poor UI/UX for property discovery.
 
 💡 **The Solution**
-We designed LiveOhana, a comprehensive real estate and subleasing application that connects verified listers with prospective tenants in a secure, intuitive, and map-centric environment.
+We designed MySublet, a comprehensive real estate and subleasing application that connects verified listers with prospective tenants in a secure, intuitive, and map-centric environment.
 
 Key features of our solution:
 

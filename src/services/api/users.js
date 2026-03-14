@@ -40,7 +40,7 @@ export const usersAPI = {
         .update(updates)
         .eq('id', userId)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -82,7 +82,7 @@ export const usersAPI = {
         .update({ avatar_url: publicUrl })
         .eq('id', userId)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

@@ -18,9 +18,9 @@ export default function AuthCallback() {
       try {
         // Get the current session
         const { data: { session }, error } = await supabase.auth.getSession()
-        
+
         if (error) throw error
-        
+
         if (session?.user) {
           console.log('OAuth login successful, redirecting to dashboard')
           toast.success('Logged in successfully!')

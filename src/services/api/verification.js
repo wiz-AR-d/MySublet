@@ -22,7 +22,7 @@ export const verificationAPI = {
           status: 'pending'
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -54,7 +54,7 @@ export const verificationAPI = {
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows
 
@@ -122,7 +122,7 @@ export const verificationAPI = {
         })
         .eq('id', verificationId)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -152,7 +152,7 @@ export const verificationAPI = {
         })
         .eq('id', verificationId)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

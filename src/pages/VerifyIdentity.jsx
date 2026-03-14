@@ -1,18 +1,19 @@
 // src/pages/VerifyIdentity.jsx
-import {useState, useRef} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {Shield, Upload, Mail, Camera, CheckCircle, X, Loader, ArrowLeft} from 'lucide-react';
-import {useAuth} from '../hooks/useAuth';
-import {verificationAPI} from '../services/api/verification';
-import {toast} from 'sonner';
-import {motion, AnimatePresence} from 'framer-motion';
+import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Shield, Upload, Mail, Camera, CheckCircle, X, Loader, ArrowLeft, AlertCircle } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
+import { verificationAPI } from '../services/api/verification';
+import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 export default function VerifyIdentity() {
   const navigate = useNavigate();
-  const {user} = useAuth();
+  const { user, profile } = useAuth();
+  const isPending = profile?.verificationStatus === 'pending';
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -29,7 +30,7 @@ export default function VerifyIdentity() {
 
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-      {method: 'POST', body: formData}
+      { method: 'POST', body: formData }
     );
 
     if (!response.ok) throw new Error('Upload failed');
@@ -47,10 +48,10 @@ export default function VerifyIdentity() {
     try {
       const documentUrl = await uploadToCloudinary(idFile);
 
-      const {error} = await verificationAPI.submit(user.id, {
+      const { error } = await verificationAPI.submit(user.id, {
         method: 'id',
         documentUrl,
-        metadata: {fileName: idFile.name}
+        metadata: { fileName: idFile.name }
       });
 
       if (error) throw error;
@@ -87,10 +88,10 @@ export default function VerifyIdentity() {
 
     setUploading(true);
     try {
-      const {error} = await verificationAPI.submit(user.id, {
+      const { error } = await verificationAPI.submit(user.id, {
         method: type,
         emailUsed: email,
-        metadata: {domain, verified: false}
+        metadata: { domain, verified: false }
       });
 
       if (error) throw error;
@@ -109,8 +110,8 @@ export default function VerifyIdentity() {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-4">
         <motion.div
-          initial={{opacity: 0, scale: 0.9}}
-          animate={{opacity: 1, scale: 1}}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 md:p-12 text-center shadow-2xl"
         >
           <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-emerald-500/20">
@@ -128,6 +129,17 @@ export default function VerifyIdentity() {
               className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 hover:scale-[1.02] active:scale-[0.98]"
             >
               Go to dashboard
+            </button>
+            <button
+              onClick={() => {
+                setSubmitted(false);
+                setSelectedMethod(null);
+                setIdFile(null);
+                setEmail('');
+              }}
+              className="w-full bg-white/5 text-white py-4 rounded-2xl font-bold hover:bg-white/10 transition-all border border-white/10 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              Submit another verification
             </button>
             <button
               onClick={() => navigate('/my-listings')}
@@ -148,9 +160,9 @@ export default function VerifyIdentity() {
           {selectedMethod ? (
             <motion.div
               key="method-form"
-              initial={{opacity: 0, x: 20}}
-              animate={{opacity: 1, x: 0}}
-              exit={{opacity: 0, x: -20}}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
               className="max-w-2xl mx-auto"
             >
               <button
@@ -277,14 +289,14 @@ export default function VerifyIdentity() {
           ) : (
             <motion.div
               key="selection-screen"
-              initial={{opacity: 0, y: 20}}
-              animate={{opacity: 1, y: 0}}
-              exit={{opacity: 0, y: -20}}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
             >
               <div className="text-center mb-16">
                 <motion.div
-                  initial={{scale: 0.8, opacity: 0}}
-                  animate={{scale: 1, opacity: 1}}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
                   className="flex items-center justify-center mb-8"
                 >
                   <div className="w-24 h-24 bg-blue-600 rounded-[2rem] flex items-center justify-center shadow-2xl shadow-blue-600/40 rotate-12">
@@ -299,16 +311,16 @@ export default function VerifyIdentity() {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
                 {[
-                  {text: 'Safer for you', color: 'text-blue-400'},
-                  {text: 'Safer for guests', color: 'text-emerald-400'},
-                  {text: 'No scams', color: 'text-purple-400'},
-                  {text: 'Free verification', color: 'text-orange-400'}
+                  { text: 'Safer for you', color: 'text-blue-400' },
+                  { text: 'Safer for guests', color: 'text-emerald-400' },
+                  { text: 'No scams', color: 'text-purple-400' },
+                  { text: 'Free verification', color: 'text-orange-400' }
                 ].map((badge, idx) => (
                   <motion.div
                     key={idx}
-                    initial={{opacity: 0, y: 10}}
-                    animate={{opacity: 1, y: 0}}
-                    transition={{delay: idx * 0.1}}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1 }}
                     className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-4 text-center"
                   >
                     <CheckCircle className={`w-5 h-5 mx-auto mb-2 ${badge.color}`} />
@@ -316,6 +328,18 @@ export default function VerifyIdentity() {
                   </motion.div>
                 ))}
               </div>
+
+              {isPending && (
+                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-6 mb-12 flex items-start text-left">
+                  <AlertCircle className="w-6 h-6 text-yellow-500 mr-4 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-yellow-500 font-medium text-lg mb-1">Verification in progress</h3>
+                    <p className="text-yellow-500/80 font-light leading-relaxed">
+                      We're currently reviewing your recent submission. You can wait for it to be processed, or submit another verification method below if you prefer.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <h2 className="text-2xl font-light text-white mb-8 text-center">Choose how you want to verify</h2>
 

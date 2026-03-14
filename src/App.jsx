@@ -3,9 +3,9 @@ import {
   Routes,
   Route
 } from "react-router-dom";
-import {useEffect, useState} from "react";
-import {useLocation} from 'react-router-dom'
-import {Toaster} from "sonner";
+import { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom'
+import { Toaster } from "sonner";
 import useAuthStore from "./store/authStore";
 
 // Layout Components
@@ -37,7 +37,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminVerifications from "./pages/admin/AdminVerifications";
 
 // Layout wrapper
-function Layout({children}) {
+function Layout({ children }) {
   const location = useLocation();
   const isLandingPage = location.pathname === '/';
   return (
@@ -52,7 +52,7 @@ function Layout({children}) {
 }
 
 function App() {
-  const {initialize, initialized, user} = useAuthStore();
+  const { initialize, initialized, user } = useAuthStore();
   const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {

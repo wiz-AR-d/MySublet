@@ -1,15 +1,15 @@
 // src/pages/Profile.jsx
-import {useState, useEffect} from 'react';
-import {useNavigate, useLocation} from 'react-router-dom';
-import {User, Mail, Phone, Building2, GraduationCap, Instagram, Linkedin, Shield, CheckCircle, Clock, XCircle, Edit2, Save, AlertCircle, Camera, Upload} from 'lucide-react';
-import {useAuth} from '../hooks/useAuth';
-import {verificationAPI} from '../services/api/verification';
-import {toast} from 'sonner';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { User, Mail, Phone, Building2, GraduationCap, Instagram, Linkedin, Shield, CheckCircle, Clock, XCircle, Edit2, Save, AlertCircle, Camera, Upload } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
+import { verificationAPI } from '../services/api/verification';
+import { toast } from 'sonner';
 
 export default function Profile() {
   const navigate = useNavigate();
   const location = useLocation();
-  const {user, profile, updateProfile} = useAuth();
+  const { user, profile, updateProfile } = useAuth();
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
@@ -64,7 +64,7 @@ export default function Profile() {
   }, [highlightFields]);
 
   const fetchVerificationStatus = async () => {
-    const {data} = await verificationAPI.getStatus(user.id);
+    const { data } = await verificationAPI.getStatus(user.id);
     setVerification(data);
   };
 
@@ -116,7 +116,7 @@ export default function Profile() {
     setAvatarUploading(true);
     try {
       const url = await uploadToCloudinary(file);
-      setFormData(prev => ({...prev, avatar_url: url}));
+      setFormData(prev => ({ ...prev, avatar_url: url }));
       toast.success('Avatar uploaded successfully!');
     } catch (error) {
       console.error('Avatar upload error:', error);
@@ -141,7 +141,7 @@ export default function Profile() {
     setLoading(true);
     try {
       console.log('[Profile] Updating profile with data:', formData);
-      const {data, error} = await updateProfile(formData);
+      const { data, error } = await updateProfile(formData);
 
       if (error) {
         console.error('[Profile] Update error:', error);
@@ -352,7 +352,7 @@ export default function Profile() {
                     Get verified in under 1 minute to start hosting on MySublet.
                   </p>
                   <button
-                    onClick={() => navigate('/verify-identity', {state: {returnTo: returnTo || '/create-listing'}})}
+                    onClick={() => navigate('/verify-identity', { state: { returnTo: returnTo || '/create-listing' } })}
                     className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20"
                   >
                     Start Verification
@@ -394,7 +394,7 @@ export default function Profile() {
                     {verification.rejection_reason || 'We were unable to verify your identity with the provided information.'}
                   </p>
                   <button
-                    onClick={() => navigate('/verify-identity', {state: {returnTo: returnTo || '/create-listing'}})}
+                    onClick={() => navigate('/verify-identity', { state: { returnTo: returnTo || '/create-listing' } })}
                     className="bg-red-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-red-500 transition-all shadow-lg shadow-red-600/20"
                   >
                     Try Again
@@ -422,7 +422,7 @@ export default function Profile() {
         </div>
 
         {/* Profile Details Card */}
-        <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-2xl p-8 md:p-12 animate-fade-in-up" style={{animationDelay: '100ms'}}>
+        <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-2xl p-8 md:p-12 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
           <h2 className="text-2xl font-black text-white mb-10 tracking-tight flex items-center gap-3">
             <User className="w-6 h-6 text-blue-400" />
             Profile Information
@@ -438,7 +438,7 @@ export default function Profile() {
                 <input
                   type="text"
                   value={formData.full_name}
-                  onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                   className="w-full px-5 py-4 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none"
                   placeholder="Enter your full name"
                 />
@@ -456,7 +456,7 @@ export default function Profile() {
                 <input
                   type="tel"
                   value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="w-full px-5 py-4 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none"
                   placeholder="+31 6 12345678"
                 />
@@ -475,7 +475,7 @@ export default function Profile() {
                 <input
                   type="text"
                   value={formData.university}
-                  onChange={(e) => setFormData({...formData, university: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, university: e.target.value })}
                   className="w-full px-5 py-4 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none"
                   placeholder="e.g., University of Amsterdam"
                 />
@@ -494,7 +494,7 @@ export default function Profile() {
                 <input
                   type="text"
                   value={formData.company}
-                  onChange={(e) => setFormData({...formData, company: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                   className="w-full px-5 py-4 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none"
                   placeholder="e.g., Google"
                 />
@@ -513,7 +513,7 @@ export default function Profile() {
                 <input
                   type="text"
                   value={formData.instagram}
-                  onChange={(e) => setFormData({...formData, instagram: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
                   className="w-full px-5 py-4 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none"
                   placeholder="@username"
                 />
@@ -532,7 +532,7 @@ export default function Profile() {
                 <input
                   type="text"
                   value={formData.linkedin}
-                  onChange={(e) => setFormData({...formData, linkedin: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
                   className="w-full px-5 py-4 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none"
                   placeholder="linkedin.com/in/username"
                 />
@@ -549,7 +549,7 @@ export default function Profile() {
               {editing ? (
                 <textarea
                   value={formData.bio}
-                  onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                   rows={4}
                   className="w-full px-5 py-4 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none resize-none"
                   placeholder="Tell others about yourself..."

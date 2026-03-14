@@ -1,16 +1,22 @@
-import {useState} from 'react'
-import {Link, useNavigate} from 'react-router-dom'
-import {Mail, Lock, Chrome} from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Mail, Lock, Chrome } from 'lucide-react'
 import useAuthStore from '../store/authStore'
-import {toast} from 'sonner'
+import { toast } from 'sonner'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const {signIn, signInWithGoogle} = useAuthStore()
+  const { user, signIn, signInWithGoogle } = useAuthStore()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard')
+    }
+  }, [user, navigate])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -23,7 +29,7 @@ export default function Login() {
     setLoading(true)
 
     try {
-      const {error} = await signIn(email, password)
+      const { error } = await signIn(email, password)
 
       if (error) {
         toast.error(error.message || 'Login failed. Please check your credentials.')
@@ -46,7 +52,7 @@ export default function Login() {
   }
 
   const handleGoogleSignIn = async () => {
-    const {error} = await signInWithGoogle()
+    const { error } = await signInWithGoogle()
     if (error) {
       toast.error(error.message)
     }
@@ -84,7 +90,7 @@ export default function Login() {
 
           {/* Email/Password Form */}
           <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-            <div className="animate-fade-in-up" style={{animationDelay: '100ms'}}>
+            <div className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">
                 Email
               </label>
@@ -101,7 +107,7 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="animate-fade-in-up" style={{animationDelay: '200ms'}}>
+            <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">
                 Password
               </label>
@@ -118,7 +124,7 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-sm animate-fade-in-up" style={{animationDelay: '300ms'}}>
+            <div className="flex items-center justify-between text-sm animate-fade-in-up" style={{ animationDelay: '300ms' }}>
               <label className="flex items-center cursor-pointer group">
                 <div className="relative flex items-center">
                   <input type="checkbox" className="peer h-5 w-5 opacity-0 absolute cursor-pointer" />
@@ -138,7 +144,7 @@ export default function Login() {
               type="submit"
               disabled={loading}
               className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50 disabled:cursor-not-allowed animate-fade-in-up"
-              style={{animationDelay: '400ms'}}
+              style={{ animationDelay: '400ms' }}
             >
               {loading ? (
                 <div className="flex items-center justify-center gap-2">
@@ -150,7 +156,7 @@ export default function Login() {
           </form>
 
           {/* Sign Up Link */}
-          <p className="mt-10 text-center text-sm text-gray-500 relative z-10 animate-fade-in" style={{animationDelay: '500ms'}}>
+          <p className="mt-10 text-center text-sm text-gray-500 relative z-10 animate-fade-in" style={{ animationDelay: '500ms' }}>
             Don't have an account?{' '}
             <Link to="/signup" className="text-blue-400 hover:text-blue-300 font-black transition-colors">
               Sign up

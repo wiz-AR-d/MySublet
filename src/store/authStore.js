@@ -13,6 +13,41 @@ const useAuthStore = create(
       initialized: false,
 
       // Initialize auth - called once on app mount
+      // Helper: ensure a profile row exists for the given auth session user
+      // This handles Google OAuth users who don't get a profile row from a trigger
+      _ensureProfile: async (authUser) => {
+        if (!authUser) return null
+        const { data: existing } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', authUser.id)
+          .maybeSingle()
+
+        if (existing) return existing
+
+        // No profile row — create one from auth metadata
+        console.log('[Auth] No profile found, creating one for:', authUser.email)
+        const meta = authUser.user_metadata || {}
+        const { data: created, error: createError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: authUser.id,
+            email: authUser.email,
+            full_name: meta.full_name || meta.name || '',
+            avatar_url: meta.avatar_url || meta.picture || '',
+            user_role: 'sublessee',
+          }, { onConflict: 'id' })
+          .select('*')
+          .maybeSingle()
+
+        if (createError) {
+          console.error('[Auth] Error creating profile:', createError)
+          return null
+        }
+        return created
+      },
+
+      // Initialize auth - called once on app mount
       initialize: async () => {
         if (!isSupabaseConfigured || !supabase) {
           console.warn('Supabase is not configured. Skipping auth initialization.')
@@ -39,18 +74,9 @@ const useAuthStore = create(
           }
 
           if (session?.user) {
-            console.log('[Auth] Session found, fetching profile...')
+            console.log('[Auth] Session found, fetching/creating profile...')
 
-            // Fetch user profile
-            const { data: profile, error: profileError } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', session.user.id)
-              .single()
-
-            if (profileError) {
-              console.error('[Auth] Error fetching profile:', profileError)
-            }
+            const profile = await get()._ensureProfile(session.user)
 
             set({
               user: session.user,
@@ -78,12 +104,7 @@ const useAuthStore = create(
               console.log('[Auth] State change:', event)
 
               if (session?.user) {
-                // Fetch updated profile
-                const { data: profile } = await supabase
-                  .from('profiles')
-                  .select('*')
-                  .eq('id', session.user.id)
-                  .single()
+                const profile = await get()._ensureProfile(session.user)
 
                 set({
                   user: session.user,
@@ -170,7 +191,7 @@ const useAuthStore = create(
               .from('profiles')
               .select('*')
               .eq('id', data.user.id)
-              .single()
+              .maybeSingle()
 
             if (profileError) {
               console.error('[Auth] Error fetching profile after sign in:', profileError)
@@ -228,30 +249,44 @@ const useAuthStore = create(
         if (!user) return { error: { message: 'No user logged in' } }
 
         try {
-          console.log('[AuthStore] Updating profile for user:', user.id, 'with updates:', updates);
-          
-          const { data, error } = await supabase
+          // Only send known valid columns to Supabase to avoid "column does not exist" errors
+          const ALLOWED_PROFILE_FIELDS = [
+            'full_name', 'phone', 'bio', 'university', 'company',
+            'instagram', 'linkedin', 'avatar_url', 'user_role'
+          ]
+          const sanitizedUpdates = Object.fromEntries(
+            Object.entries(updates).filter(([key]) => ALLOWED_PROFILE_FIELDS.includes(key))
+          )
+
+          // Preserve existing user_role so upsert INSERT path doesn't fail
+          const existingRole = get().profile?.userRole || 'user'
+          const { error } = await supabase
             .from('profiles')
-            .update(updates)
-            .eq('id', user.id)
-            .select()
-            .single()
+            .upsert(
+              { id: user.id, email: user.email, user_role: existingRole, ...sanitizedUpdates },
+              { onConflict: 'id' }
+            )
 
           if (error) {
-            console.error('[AuthStore] Profile update failed:', error);
+            console.error('[AuthStore] Profile upsert failed:', error);
             return { data: null, error };
           }
 
-          console.log('[AuthStore] Profile update successful, raw data:', data);
+          // After a successful upsert, re-fetch the profile fresh from DB
+          const { data: freshProfile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .maybeSingle()
 
-          if (data) {
-            // Transform the data to camelCase before storing
-            const transformedProfile = transformProfile(data)
-            console.log('[AuthStore] Transformed profile:', transformedProfile);
+          console.log('[AuthStore] Fresh profile after upsert:', freshProfile);
+
+          if (freshProfile) {
+            const transformedProfile = transformProfile(freshProfile)
             set({ profile: transformedProfile })
           }
 
-          return { data, error: null }
+          return { data: freshProfile, error: null }
         } catch (error) {
           console.error('[AuthStore] Profile update exception:', error);
           return { data: null, error }

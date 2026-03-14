@@ -1,13 +1,13 @@
 // src/components/profile/ProfileCompletionCheck.jsx
-import {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {useAuth} from '../../hooks/useAuth';
-import {usersAPI} from '../../services/api/users';
-import {AlertCircle, CheckCircle, User, Phone, FileText} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
+import { usersAPI } from '../../services/api/users';
+import { AlertCircle, CheckCircle, User, Phone, FileText } from 'lucide-react';
 
-export default function ProfileCompletionCheck({onComplete, onIncomplete}) {
+export default function ProfileCompletionCheck({ onComplete, onIncomplete }) {
   const navigate = useNavigate();
-  const {user, profile} = useAuth();
+  const { user, profile } = useAuth();
   const [loading, setLoading] = useState(true);
   const [missingFields, setMissingFields] = useState([]);
 
@@ -161,7 +161,7 @@ export default function ProfileCompletionCheck({onComplete, onIncomplete}) {
               e.stopPropagation();
               console.log('[ProfileCompletionCheck] Navigate button clicked');
 
-              const serializableFields = missingFields.map(({field, label, description}) => ({
+              const serializableFields = missingFields.map(({ field, label, description }) => ({
                 field,
                 label,
                 description

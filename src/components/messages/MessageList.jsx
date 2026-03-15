@@ -3,10 +3,19 @@ import {format, formatDistanceToNow, isSameDay} from 'date-fns'
 
 export default function MessageList({messages, currentUserId, loading}) {
   const messagesEndRef = useRef(null)
+  const containerRef = useRef(null)
 
-  // Auto-scroll to bottom when messages change
+  // Scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({behavior: 'smooth'})
+    // We use a small timeout to ensure the DOM has updated and painted the new message
+    setTimeout(() => {
+      if (containerRef.current) {
+        containerRef.current.scrollTo({
+          top: containerRef.current.scrollHeight,
+          behavior: 'smooth'
+        })
+      }
+    }, 50)
   }, [messages])
 
   if (loading && (!messages || messages.length === 0)) {
@@ -52,7 +61,7 @@ export default function MessageList({messages, currentUserId, loading}) {
   })
 
   return (
-    <div className="p-4 space-y-4">
+    <div ref={containerRef} className="p-4 space-y-4 h-full overflow-y-auto">
       {groupedMessages.map((item, index) => {
         if (item.type === 'date') {
           return (
@@ -115,7 +124,7 @@ export default function MessageList({messages, currentUserId, loading}) {
       })}
 
       {/* Auto-scroll anchor */}
-      <div ref={messagesEndRef} />
+      <div ref={messagesEndRef} className="h-1 w-full" />
 
       <style jsx>{`
         @keyframes fade-in-smooth {

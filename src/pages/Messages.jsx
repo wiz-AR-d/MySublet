@@ -93,7 +93,7 @@ export default function Messages() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-stagger-in" style={{height: 'calc(100vh - 250px)'}}>
           {/* Left Panel: Conversations */}
-          <div className={`lg:col-span-1 ${showConversations ? 'block' : 'hidden lg:block'}`}>
+          <div className={`lg:col-span-1 min-h-0 ${showConversations ? 'block' : 'hidden lg:block'}`}>
             <ConversationList
               conversations={conversations}
               selectedConversation={selectedConversation}
@@ -103,7 +103,7 @@ export default function Messages() {
           </div>
 
           {/* Right Panel: Message Thread */}
-          <div className={`lg:col-span-2 ${!showConversations ? 'block' : 'hidden lg:block'}`}>
+          <div className={`lg:col-span-2 min-h-0 ${!showConversations ? 'block' : 'hidden lg:block'}`}>
             {selectedConversation ? (
               <MessageThread
                 conversation={selectedConversation}

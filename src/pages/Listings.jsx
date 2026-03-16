@@ -6,7 +6,6 @@ import FilterModal from '../components/listings/FilterModal';
 import ListingGrid from '../components/listings/ListingGrid';
 import ListingMap from '../components/listings/ListingMap';
 import Pagination from '../components/common/Pagination';
-import CurrencySelector from '../components/listings/CurrencySelector';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
 import {Filter, MapPin, List, LayoutGrid, Map as MapIcon} from 'lucide-react';
@@ -99,15 +98,15 @@ export default function Listings() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-neutral-900 to-black text-white">
       {/* Header Section */}
-      <div className="bg-neutral-900/60 backdrop-blur-2xl border-b border-white/5 sticky top-0 z-40 transition-all duration-300 shadow-2xl shadow-black/50">
+      <div className="bg-neutral-900/60 backdrop-blur-2xl border-b border-white/5 sticky top-[65px] z-40 transition-all duration-300 shadow-2xl shadow-black/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Search Bar Container */}
-          <div className="py-6">
+          <div className="py-2">
             <SearchBar />
           </div>
 
           {/* Controls */}
-          <div className="flex flex-col sm:flex-row items-center justify-between pb-6 gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between pb-3 gap-2">
             <div className="flex items-center space-x-4 w-full sm:w-auto justify-between sm:justify-start">
               <button
                 onClick={toggleFilters}
@@ -124,9 +123,6 @@ export default function Listings() {
             </div>
 
             <div className="flex items-center space-x-4 w-full sm:w-auto justify-between sm:justify-end">
-              {/* Currency Selector */}
-              <CurrencySelector />
-
               {/* View Mode Toggle */}
               <div className="hidden lg:flex bg-black/40 rounded-xl p-1 border border-white/5 backdrop-blur-md">
                 <button

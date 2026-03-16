@@ -97,12 +97,12 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="py-2">
-      <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-2">
+    <div className="py-1">
+      <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-1">
         <div className="flex flex-col lg:flex-row lg:items-center lg:divide-x lg:divide-white/10">
 
           {/* Location / Search */}
-          <div className="flex-1 p-4">
+          <div className="flex-1 p-2">
             <div className="flex items-center space-x-3">
               <Search className="w-5 h-5 text-blue-400 flex-shrink-0" />
               <div className="flex-1">
@@ -127,7 +127,7 @@ export default function SearchBar() {
           </div>
 
           {/* Location Filter (Optional) */}
-          <div className="flex-1 p-4 hidden lg:block">
+          <div className="flex-1 p-2 hidden lg:block">
             <div className="flex items-center space-x-3">
               <MapPin className="w-5 h-5 text-blue-400 flex-shrink-0" />
               <div className="flex-1">
@@ -150,7 +150,7 @@ export default function SearchBar() {
           </div>
 
           {/* Move-in Date */}
-          <div className="flex-1 p-4">
+          <div className="flex-1 p-2">
             <div className="flex items-center space-x-3">
               <Calendar className="w-5 h-5 text-blue-400 flex-shrink-0" />
               <div className="flex-1">
@@ -182,7 +182,7 @@ export default function SearchBar() {
           </div>
 
           {/* Move-out Date */}
-          <div className="flex-1 p-4">
+          <div className="flex-1 p-2">
             <div className="flex items-center space-x-3">
               <Calendar className="w-5 h-5 text-blue-400 flex-shrink-0" />
               <div className="flex-1">
@@ -214,7 +214,7 @@ export default function SearchBar() {
           </div>
 
           {/* Search Button */}
-          <div className="p-4">
+          <div className="p-2">
             <button
               onClick={handleSearch}
               className="w-full lg:w-auto bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-bold transition-all hover:scale-105 shadow-lg shadow-blue-500/20 flex items-center justify-center space-x-2"

@@ -23,8 +23,11 @@ export const listingsAPI = {
             email
           )
         `)
-        .eq('status', filters.status || 'active')
         .order('created_at', { ascending: false });
+
+      if (filters.status !== 'all') {
+        query = query.eq('status', filters.status || 'active');
+      }
 
       // Apply filters
       if (filters.city) {
@@ -231,9 +234,12 @@ export const listingsAPI = {
         throw new Error('Listing not found');
       }
 
+      // Convert existing to app format to merge properly
+      const existingAppFormat = transformListing(existing, null);
+
       // Transform updates if needed
       const supabaseUpdates = transformListingToSupabase(
-        { ...existing, ...updates },
+        { ...existingAppFormat, ...updates },
         userId
       );
 
@@ -255,7 +261,15 @@ export const listingsAPI = {
         `)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase raw error on update:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        throw error;
+      }
 
       const transformedListing = transformListing(data, data.profiles);
 

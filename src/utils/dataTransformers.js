@@ -169,11 +169,11 @@ export function transformListingToSupabase(appListing, userId) {
     // Status - Use the status from the form (determined by user's verification status)
     // If not provided, default to 'pending'
     status: appListing.status || 'pending',
-    verification_status: appListing.verification_status || 'pending',
+    verification_status: appListing.verification_status || appListing.verificationStatus || 'pending',
     
     // Optional fields
-    square_feet: appListing.square_feet || null,
-    house_rules: appListing.house_rules || null,
+    square_feet: appListing.square_feet || appListing._supabase?.square_feet || null,
+    house_rules: appListing.house_rules || appListing._supabase?.house_rules || null,
   };
 }
 

@@ -24,6 +24,7 @@ import CreateListing from "./pages/CreateListing";
 import Dashboard from "./pages/Dashboard";
 import AuthCallback from "./pages/AuthCallback";
 import MyListings from "./pages/MyListings";
+import EditListing from "./pages/EditListing";
 import SavedListings from "./pages/SavedListings";
 import Messages from "./pages/Messages";
 import ListingDetail from "./pages/ListingDetail";
@@ -159,6 +160,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <CreateListing />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/listings/:id/edit"
+            element={
+              <ProtectedRoute>
+                <EditListing />
               </ProtectedRoute>
             }
           />

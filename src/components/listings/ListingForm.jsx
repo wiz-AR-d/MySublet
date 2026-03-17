@@ -1305,7 +1305,13 @@ const StepPreview = ({formData}) => {
   );
 };
 // Main Form Component
-export default function ListingForm({autoFillFromProfile = false, allowDraft = false, verificationPending = false}) {
+export default function ListingForm({
+  autoFillFromProfile = false, 
+  allowDraft = false, 
+  verificationPending = false,
+  initialData = null,
+  isEdit = false
+}) {
   const navigate = useNavigate();
   const {user, profile} = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
@@ -1313,7 +1319,7 @@ export default function ListingForm({autoFillFromProfile = false, allowDraft = f
   const [autoFilledFields, setAutoFilledFields] = useState(false);
 
   // Initialize form data - will be populated from profile if autoFillFromProfile is true
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(initialData || {
     propertyType: "",
     whatOffering: "",
     furnishing: "",
@@ -1560,9 +1566,9 @@ export default function ListingForm({autoFillFromProfile = false, allowDraft = f
         petPolicy: formData.petPolicy || 'No pets',
 
         // Status logic:
-        // - Verified users: 'active' if publishing, 'draft' if saving
+        // - Verified users: 'active' if publishing, 'cancelled' if saving as draft
         // - Unverified users: always 'pending' (waiting for verification)
-        status: isDraft ? 'draft' : (isVerified ? 'active' : 'pending'),
+        status: isDraft ? 'cancelled' : (isVerified ? 'active' : 'pending'),
         verification_status: isVerified ? 'approved' : 'pending'
       };
 
@@ -1575,10 +1581,18 @@ export default function ListingForm({autoFillFromProfile = false, allowDraft = f
         setTimeout(() => reject(new Error('Request timed out after 30 seconds')), 30000)
       );
 
-      const result = await Promise.race([
-        listingsAPI.create(listingData, user.id),
-        timeoutPromise
-      ]);
+      let result;
+      if (isEdit && initialData?.id) {
+        result = await Promise.race([
+          listingsAPI.update(initialData.id, listingData, user.id),
+          timeoutPromise
+        ]);
+      } else {
+        result = await Promise.race([
+          listingsAPI.create(listingData, user.id),
+          timeoutPromise
+        ]);
+      }
 
       console.log('[ListingForm] API call completed, result:', result);
 
@@ -1592,7 +1606,10 @@ export default function ListingForm({autoFillFromProfile = false, allowDraft = f
       console.log('[ListingForm] Listing created successfully!', result.data);
 
       // Success messages and navigation
-      if (isDraft) {
+      if (isEdit) {
+        toast.success('Listing updated successfully!');
+        navigate('/my-listings');
+      } else if (isDraft) {
         toast.success('Listing saved as draft!');
         navigate('/my-listings');
       } else if (isVerified) {

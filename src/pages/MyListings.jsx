@@ -66,7 +66,7 @@ export default function MyListings() {
   const navigate = useNavigate()
 
   // State
-  const [filter, setFilter] = useState('all') // all, active, inactive
+  const [filter, setFilter] = useState('all') // all, active, cancelled
   const [sortBy, setSortBy] = useState('newest') // newest, oldest, price-high, price-low
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [listingToDelete, setListingToDelete] = useState(null)
@@ -74,7 +74,7 @@ export default function MyListings() {
 
   // Fetch listings - filter by user ID
   const {listings, loading, error, refetch} = useListings(
-    user?.id ? {userId: user.id} : {}
+    user?.id ? {userId: user.id, status: 'all'} : {}
   )
 
   // Check verification status
@@ -85,7 +85,7 @@ export default function MyListings() {
   const filteredListings = listings?.filter(listing => {
     if (filter === 'all') return true
     if (filter === 'active') return listing._supabase?.status === 'active'
-    if (filter === 'inactive') return listing._supabase?.status === 'inactive'
+    if (filter === 'inactive') return listing._supabase?.status === 'cancelled'
     return true
   }) || []
 
@@ -109,7 +109,7 @@ export default function MyListings() {
   const stats = {
     total: listings?.length || 0,
     active: listings?.filter(l => l._supabase?.status === 'active').length || 0,
-    inactive: listings?.filter(l => l._supabase?.status === 'inactive').length || 0,
+    inactive: listings?.filter(l => l._supabase?.status === 'cancelled').length || 0,
     totalViews: listings?.reduce((sum, l) => sum + (l._supabase?.views_count || 0), 0) || 0
   }
 
@@ -160,7 +160,7 @@ export default function MyListings() {
 
   // Handle status toggle
   const handleToggleStatus = async (listing) => {
-    const newStatus = listing._supabase?.status === 'active' ? 'inactive' : 'active'
+    const newStatus = listing._supabase?.status === 'active' ? 'cancelled' : 'active'
 
     try {
       const {error} = await listingsAPI.update(listing.id, {status: newStatus}, user.id)

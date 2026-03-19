@@ -7,16 +7,16 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 // Mock location options (you can later integrate with Google Places API)
 const locationOptions = [
-  {value: 'new york', label: 'New York, NY, USA'},
-  {value: 'brooklyn', label: 'Brooklyn, NY, USA'},
-  {value: 'manhattan', label: 'Manhattan, NY, USA'},
-  {value: 'queens', label: 'Queens, NY, USA'},
-  {value: 'bronx', label: 'The Bronx, NY, USA'},
-  {value: 'chicago', label: 'Chicago, IL, USA'},
-  {value: 'los angeles', label: 'Los Angeles, CA, USA'},
-  {value: 'san francisco', label: 'San Francisco, CA, USA'},
-  {value: 'boston', label: 'Boston, MA, USA'},
-  {value: 'washington dc', label: 'Washington, DC, USA'}
+  {value: 'berlin', label: 'Berlin, Germany'},
+  {value: 'munich', label: 'Munich, Germany'},
+  {value: 'hamburg', label: 'Hamburg, Germany'},
+  {value: 'frankfurt', label: 'Frankfurt, Germany'},
+  {value: 'cologne', label: 'Cologne, Germany'},
+  {value: 'stuttgart', label: 'Stuttgart, Germany'},
+  {value: 'dusseldorf', label: 'Düsseldorf, Germany'},
+  {value: 'leipzig', label: 'Leipzig, Germany'},
+  {value: 'dortmund', label: 'Dortmund, Germany'},
+  {value: 'essen', label: 'Essen, Germany'}
 ];
 
 export default function SearchBar() {
@@ -26,7 +26,8 @@ export default function SearchBar() {
 
   const handleLocationChange = (option) => {
     setSelectedLocation(option);
-    setFilters({location: option ? option.label : ''});
+    // Provide clean city name
+    setFilters({city: option ? option.label.split(',')[0].trim() : ''});
   };
 
   const handleMoveInDateChange = (date) => {
@@ -38,8 +39,7 @@ export default function SearchBar() {
   };
 
   const handleSearch = () => {
-    // Extract city from location filter if available
-    const city = filters.location ? filters.location.split(',')[0].trim() : '';
+    const city = filters.city || '';
 
     // Build search filters
     const searchFilters = {

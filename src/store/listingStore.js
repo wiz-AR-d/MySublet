@@ -19,7 +19,7 @@ export const useListingStore = create((set, get) => ({
 
   // Filters
   filters: {
-    location: '',
+    city: '',
     moveInDate: null,
     moveOutDate: null,
     priceRange: ['', ''], // Blank initial values
@@ -116,7 +116,7 @@ export const useListingStore = create((set, get) => ({
 
   clearFilters: () => {
     const defaultFilters = {
-      location: '',
+      city: '',
       moveInDate: null,
       moveOutDate: null,
       priceRange: ['', ''],
@@ -145,9 +145,11 @@ export const useListingStore = create((set, get) => ({
     if (!listings || listings.length === 0) return [];
 
     return listings.filter(listing => {
-      // Location filter
-      if (filters.location && listing.location && !listing.location.toLowerCase().includes(filters.location.toLowerCase())) {
-        return false;
+      // City filter directly from Supabase City column
+      if (filters.city && listing.city) {
+        if (listing.city.toLowerCase() !== filters.city.toLowerCase()) {
+          return false;
+        }
       }
 
       // Price filter

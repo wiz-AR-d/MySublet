@@ -34,6 +34,7 @@ export function transformListing(supabaseListing, profile) {
     address: `${supabaseListing.street} ${supabaseListing.house_number}`,
     zip_code: supabaseListing.postal_code,
     state: '',
+    coordinates: supabaseListing.coordinates || null,
     
     // Pricing
     monthlyRent: supabaseListing.monthly_rent,
@@ -170,6 +171,9 @@ export function transformListingToSupabase(appListing, userId) {
     // If not provided, default to 'pending'
     status: appListing.status || 'pending',
     verification_status: appListing.verification_status || appListing.verificationStatus || 'pending',
+    
+    // Geographical coordinates natively saved
+    coordinates: appListing.coordinates || null,
     
     // Optional fields
     square_feet: appListing.square_feet || appListing._supabase?.square_feet || null,

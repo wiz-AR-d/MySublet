@@ -34,9 +34,9 @@ const createPriceIcon = (price, currency, isSelected = false) => {
 export default function ListingMap({listings, selectedCurrency, selectedListingId = null}) {
   const [selectedListing, setSelectedListing] = useState(null);
 
-  // Default center (New York City)
-  const defaultCenter = [40.7589, -73.9851];
-  const defaultZoom = 12;
+  // Default center (Germany)
+  const defaultCenter = [51.1657, 10.4515];
+  const defaultZoom = 6;
 
   // Calculate map bounds based on listings
   const getMapBounds = () => {

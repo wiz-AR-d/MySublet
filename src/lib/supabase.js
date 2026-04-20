@@ -20,6 +20,8 @@ export const supabase = isSupabaseConfigured
         flowType: 'implicit',
         // Storage key - customize if needed
         storageKey: 'sb-auth-token',
+        // Disable local locking to prevent infinite deadlock in Chrome
+        lock: false,
         // Debug mode - set to true for troubleshooting
         debug: import.meta.env.DEV,
       },

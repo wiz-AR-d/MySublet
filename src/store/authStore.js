@@ -58,11 +58,29 @@ const useAuthStore = create(
         try {
           console.log('[Auth] Initializing authentication...')
 
-          // Get session from Supabase (which reads from localStorage)
-          const { data: { session }, error } = await supabase.auth.getSession()
+          // Get session from Supabase with a 5-second timeout to prevent infinite loading
+          const getSessionPromise = supabase.auth.getSession()
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error("Supabase getSession timeout")), 5000)
+          )
+          
+          let sessionResult;
+          try {
+             sessionResult = await Promise.race([getSessionPromise, timeoutPromise])
+          } catch (err) {
+             console.error('[Auth] Session timeout or error:', err);
+             // Clear potentially corrupted local storage
+             try { localStorage.removeItem('sb-auth-token'); localStorage.removeItem('auth-storage'); } catch(e) {}
+             set({ user: null, profile: null, session: null, loading: false, initialized: true });
+             return;
+          }
+
+          const { data: { session }, error } = sessionResult;
 
           if (error) {
             console.error('[Auth] Error getting session:', error)
+            // Clear storage if there's an error to prevent looping
+            try { localStorage.removeItem('sb-auth-token'); localStorage.removeItem('auth-storage'); } catch(e) {}
             set({
               user: null,
               profile: null,
@@ -313,45 +331,43 @@ const useAuthStore = create(
 
       // Sign Out
       signOut: async () => {
+        // Optimistically clear local state immediately to fix UI delay/logout bugs
+        set({
+          user: null,
+          profile: null,
+          session: null,
+          loading: false,
+        })
+        
+        // Hard-clear storage keys to forcefully log out locally
+        try {
+          localStorage.removeItem('sb-auth-token');
+          localStorage.removeItem('auth-storage');
+        } catch (e) {
+          console.warn('Could not clear local storage manually');
+        }
+
         if (!isSupabaseConfigured || !supabase) {
           console.warn('Supabase is not configured. Clearing local state only.')
-          set({
-            user: null,
-            profile: null,
-            session: null,
-            loading: false,
-          })
           return { error: null }
         }
 
         try {
-          console.log('[Auth] Signing out...')
-          const { error } = await supabase.auth.signOut()
-
-          // Always clear local state
-          set({
-            user: null,
-            profile: null,
-            session: null,
-            loading: false,
+          console.log('[Auth] Signing out from Supabase...')
+          // Use timeout because signOut can hang if storage is locked
+          const signOutPromise = supabase.auth.signOut()
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error("Supabase signOut timeout")), 3000)
+          )
+          
+          await Promise.race([signOutPromise, timeoutPromise]).catch(err => {
+            console.warn('[Auth] Supabase signOut timed out or threw:', err.message)
           })
-
-          if (error) {
-            console.error('[Auth] Error signing out:', error)
-            return { error }
-          }
 
           console.log('[Auth] Signed out successfully')
           return { error: null }
         } catch (error) {
           console.error('[Auth] Unexpected error during sign out:', error)
-          // Still clear local state
-          set({
-            user: null,
-            profile: null,
-            session: null,
-            loading: false,
-          })
           return { error }
         }
       },

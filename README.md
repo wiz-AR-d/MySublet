@@ -42,19 +42,31 @@ Beyond core listing capabilities, this project includes several auxiliary system
 - **Integrated Messaging**: Users can instantly connect with property listers via secure messaging built directly into the app, avoiding the need to share private phone numbers prematurely.
 - **Admin Oversight Center**: A dedicated admin verification suite `/admin/verifications` for maintaining platform integrity by manually reviewing applications, identities, and reported properties.
 - **Cloudinary Image Upload**: Seamless handling of user-generated property photos, optimized on-the-fly to maintain lighting-fast page loads.
+- **Progressive Web App (PWA)**: Fully installable as a PWA with optimized manifest and icons, ensuring users have a native-like experience on their mobile devices.
+- **Advanced Geocoding & City Search**: Features dynamic location mapping and search filtering (extending to major European cities) to surface relevant properties efficiently.
+
+### 🗺 Interactive Map & Geocoding Architecture
+The platform employs a robust mapping subsystem to help users discover properties geographically:
+- **Background Geocoding**: When a host creates or updates a listing, the system automatically resolves the address (street, city, zip code) into geographic coordinates in the background via the **OpenStreetMap Nominatim API**. This is designed with a non-blocking "fire-and-forget" approach to ensure user experience remains incredibly fast.
+- **Dynamic Map Bounding**: The `ListingMap` component uses **React-Leaflet** to render the interface. When searching or filtering listings, it dynamically traverses all property coordinates to calculate precise bounding boxes (`latLngBounds`), automatically centering and zooming the map to fit all relevant results on screen.
+- **Custom Price Markers**: Instead of generic map pins, the app implements custom Leaflet `divIcon` elements. These interactive markers calculate and display the live, converted currency price directly on the map for immediate scanning.
+- **Interactive Previews**: Hovering or clicking on any price pin opens a custom popup revealing key property details (thumbnail, title, location, beds/baths, and price layout).
 
 ## 🛠 Tech Stack
 
 ### Frontend
 - **React 19 & Vite**: Lightning-fast UI rendering and modern development building.
-- **TailwindCSS**: Rapid, responsive, and modern styling framework.
+- **TailwindCSS 4**: Rapid, responsive, and modern styling framework.
 - **React-Leaflet**: Embedded interactive map engine for geographical listing search and pinning.
 - **Zustand**: Lightweight and scalable global state management (e.g., auth, UI states).
+- **React Hook Form & Zod**: Robust form management and strictly typed data validation.
+- **SwiperJS**: High-performance, touch-friendly image carousels for navigating property media.
 - **Lucide-React & Framer Motion**: Beautiful iconography and smooth micro-animations.
 
 ### Backend & Services
 - **Supabase**: Open-source Firebase alternative providing secure PostgreSQL database management, realtime capabilities, and user authentication.
 - **Cloudinary**: High-performance CDN for image upload, processing, and delivery.
+- **Vercel**: Optimized edge network deployment and hosting for the frontend application.
 
 ## 🗄 Database Schema Structure
 The application's persistent layer relies on Supabase's managed serverless Postgres database. The schema is optimized for managing ownership, messaging, and multi-listing geographical data.

@@ -66,74 +66,59 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const listingsAPI = {
   /**
-   * Get all listings with optional filters
+   * Get all listings with optional filters.
+   * Uses raw fetch() to bypass the Supabase JS GoTrue middleware entirely.
+   * This avoids the getSession() token-refresh call that hangs indefinitely
+   * in Chrome when a stale session token exists in localStorage.
    */
   getAll: async (filters = {}) => {
-    if (!isSupabaseConfigured || !supabase) {
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
       throw new Error('Supabase is not configured');
     }
 
     try {
-      let query = supabase
-        .from('listings')
-        .select(`
-          *,
-          profiles!listings_user_id_fkey (
-            id,
-            full_name,
-            avatar_url,
-            email
-          )
-        `)
-        .order('created_at', { ascending: false });
+      // Build query params for PostgREST REST API
+      const params = new URLSearchParams();
+      
+      // Select with profiles join
+      params.append('select', '*,profiles!listings_user_id_fkey(id,full_name,avatar_url,email)');
+      params.append('order', 'created_at.desc');
 
+      // Status filter
       if (filters.status !== 'all') {
-        query = query.eq('status', filters.status || 'active');
+        params.append('status', `eq.${filters.status || 'active'}`);
       }
 
-      // Apply filters
-      if (filters.city) {
-        query = query.ilike('city', `%${filters.city}%`);
+      if (filters.city) params.append('city', `ilike.%${filters.city}%`);
+      if (filters.state) params.append('state', `ilike.%${filters.state}%`);
+      if (filters.priceMin) params.append('price_per_month', `gte.${filters.priceMin}`);
+      if (filters.priceMax) params.append('price_per_month', `lte.${filters.priceMax}`);
+      if (filters.bedrooms !== undefined && filters.bedrooms !== null && filters.bedrooms !== '') {
+        params.append('bedrooms', `eq.${filters.bedrooms}`);
+      }
+      if (filters.bathrooms) params.append('bathrooms', `eq.${filters.bathrooms}`);
+      if (filters.userId) params.append('user_id', `eq.${filters.userId}`);
+
+      // Use stored auth token if available, otherwise fall back to anon key
+      const authToken = getStoredAuthToken();
+
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/listings?${params.toString()}`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${authToken ?? SUPABASE_ANON_KEY}`,
+          'Accept': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to fetch listings (${response.status}): ${errorText}`);
       }
 
-      if (filters.state) {
-        query = query.ilike('state', `%${filters.state}%`);
-      }
-
-      if (filters.priceMin) {
-        query = query.gte('price_per_month', filters.priceMin);
-      }
-
-      if (filters.priceMax) {
-        query = query.lte('price_per_month', filters.priceMax);
-      }
-
-      if (filters.bedrooms !== undefined && filters.bedrooms !== null) {
-        query = query.eq('bedrooms', filters.bedrooms);
-      }
-
-      if (filters.bathrooms) {
-        query = query.eq('bathrooms', filters.bathrooms);
-      }
-
-      if (filters.availableFrom) {
-        query = query.lte('available_from', filters.availableFrom);
-      }
-
-      if (filters.availableTo) {
-        query = query.gte('available_to', filters.availableTo);
-      }
-
-      if (filters.userId) {
-        query = query.eq('user_id', filters.userId);
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
+      const data = await response.json();
 
       // Transform data
-      const transformedListings = (data || []).map(listing => 
+      const transformedListings = (data || []).map(listing =>
         transformListing(listing, listing.profiles)
       );
 

@@ -5,6 +5,26 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
 
+// --- ABRUPT PURGE BEFORE CLIENT CREATION ---
+// GoTrue's autoRefreshToken will fire an HTTP request THE MOMENT createClient()
+// executes if a token exists. If that token is stale (e.g. Chrome's idle state),
+// the entire app hangs for 5 seconds waiting for the refresh timeout.
+// By detecting expiration synchronously and deleting the token first,
+// GoTrue boots up clean and treats the user as instantly logged out.
+if (typeof window !== 'undefined') {
+  try {
+    const raw = window.localStorage.getItem('sb-auth-token')
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (parsed?.expires_at && (Date.now() / 1000) > parsed.expires_at) {
+        window.localStorage.removeItem('sb-auth-token')
+        window.localStorage.removeItem('auth-storage')
+        console.log('[Supabase] Purged dead session synchronously to prevent initialization hang')
+      }
+    }
+  } catch(e) {}
+}
+
 export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey, {
       auth: {

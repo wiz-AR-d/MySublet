@@ -66,35 +66,7 @@ function App() {
     initAuth();
   }, []); // Empty dependency array - run once on mount
 
-  // Handle OAuth callback redirect
-  useEffect(() => {
-    // Check if we have OAuth tokens in the URL hash
-    const hash = window.location.hash;
-    if (hash && hash.includes('access_token')) {
-      console.log('[App] OAuth callback detected, waiting for session...');
 
-      // Wait for user to be set by onAuthStateChange
-      const checkAuth = setInterval(() => {
-        if (user) {
-          console.log('[App] User authenticated, redirecting to dashboard');
-          clearInterval(checkAuth);
-          // Clear hash and redirect to dashboard
-          window.location.href = '/dashboard';
-        }
-      }, 100); // Check every 100ms
-
-      // Timeout after 5 seconds
-      setTimeout(() => {
-        clearInterval(checkAuth);
-        if (!user) {
-          console.error('[App] OAuth timeout, redirecting to login');
-          window.location.href = '/login';
-        }
-      }, 5000);
-
-      return () => clearInterval(checkAuth);
-    }
-  }, [user]);
 
   // Show loading screen while initializing
   if (isInitializing || !initialized) {
